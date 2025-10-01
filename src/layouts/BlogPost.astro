@@ -16,9 +16,9 @@ const { title, description, pubDate, updatedDate, heroImage } = Astro.props;
         <BaseHead title={title} description={description} />
         <style>
             main {
-                width: calc(100% - 2em);
+                /* width: calc(100% - 2em); */
                 max-width: 100%;
-                margin: 0;
+                /* margin: 0; */
             }
             .hero-image {
                 width: 100%;
@@ -56,6 +56,7 @@ const { title, description, pubDate, updatedDate, heroImage } = Astro.props;
     </head>
 
     <body>
+        <div class="bg-grid"></div>
         <Header />
         <main>
             <article>
@@ -81,6 +82,6 @@ const { title, description, pubDate, updatedDate, heroImage } = Astro.props;
                 </div>
             </article>
         </main>
-        <Footer />
+        <!-- <Footer /> -->
     </body>
 </html>
