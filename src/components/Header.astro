@@ -2,15 +2,15 @@
 import { SITE_TITLE } from '../consts';
 import HeaderLink from './HeaderLink.astro';
 
-import { Image } from 'astro:assets';
-import TextLogo from "/public/exegesis_textlogo.svg";
+// import { Image } from 'astro:assets';
+// import TextLogo from "/exegesis_textlogo.svg";
 ---
 
 <header>
     <nav>
-        <Image
+        <img
             class="logo-img"
-            src={TextLogo}
+            src="/exegesis_textlogo.svg"
             title={SITE_TITLE}
             alt="Exegesis text logo"
         />
