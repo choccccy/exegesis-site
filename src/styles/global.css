@@ -10,9 +10,10 @@
   --accent: #c0c0c0;
   --accent-dark: #808080;
   --black: 0, 0, 0;
-  --gray-light: 64, 64, 64;
+  --gray-dark-dark: 32, 32, 32;
+  --gray-dark: 64, 64, 64;
   --gray: 128, 128, 128;
-  --gray-dark: 192, 192, 192;
+  --gray-light: 192, 192, 192;
   --white: 255, 255, 255;
   --gray-gradient: rgba(var(--gray-light), 50%), #fff;
   --box-shadow:
@@ -256,9 +257,9 @@ img {
   border-radius: 8px;
 }
 code {
-  padding: 2px 5px;
-  background-color: rgb(var(--gray-light));
-  border-radius: 2px;
+  font-family: "tiny5";
+  /* background-color: rgb(var(--gray-dark)); */
+  /* padding: 0.1em 0.2em; */
 }
 pre {
   padding: 1.5em;
@@ -274,8 +275,9 @@ blockquote {
   font-size: 1.333em;
 }
 hr {
+  width: 100%;
   border: none;
-  border-top: 1px solid rgb(var(--gray-light));
+  border-top: 1px solid white;
 }
 @media (max-width: 720px) {
   body {

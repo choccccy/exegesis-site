@@ -1,0 +1,56 @@
+---
+const { char = 'default', children, para = false } = Astro.props;
+
+const palette = {
+  antikythera: '#C0C0C0',
+  ncho: '#C499FF',
+  obi: '#C499FF',
+  lemaitre: '#6E8EFF',
+  v3n: '#8DDCDC',
+  default: '#FF00FF'
+};
+
+const baseColor = palette[char] ?? palette.default;
+
+function withAlpha(hex, alpha) {
+  // Accepts #rrggbb and returns rgba(...)
+  const [, r, g, b] = hex.match(/^#(..)(..)(..)$/).map(x => parseInt(x, 16));
+  return `rgba(${r}, ${g}, ${b}, ${alpha})`;
+}
+
+function darken(hex, factor = 0.6) {
+  const [, r, g, b] = hex.match(/^#(..)(..)(..)$/).map(x => parseInt(x, 16));
+  return `rgb(${Math.round(r*factor)}, ${Math.round(g*factor)}, ${Math.round(b*factor)})`;
+}
+
+const background = withAlpha(baseColor, 0.08);
+const border = darken(baseColor);
+---
+
+{para ? (
+  <p class="dialogue-para">
+    <span
+      class={`dialogue-box ${char}`}
+      style={`color:${baseColor}; background:${background}; border-left:4px solid ${border};`}
+    >
+      <slot />
+    </span>
+  </p>
+) : (
+  <span
+    class={`dialogue-box ${char}`}
+    style={`color:${baseColor}; background:${background}; border-left:4px solid ${border};`}
+  >
+    <slot />
+  </span>
+)}
+<style>
+.dialogue-box {
+  display: inline;
+  vertical-align: baseline;
+  margin: 0;
+  padding: 0.2em 0.6em;
+  border-left: 4px solid;
+  font-size: 0.97em;
+}
+</style>
