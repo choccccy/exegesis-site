@@ -1,5 +1,5 @@
 ---
-const { char = 'default', children, para = false } = Astro.props;
+const { char = 'default' } = Astro.props;
 
 const palette = {
   antikythera: '#C0C0C0',
@@ -10,47 +10,56 @@ const palette = {
   default: '#FF00FF'
 };
 
+const backgroundAlpha = 0.16;
+const borderDarken = 0.5;
+
 const baseColor = palette[char] ?? palette.default;
 
 function withAlpha(hex, alpha) {
-  // Accepts #rrggbb and returns rgba(...)
   const [, r, g, b] = hex.match(/^#(..)(..)(..)$/).map(x => parseInt(x, 16));
   return `rgba(${r}, ${g}, ${b}, ${alpha})`;
 }
-
-function darken(hex, factor = 0.6) {
+function darken(hex, factor = borderDarken) {
   const [, r, g, b] = hex.match(/^#(..)(..)(..)$/).map(x => parseInt(x, 16));
   return `rgb(${Math.round(r*factor)}, ${Math.round(g*factor)}, ${Math.round(b*factor)})`;
 }
 
-const background = withAlpha(baseColor, 0.08);
-const border = darken(baseColor);
+const background = withAlpha(baseColor, backgroundAlpha);
+const border = darken(baseColor, borderDarken);
 ---
 
-{para ? (
-  <p class="dialogue-para">
-    <span
-      class={`dialogue-box ${char}`}
-      style={`color:${baseColor}; background:${background}; border-left:4px solid ${border};`}
-    >
-      <slot />
-    </span>
-  </p>
-) : (
-  <span
-    class={`dialogue-box ${char}`}
-    style={`color:${baseColor}; background:${background}; border-left:4px solid ${border};`}
-  >
-    <slot />
-  </span>
-)}
-<style>
-.dialogue-box {
-  display: inline;
-  vertical-align: baseline;
-  margin: 0;
-  padding: 0.2em 0.6em;
-  border-left: 4px solid;
-  font-size: 0.97em;
-}
+<span
+  class={`db ${char}`}
+  style={`color:${baseColor}; background:${background}; border-left:4px solid ${border};`}
+>
+  <slot />
+</span>
+
+<style is:global>
+  .db {
+    display: inline;
+    vertical-align: baseline;
+    padding: 0.3em 0.4em;
+    margin-right: 0.4em;
+    border-left: 4px solid;
+    font-size: 0.97em;
+    word-break: break-word;
+    white-space: normal;
+    line-height: inherit;
+  }
+
+  .db:not(p .db) {  /* Target standalone dialogue boxes that are NOT inside paragraphs */
+    display: block !important;
+    margin-bottom: var(--paragraph-margin);
+    width: fit-content;
+  }
+
+  p .db {  /* Ensure inline dialogue boxes stay inline */
+    display: inline !important;
+    margin-bottom: 0;
+  }
+
+  .db code + code {  /* Code gapping */
+    margin-left: 1.5em;
+  }
 </style>
