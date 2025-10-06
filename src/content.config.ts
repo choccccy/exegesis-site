@@ -7,12 +7,14 @@ const entry = defineCollection({
     // Type-check frontmatter using a schema
     schema: ({ image }) =>
         z.object({
+            published: z.boolean(),
+            entryNumber: z.number().int(),
             title: z.string(),
+            showTitle: z.boolean().default(true),
             description: z.string(),
-            // Transform string to Date object
-            pubDate: z.coerce.date(),
-            updatedDate: z.coerce.date().optional(),
             heroImage: image().optional(),
+            previousEntry: z.string().nullable(),
+            nextEntry: z.string().nullable()
         }),
 });
 

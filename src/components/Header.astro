@@ -8,17 +8,19 @@ import HeaderLink from './HeaderLink.astro';
 
 <header>
     <nav>
-        <img
-            class="logo-img"
-            src="/exegesis_textlogo.svg"
-            title={SITE_TITLE}
-            alt="Exegesis text logo"
-        />
-        <div class="internal-links">
+        <!-- <a href="/" class="logo-link"> -->
+            <img
+                class="logo-img"
+                src="/exegesis_textlogo.svg"
+                title={SITE_TITLE}
+                alt="Exegesis text logo"
+            />
+        <!-- </a> -->
+        <!-- <div class="internal-links">
             <HeaderLink href="/">Home</HeaderLink>
             <HeaderLink href="/entry">Entries</HeaderLink>
             <HeaderLink href="/about">About</HeaderLink>
-        </div>
+        </div> -->
         <div class="social-links">
             <a href="https://discord.gg/CAHWY2wKWu" target="_blank">
                 <span class="sr-only">Exegesis Discord Server</span>
@@ -36,9 +38,9 @@ import HeaderLink from './HeaderLink.astro';
 <style>
     header {
         margin: 0;
-        padding: 0 1em;
+        padding: 5vh 5vw;
         color: white;
-        background: black;
+        background: #00000000;
         box-shadow: 0 2px 8px rgba(var(--black), 5%);
     }
     .logo-img {
