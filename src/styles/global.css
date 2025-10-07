@@ -63,7 +63,7 @@ main {
   max-width: calc(100% - 2em);
   margin: auto;
   margin-bottom: 5vh;
-  padding: 3em 1em;
+  padding: 0 0;
   border: 1px solid white;
   box-sizing: border-box;
   background: black
@@ -103,11 +103,13 @@ a:hover {
   color: var(--accent);
 }
 p {
+  margin-top: var(--paragraph-margin);
   margin-bottom: var(--paragraph-margin);
 }
-.prose p {
+/* .prose p {
+  margin-top: var(--paragraph-margin);
   margin-bottom: var(--paragraph-margin);
-}
+} */
 textarea {
   width: 100%;
   font-size: 16px;
@@ -119,10 +121,31 @@ table {
   width: 100%;
 }
 img {
-  max-width: 100%;
   height: auto;
-  /* border-radius: 8px; */
-  border: 1px solid white
+  /* box-sizing: content-box; */
+  outline: 1px solid white;
+  /* border-top: 1px solid white;
+  border-bottom: 1px solid white; */
+}
+/* Apply width constraint to prose text elements */
+.prose p,
+.prose h1,
+.prose h2,
+.prose h3,
+.prose h4,
+.prose h5,
+.prose h6,
+.prose blockquote,
+.prose .db {
+  width: 92%;
+  margin-left: auto;
+  margin-right: auto;
+}
+/* Reset paragraph styles specifically for paragraphs containing only images */
+.prose p:has(> img:only-child) {
+  width: 100%;
+  margin-left: 0;
+  margin-right: 0;
 }
 code {
   font-family: "JetBrainsMono";
