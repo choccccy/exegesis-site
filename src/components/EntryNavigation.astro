@@ -21,8 +21,8 @@ function isEntryPublished(entryTitle: string): boolean {
 function titleToSlug(title: string): string {
   return title
     .toLowerCase()
-    .replace(/[^a-z0-9]+/g, '_')
-    .replace(/^_|_$/g, '');
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-|-$/g, '');
 }
 
 const isPreviousPublished = previousEntry ? isEntryPublished(previousEntry) : false;
