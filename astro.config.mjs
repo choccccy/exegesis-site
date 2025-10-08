@@ -13,6 +13,7 @@ export default defineConfig({
   site: 'https://choccccy.github.io',
   // base: '/exegesis-site',
   integrations: [mdx(), sitemap()],
+
   markdown: {
     remarkPlugins: [remarkUnwrapImages]
   },
