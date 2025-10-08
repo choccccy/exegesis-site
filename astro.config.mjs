@@ -10,7 +10,7 @@ import remarkUnwrapImages from 'remark-unwrap-images';
 
 // https://astro.build/config
 export default defineConfig({
-  site: 'https://choccccy.github.io',
+  site: 'https://exegesis.space',
   // base: '/exegesis-site',
   integrations: [mdx(), sitemap()],
 
