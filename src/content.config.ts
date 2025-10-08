@@ -12,7 +12,7 @@ const entry = defineCollection({
             title: z.string(),
             showTitle: z.boolean().default(true),
             description: z.string(),
-            heroImage: image().optional(),
+            heroImage: image(),
             previousEntry: z.string().nullable(),
             nextEntry: z.string().nullable()
         }),
