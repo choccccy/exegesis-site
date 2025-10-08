@@ -24,7 +24,8 @@ const entry = defineCollection({
             description: z.string(),
             heroImage: image(),
             previousEntry: z.string().nullable(),
-            nextEntry: z.string().nullable()
+            nextEntry: z.string().nullable(),
+            NSFW: z.boolean().default(false)
         }),
 });
 
