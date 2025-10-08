@@ -74,10 +74,10 @@ const isNextPublished = nextEntry ? isEntryPublished(nextEntry) : false;
     ) : nextEntry && !isNextPublished ? (
       <span 
         class="nav-button nav-button--next nav-button--disabled"
-        aria-label={`Next entry not yet published: ${nextEntry}`}
-        title="This entry is not yet published"
+        aria-label="No next entry available"
       >
-        <span class="nav-text">{nextEntry}</span>
+        {/* <span class="nav-text">{nextEntry}</span> */}
+        <span class="nav-text">{'{...}'}</span>
       </span>
     ) : (
       <span 
@@ -167,16 +167,15 @@ const isNextPublished = nextEntry ? isEntryPublished(nextEntry) : false;
   }
 
   .nav-button--disabled {
-    background: white;
+    background: #808080;
     color: black;
     cursor: not-allowed;
-    opacity: 0.6;
   }
 
   .nav-button--unavailable {
     background: #808080;
     color: black;
-    cursor: default;
+    cursor: not-allowed;
   }
 
   .nav-button--unavailable.nav-button--next {
