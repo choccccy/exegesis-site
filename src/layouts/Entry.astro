@@ -9,7 +9,7 @@ import Header from '../components/Header.astro';
 
 type Props = CollectionEntry<'entry'>['data'];
 
-const { title, showTitle, description, previousEntry, nextEntry, heroImage } = Astro.props;
+const { published, title, showTitle, description, previousEntry, nextEntry, heroImage } = Astro.props;
 ---
 
 <html lang="en">
@@ -57,6 +57,35 @@ const { title, showTitle, description, previousEntry, nextEntry, heroImage } = A
             .last-updated-on {
                 font-style: italic;
             }
+            .unfinished-warning {
+                width: 100vw;
+                margin-left: 50%;
+                transform: translateX(-50%);
+                position: relative;
+                background: repeating-linear-gradient(
+                    45deg,
+                    black 0px,
+                    black 20px,
+                    yellow 20px,
+                    yellow 40px
+                );
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                padding: 0.72em 0;
+                margin-top: 1em;
+                margin-bottom: 1em;
+                overflow: hidden;
+            }
+            .unfinished-warning-text {
+                background: black;
+                color: yellow;
+                padding: 0 1em;
+                font-family: 'JetBrainsMono', monospace;
+                font-weight: bold;
+                text-transform: uppercase;
+                z-index: 1;
+            }
         </style>
     </head>
 
@@ -69,11 +98,21 @@ const { title, showTitle, description, previousEntry, nextEntry, heroImage } = A
             {/* <hr /> */}
         </div>
         )}
+        {published == false && (
+        <div class="unfinished-warning">
+            <span class="unfinished-warning-text">this entry is unfinished! content is subject to change.</span>
+        </div>
+        )}
         <main>
             <div class="prose">
                 <slot />
             </div>
         </main>
+        {published == false && (
+        <div class="unfinished-warning">
+            <span class="unfinished-warning-text">this entry is unfinished! content is subject to change.</span>
+        </div>
+        )}
         <EntryNavigation 
             currentEntry={title}
             previousEntry={previousEntry}
