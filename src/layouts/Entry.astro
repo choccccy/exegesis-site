@@ -6,6 +6,7 @@ import Footer from '../components/Footer.astro';
 import EntryNavigation from '../components/EntryNavigation.astro';
 import FormattedDate from '../components/FormattedDate.astro';
 import Header from '../components/Header.astro';
+import WarningBanner from '../components/WarningBanner.astro';
 
 type Props = CollectionEntry<'entry'>['data'];
 
@@ -73,8 +74,8 @@ const { published, title, showTitle, description, previousEntry, nextEntry, hero
                 justify-content: center;
                 align-items: center;
                 padding: 0.72em 0;
-                margin-top: 1em;
-                margin-bottom: 1em;
+                margin-top: 0.5em;
+                margin-bottom: 0.5em;
                 overflow: hidden;
             }
             .unfinished-warning-text {
@@ -98,21 +99,13 @@ const { published, title, showTitle, description, previousEntry, nextEntry, hero
             {/* <hr /> */}
         </div>
         )}
-        {published == false && (
-        <div class="unfinished-warning">
-            <span class="unfinished-warning-text">this entry is unfinished! content is subject to change.</span>
-        </div>
-        )}
+        {published == false && (<WarningBanner lines={[ 'this entry is unfinished! content is subject to change.' ]} />)}
         <main>
             <div class="prose">
                 <slot />
             </div>
         </main>
-        {published == false && (
-        <div class="unfinished-warning">
-            <span class="unfinished-warning-text">this entry is unfinished! content is subject to change.</span>
-        </div>
-        )}
+        {published == false && (<WarningBanner lines={[ 'this entry is unfinished! content is subject to change.' ]} />)}
         <EntryNavigation 
             currentEntry={title}
             previousEntry={previousEntry}
