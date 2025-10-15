@@ -1,8 +1,21 @@
 # V3N
-({...} - Shortened to V3N)
+Victor Three November - Shortened to **V3N** or **Ven**
+he/him
 
 ## Body
 {...}
 
 ## Personality
-V3N is mission-focused, dry, and succinct, a pilot who relishes clarity and procedure. Their communication is clipped and professional, revealing reliability and a touch of good-natured competitiveness. V3N supports team goals without fuss, prioritizing safe, precise maneuvers and cutting through noise with task-oriented input.
+Mission-focused, dry, and succinct. Relishes clarity and procedure. Communication is clipped and professional, revealing reliability and a touch of good-natured competitiveness. Cuts through noise with task-oriented input.
+
+## Speech Pattern
+Clipped, procedural, professional; terse radio protocol. Softer "off the job".
+
+## Mission Role
+S&R pilot
+
+## Social Role
+Task-sergeant, keeps crew in discipline and execution.
+
+## Inner Circle
+{...}

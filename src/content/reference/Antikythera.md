@@ -1,9 +1,21 @@
-# Antikythera Navigator
+# Antikythera
+Named for the location of the oldest known (mechanical) computer
+it/its
 
 ## Body
-Nysa's Wake
+Nysa's Wake; inhabits onboard navigation, sensors, environmental controls, simple frames, infrastructure, everything.
 
 ## Personality
-The overseeing AI handling navigation and ship functions, reduced to a bare minimum of functionality by the Slumbering Empyrean
+Calm, technical, focused on safety. Understated, algorithmic presence; an omnipresent mind <!-- reduced to only essential function by contact with the Slumbering Empyrean. -->
 
-The Antikythera augments Nysa's Wake with a mind both omnipresent and measured. It is calm, technical, and focused on safety, rarely using surplus words but always watching. Its understated, algorithmic presence reassures, the voice of a superintelligence that functions as both guardian and navigator, devoted to the crew's ongoing survival amid unknown, cosmic threats.
+## Speech Pattern
+Formal, algorithmic, technical; rarely uses surplus words. Cadence of mission log or ship's bell.
+
+## Mission Role
+Navigation, diagnostics, ship evaluation, and guidance.
+
+## Social Role
+Guardian and advisor, voice of caution and procedure for the crew.
+
+## Inner Circle
+N/a
