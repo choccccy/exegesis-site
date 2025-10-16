@@ -1,5 +1,5 @@
 # V3N
-Victor Three November - Shortened to **V3N** or **Ven**
+NATO phonetic alphabet, Victor Three November - Shortened to **V3N** or **Ven**
 he/him
 
 ## Body

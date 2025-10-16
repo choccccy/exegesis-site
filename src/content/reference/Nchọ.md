@@ -1,6 +1,6 @@
 # onye Nchọgharị
-"Person who wanders/searches" - Shortened to **Nchọ**
-they/him
+From Igbo, "Person who wanders/searches" - Shortened to **Nchọ**
+*they/him*
 
 ## Body
 1.75m tall humanoid
@@ -15,10 +15,11 @@ Bouncy and dexterous, utilizing parkour and freerunning techniques augmented hea
 Uncapitalized, elliptical, slides between terse operational and casual banter. Bandies slang and mission-shorthand liberally.
 
 ## Mission Role
-Expedition handyman, jack of all trades (master of none). Often takes a leadership role, but only as far as completing the task at hand, happy to acquiesce command. Talented mechanic/medic, particularly with limited resources
+Logistics specialist. Often takes a leadership role, but only as far as completing the task at hand, happy to acquiesce command. Talented mechanic/medic, particularly with limited resources.
 
 ## Social Role
 Anchor and pressure-valve for the crew; banter and presence hold groups together.
 
 ## Inner Circle
 - **mkpụrụobi mepụta** - Familiar AI
+- **Victor Three November** - BFFwB

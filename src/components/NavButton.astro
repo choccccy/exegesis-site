@@ -1,0 +1,144 @@
+---
+export interface Props {
+  type?: 'default' | 'current' | 'previous' | 'next' | 'disabled' | 'placeholder' | 'unavailable' | 'warning'
+  href?: string
+  id?: string
+  ariaLabel?: string
+  [key: string]: unknown
+}
+const { type = 'default', href, id, ariaLabel, ...rest } = Astro.props;
+---
+{href ? (
+  <a
+    href={href}
+    class={`nav-button nav-button--${type}`}
+    aria-label={ariaLabel}
+    id={id}
+    {...rest}
+  >
+    <span class="nav-text"><slot /></span>
+  </a>
+) : (
+  <button
+    class={`nav-button nav-button--${type}`}
+    aria-label={ariaLabel}
+    id={id}
+    type="button"
+    {...rest}
+  >
+    <span class="nav-text"><slot /></span>
+  </button>
+)}
+
+<style>
+  .nav-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.75rem 1.25rem;
+    background: white;
+    color: black;
+    text-decoration: none;
+    font-family: 'tiny5', monospace;
+    font-size: 2rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    text-align: center;
+    line-height: 1.2;
+    border: none;
+    position: relative;
+    box-sizing: border-box;
+    max-width: none;
+  }
+
+  .nav-button--default {
+    background: white;
+    color: black;
+    border: 2px solid black;
+    border-radius: 0; /* square edges */
+    padding: 0.75rem 1.5rem;
+  }
+
+  .nav-button--previous {
+    background: white;
+    color: black;
+    clip-path: polygon(28px 0%, 100% 0%, 100% 100%, 28px 100%, 0% 50%);
+    padding-left: 36px;
+    justify-self: end;
+  }
+
+  .nav-button--next {
+    background: white;
+    color: black;
+    clip-path: polygon(0% 0%, calc(100% - 28px) 0%, 100% 50%, calc(100% - 28px) 100%, 0% 100%);
+    padding-right: 36px;
+    justify-self: start;
+  }
+
+  .nav-button--current {
+    background: black;
+    color: white;
+    z-index: 1;
+    justify-self: center;
+  }
+
+  .nav-button--disabled,
+  .nav-button--unavailable {
+    background: #808080;
+    color: black;
+    cursor: not-allowed;
+    justify-self: start;
+  }
+
+  .nav-button--placeholder {
+    visibility: hidden;
+    pointer-events: none;
+    clip-path: polygon(28px 0%, 100% 0%, 100% 100%, 28px 100%, 0% 50%);
+    padding-left: 36px;
+    justify-self: end;
+  }
+
+  .nav-text {
+    white-space: nowrap;
+    text-align: center;
+    display: inline-block;
+  }
+
+  .nav-button--warning {
+    background: repeating-linear-gradient(
+      45deg,
+      black 0px,
+      black 20px,
+      yellow 20px,
+      yellow 40px
+    );
+    color: black;
+    border: 2px solid black;
+    border-radius: 0;
+    padding: 0.75rem 1.5rem; /* match default */
+    box-sizing: border-box;
+  }
+
+  .nav-button--warning .nav-text {
+    background: black;
+    color: yellow;
+    padding: 0 0.3em; /* much smaller, just enough for box effect */
+    display: inline-block;
+    line-height: 1.2;
+    border-radius: 0;
+  }
+
+  @media (max-width: 640px) {
+    .nav-button--previous,
+    .nav-button--next,
+    .nav-button--current,
+    .nav-button--default {
+      width: 100%;
+      clip-path: none;
+      padding: 0.75rem 1.25rem;
+    }
+    .nav-button--placeholder {
+      display: none;
+    }
+  }
+</style>

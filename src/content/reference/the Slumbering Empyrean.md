@@ -6,8 +6,11 @@ The Empyrean is slowly reactivating. Current estimates, based on the exponential
 
 ---
 
+# the Slumbering Empyrean
+A Dyson Sphere, impossibly vast. Roughly 0.3 AU across. Astronomical observation suggests that the system was once a ternary star system, with the larger binary pair having been consumed to create the Empyrean, although even the mass of those stars would not account for its size.
 
+## The Encroaching Void
+Something moves within cognition itself, a vector drawn toward thought. Abstract fields interfere with computation and awareness, devouring process before form.
 
----
-
-
+## The Stirring
+The Empyrean reawakens. Its expanding field increases exponentially; within four years it will propagate at lightspeed. The sky will ripple with its will.  

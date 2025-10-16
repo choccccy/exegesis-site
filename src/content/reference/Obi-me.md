@@ -1,6 +1,6 @@
 # mkpụrụobi mepụta
-"created soul" - Shortened to **Obi-me** or just **Obi**
-it/its
+From Igbo, "created soul" - Shortened to **Obi-me** or just **Obi**
+*it/its*
 
 ## Body
 5m tall biped on stocky legs, with two massive, long arms with spherical elbow joints and radially symmetric hands with 4 wide fingers, plus two smaller, more traditionally "human" arms mounted near the front-lower ribcage to allow for interface with standard human equipment. Large primary thruster on back; shoulders wrap where a head would be, but actual head is near the sternum.

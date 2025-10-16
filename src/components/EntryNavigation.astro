@@ -1,218 +1,109 @@
 ---
-import { getCollection } from 'astro:content';
+import { getCollection } from 'astro:content'
+import NavButton from '../components/NavButton.astro'
 
 interface Props {
-  currentEntry: string;
-  previousEntry?: string | null;
-  nextEntry?: string | null;
+  currentEntry: string
+  previousEntry?: string | null
+  nextEntry?: string | null
 }
 
-const { currentEntry, previousEntry, nextEntry } = Astro.props;
+const { currentEntry, previousEntry, nextEntry } = Astro.props
 
-// Get all published entries to check if next/previous entries are published
-const publishedEntries = await getCollection('entry', ({ data }) => {
-  return data.published === true;
-});
+const publishedEntries = await getCollection('entry', ({ data }) => data.published === true)
 
 function isEntryPublished(entryTitle: string): boolean {
-  return publishedEntries.some(entry => entry.data.title === entryTitle);
+  return publishedEntries.some(entry => entry.data.title === entryTitle)
 }
 
 function titleToSlug(title: string): string {
   return title
     .toLowerCase()
     .replace(/[^a-z0-9]+/g, '-')
-    .replace(/^-|-$/g, '');
+    .replace(/^-|-$/g, '')
 }
 
-const isPreviousPublished = previousEntry ? isEntryPublished(previousEntry) : false;
-const isNextPublished = nextEntry ? isEntryPublished(nextEntry) : false;
+const isPreviousPublished = previousEntry ? isEntryPublished(previousEntry) : false
+const isNextPublished = nextEntry ? isEntryPublished(nextEntry) : false
 ---
 
 <nav class="entry-navigation" role="navigation" aria-label="Entry navigation">
   <div class="nav-group">
-    <!-- Previous entry button -->
-    {previousEntry && isPreviousPublished ? (
-      <a 
-        href={`/entry/${titleToSlug(previousEntry)}/`}
-        class="nav-button nav-button--previous"
-        aria-label={`Previous entry: ${previousEntry}`}
-      >
-        <span class="nav-text">{previousEntry}</span>
-      </a>
-    ) : previousEntry && !isPreviousPublished ? (
-      <span 
-        class="nav-button nav-button--previous nav-button--disabled"
-        aria-label={`Previous entry not yet published: ${previousEntry}`}
-        title="This entry is not yet published"
-      >
-        <span class="nav-text">{previousEntry}</span>
-      </span>
+    {previousEntry ? (
+      isPreviousPublished ? (
+        <NavButton
+          type="previous"
+          href={`/entry/${titleToSlug(previousEntry)}/`}
+          ariaLabel={`Previous entry: ${previousEntry}`}
+        >
+          {previousEntry}
+        </NavButton>
+      ) : (
+        <NavButton
+          type="disabled"
+          ariaLabel={`Previous entry not yet published: ${previousEntry}`}
+          title="This entry is not yet published"
+        >
+          {previousEntry}
+        </NavButton>
+      )
     ) : (
-      <div class="nav-button nav-button--previous nav-button--placeholder" aria-hidden="true"></div>
+      <NavButton type="placeholder" aria-hidden="true" />
     )}
 
-    <!-- Current entry button -->
-    <button 
-      class="nav-button nav-button--current" 
+    <NavButton
+      type="current"
       onclick="window.scrollTo({ top: 0, behavior: 'smooth' })"
-      aria-label={`Back to top of ${currentEntry}`}
-      type="button"
+      ariaLabel={`Back to top of ${currentEntry}`}
     >
-      <span class="nav-text">{currentEntry}</span>
-    </button>
+      {currentEntry}
+    </NavButton>
 
-    <!-- Next entry button -->
-    {nextEntry && isNextPublished ? (
-      <a 
-        href={`/entry/${titleToSlug(nextEntry)}/`}
-        class="nav-button nav-button--next"
-        aria-label={`Next entry: ${nextEntry}`}
-      >
-        <span class="nav-text">{nextEntry}</span>
-      </a>
-    ) : nextEntry && !isNextPublished ? (
-      <span 
-        class="nav-button nav-button--next nav-button--disabled"
-        aria-label="No next entry available"
-      >
-        {/* <span class="nav-text">{nextEntry}</span> */}
-        <span class="nav-text">{'{...}'}</span>
-      </span>
+    {nextEntry ? (
+      isNextPublished ? (
+        <NavButton
+          type="next"
+          href={`/entry/${titleToSlug(nextEntry)}/`}
+          ariaLabel={`Next entry: ${nextEntry}`}
+        >
+          {nextEntry}
+        </NavButton>
+      ) : (
+        <NavButton
+          type="disabled"
+          ariaLabel="No next entry available"
+        >
+          {'{...}'}
+        </NavButton>
+      )
     ) : (
-      <span 
-        class="nav-button nav-button--next nav-button--unavailable"
-        aria-label="No next entry available"
+      <NavButton
+        type="unavailable"
+        ariaLabel="No next entry available"
       >
-        <span class="nav-text">{'{...}'}</span>
-      </span>
+        {'{...}'}
+      </NavButton>
     )}
   </div>
 </nav>
 
 <style>
   .entry-navigation {
-    /* padding: 0 0; */
     margin: 1.5em 0 10vh 0;
   }
 
   .nav-group {
-    /* Use CSS grid for centering the current entry button */
-    display: grid; /* switched from flex to grid */
-    grid-template-columns: 1fr auto 1fr; /* left, center, right columns */
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
     align-items: center;
-    column-gap: 1.25rem; /* spacing between buttons */
-  }
-
-  /* Ensure buttons align correctly in grid cells */
-  .nav-button--previous {
-    justify-self: end; /* right-align previous button in left column */
-  }
-  .nav-button--current {
-    justify-self: center; /* center current button */
-  }
-  .nav-button--next {
-    justify-self: start; /* left-align next button in right column */
-  }
-  .nav-button--disabled,
-  .nav-button--unavailable {
-    /* match side button alignment */
-    justify-self: start;
-  }
-  .nav-button--placeholder {
-    justify-self: end;
-  }
-
-  .nav-button {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    padding: 0.75rem 1.25rem; 
-    background: white;
-    color: black;
-    text-decoration: none;
-    font-family: 'tiny5', monospace;
-    font-size: 2rem;
-    cursor: pointer;
-    transition: all 0.2s ease;
-    text-align: center;
-    line-height: 1.2;
-    border: none;
-    position: relative;
-    box-sizing: border-box;
-    max-width: none; /* allow expansion */
-  }
-
-  /* Removed min/max/fixed width on .nav-button--previous/.nav-button--next for true content-fit */
-
-  .nav-button--previous {
-    background: white;
-    color: black;
-    clip-path: polygon(28px 0%, 100% 0%, 100% 100%, 28px 100%, 0% 50%);
-    padding-left: 36px;
-  }
-
-  .nav-button--next {
-    background: white;
-    color: black;
-    clip-path: polygon(0% 0%, calc(100% - 28px) 0%, 100% 50%, calc(100% - 28px) 100%, 0% 100%);
-    padding-right: 36px;
-  }
-
-  .nav-button--current {
-    background: black;
-    color: white;
-    z-index: 1;
-  }
-
-  .nav-button--disabled {
-    background: #808080;
-    color: black;
-    cursor: not-allowed;
-  }
-
-  .nav-button--unavailable {
-    background: #808080;
-    color: black;
-    cursor: not-allowed;
-  }
-
-  .nav-button--unavailable.nav-button--next {
-    clip-path: polygon(0% 0%, calc(100% - 28px) 0%, 100% 50%, calc(100% - 28px) 100%, 0% 100%);
-    padding-right: 36px;
-  }
-
-  .nav-button--placeholder {
-    visibility: hidden;
-    pointer-events: none;
-    clip-path: polygon(28px 0%, 100% 0%, 100% 100%, 28px 100%, 0% 50%);
-    padding-left: 36px;
-  }
-
-  .nav-text {
-    white-space: nowrap; /* always oneliner */
-    text-align: center;
-    display: inline-block;
+    column-gap: 1.25rem;
   }
 
   @media (max-width: 640px) {
     .nav-group {
-      display: flex; /* revert to flex/column on mobile */
+      display: flex;
       flex-direction: column;
       gap: 0.75rem;
-    }
-    .nav-button--previous,
-    .nav-button--next,
-    .nav-button--current {
-      width: 100%;
-    }
-    .nav-button--previous,
-    .nav-button--next {
-      clip-path: none;
-      padding: 0.75rem 1.25rem;
-    }
-    .nav-button--placeholder {
-      display: none;
     }
   }
 </style>

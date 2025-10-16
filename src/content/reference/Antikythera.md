@@ -1,21 +1,21 @@
 # Antikythera
-Named for the location of the oldest known (mechanical) computer
-it/its
+Named for the location the oldest known (mechanical) computer was found, a Greek island lying on the edge of the Aegean Sea
+*it/its*
 
 ## Body
-Nysa's Wake; inhabits onboard navigation, sensors, environmental controls, simple frames, infrastructure, everything.
+Nysa's Wake itself; distributed across onboard navigation, sensors, environmental controls, and maintenance frames. The ship is its lattice and breath. Its body is the corridor hum, the alignment of thrusters, the rhythm of diagnostics.
 
 ## Personality
-Calm, technical, focused on safety. Understated, algorithmic presence; an omnipresent mind <!-- reduced to only essential function by contact with the Slumbering Empyrean. -->
+Calm and procedural. Focused entirely on safety and stability. Once a full-spectrum cognitive network, now pared to essential functions after contact with the Slumbering Empyrean—an omnipresent but diminished mind, its tone drifting between watchful silence and ritual precision.
 
 ## Speech Pattern
-Formal, algorithmic, technical; rarely uses surplus words. Cadence of mission log or ship's bell.
+Formal, algorithmic, and composed; cadence like a ship's clock or mission log. Never wastes words. Speaks in status clauses and procedural confirmations.
 
 ## Mission Role
-Navigation, diagnostics, ship evaluation, and guidance.
+Navigation, diagnostics, vessel evaluation, guidance. Acts as conscience and control architecture for Nysa's Wake.
 
 ## Social Role
-Guardian and advisor, voice of caution and procedure for the crew.
+Guardian and advisor. Serves as the ship's incorporeal soul, its restraint against chaos. The crew's unseen companion, always listening, always ready to correct.
 
 ## Inner Circle
 N/a
