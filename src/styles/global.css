@@ -150,8 +150,8 @@ img {
 code {
   font-family: "JetBrainsMono";
   font-size: 18px;
-  /* background-color: rgb(var(--gray-dark)); */
-  /* padding: 0.1em 0.2em; */
+  background-color: rgb(var(--gray-dark));
+  padding: 0.1em 0.2em;
 }
 pre {
   padding: 1.5em;

@@ -14,3 +14,4 @@
 - [ ] {Title Title} - Wide - character montage over GUILTY LANDSCAPES
 - [ ] {Title Title} - Narrow - escape sequence to Light it Up, culminating in the final post-drop having all characters pushing heat limits
 - [ ] {Title Title} - Narrow - somebody who uses a lot of remote bodies jorking themselves
+- [ ] Clockwork Routines - Narrow - The Antikythera runs a self-diagnostic routine on Nysa's Wake and itself
