@@ -1,0 +1,24 @@
+# {FULL NAME}
+{NAME_EXPLAINATION} - Shortened to **{NICKNAME}**
+*{PRONOUN}/{PRONOUN}*
+
+## Body
+{BODY_DESCRIPTION}
+
+## Personality
+{PERSONALITY_DESCRIPTION}
+
+## Movement Style
+{MOVEMENT_STYLE_DESCRIPTION}
+
+## Speech Pattern
+{SPEECH_PATTERN_DESCRIPTION}
+
+## Mission Role
+{MISSION_ROLE_DESCRIPTION}
+
+## Social Role
+{SOCIAL_ROLE_DESCRIPTION}
+
+## Inner Circle
+- **{OTHER_CHARACTER}** - {RELATIONSHIP}
