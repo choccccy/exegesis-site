@@ -126,6 +126,14 @@ img {
   outline: 1px solid white;
   /* border-top: 1px solid white;
   border-bottom: 1px solid white; */
+
+  /* Use both for browser compatibility */
+  image-rendering: -webkit-optimize-contrast; /* Chrome/Safari */
+  image-rendering: crisp-edges; /* Firefox */
+  image-rendering: pixelated; /* Chrome (preferred) */
+  
+  /* Prevent smooth scaling */
+  image-rendering: -moz-crisp-edges; /* Firefox fallback */
 }
 /* Apply width constraint to prose text elements */
 .prose p,
@@ -150,8 +158,8 @@ img {
 code {
   font-family: "JetBrainsMono";
   font-size: 18px;
-  background-color: rgb(var(--gray-dark));
-  padding: 0.1em 0.2em;
+  background-color: rgb(var(--gray-dark-dark));
+  padding: 0.2em 0.4em;
 }
 pre {
   padding: 1.5em;
