@@ -1,19 +1,18 @@
 ---
-const { char = 'default' } = Astro.props;
-
 const palette = {
   antikythera: '#C0C0C0',
   ncho: '#C499FF',
-  obi: '#C499FF',
+  obi: ['#C499FF', '#404040'],
   lemaitre: '#6E8EFF',
-  v3n: '#8DDCDC',
+  // v3n: '#8DDCDC',  // seafoam
+  v3n: '#FFA500',
   default: '#FF00FF'
 };
 
 const backgroundAlpha = 0.16;
 const borderDarken = 0.5;
 
-const baseColor = palette[char] ?? palette.default;
+const { char = 'default', bgOverride } = Astro.props;
 
 function withAlpha(hex, alpha) {
   const [, r, g, b] = hex.match(/^#(..)(..)(..)$/).map(x => parseInt(x, 16));
@@ -24,7 +23,13 @@ function darken(hex, factor = borderDarken) {
   return `rgb(${Math.round(r*factor)}, ${Math.round(g*factor)}, ${Math.round(b*factor)})`;
 }
 
-const background = withAlpha(baseColor, backgroundAlpha);
+const entry = palette[char] ?? palette.default;
+const baseColor = Array.isArray(entry) ? entry[0] : entry;
+const background =
+  bgOverride ? bgOverride :
+  (Array.isArray(entry) && entry[1]) ? entry[1] :
+  withAlpha(baseColor, backgroundAlpha);
+
 const border = darken(baseColor, borderDarken);
 ---
 
