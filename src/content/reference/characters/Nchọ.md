@@ -18,7 +18,7 @@ Uncapitalized, elliptical, slides between terse operational and casual banter. B
 Logistics specialist. Often takes a leadership role, but only as far as completing the task at hand, happy to acquiesce command. Talented mechanic/medic, particularly with limited resources.
 
 ## Social Role
-Anchor and pressure-valve for the crew; banter and presence hold groups together.
+Anchor and pressure-valve for the crew; tries to hold groups together with positive spin and banter.
 
 ## Inner Circle
 - **mkpụrụobi mepụta** - Familiar AI
