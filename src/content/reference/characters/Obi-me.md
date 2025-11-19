@@ -1,4 +1,4 @@
-# mkpụrụobi mepụta
+# Mkpụrụobi mepụta
 From Igbo, "created soul" - Shortened to **Obi-me** or just **Obi**
 *it/its*
 
