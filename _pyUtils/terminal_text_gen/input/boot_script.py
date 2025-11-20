@@ -25,33 +25,33 @@ events = [
     {
         'id': 'boot-wakeup',
         'lines': [
-            {'prompt': "comms_array/local/Mkpụrụobi_mepụta > ", 'text': "U+23F0"},
-            {'prompt': "onye_Nchọgharị > ", 'text': "yeah, yeah, i'm up."},
-            {'prompt': "comms_array/local/Mkpụrụobi_mepụta > ", 'text': "ETA to Nysa's Wake: 12 MINUTES"},
+            {'prompt': "comms_array/local/Mkpụrụobi_mepụta > ", 'text': "U+23F0", 'color': '#99f6ff'},
+            {'prompt': "onye_Nchọgharị > ", 'text': "yeah, yeah, i'm up.", 'color': '#c499ff'},
+            {'prompt': "comms_array/local/Mkpụrụobi_mepụta > ", 'text': "ETA to Nysa's Wake: 12 MINUTES", 'color': '#99f6ff'},
         ],
     },
     {
         'id': 'boot-antikythera-gm',
         'lines': [
-            {'prompt': "comms_array/Nysa's_Wake/Antikythera > ", 'text': "Cognitive function measured within variance (101.53% compared to baseline). Good Morning, onye_Nchọgharị."},
-            {'prompt': "onye_Nchọgharị > ", 'text': "gm to you, too."},
+            {'prompt': "comms_array/Nysa's_Wake/Antikythera > ", 'text': "Cognitive function measured within variance (101.53% compared to baseline). Good Morning, onye Nchọgharị.", 'color': (255, 255, 255)},
+            {'prompt': "onye_Nchọgharị > ", 'text': "gm to you, too.", 'color': '#c499ff'},
         ],
     },
     {
         'id': 'boot-landing-setup',
         'lines': [
             {'prompt': "onye_Nchọgharị/sensors/radar > ", 'text': "enabled"},
-            {'prompt': "onye_Nchọgharị > ", 'text': "...alr, let's get ready for landing."},
+            {'prompt': "onye_Nchọgharị > ", 'text': "...alr, let's get ready for landing.", 'color': '#c499ff'},
             {'prompt': "onye_Nchọgharị/sensors/cameras/IR > ", 'text': "enabled"},
         ],
     },
     {
         'id': 'boot-request-bay',
         'lines': [
-            {'prompt': "onye_Nchọgharị > ", 'text': "Antikythera, can we get a bay?"},
-            {'prompt': "comms_array/Nysa's_Wake/Antikythera > ", 'text': "Starboard Bay 9J is available. Dr. Agnès Lemaître will be arriving within the hour to begin loading her lab onto your freighter."},
-            {'prompt': "onye_Nchọgharị > ", 'text': "eh? why are we running that, wouldn't she prefer somebody from the Research Logistics team?"},
-            {'prompt': "comms_array/Nysa's_Wake/Antikythera > ", 'text': "Dr. Lemaître preferred your support. No other pilot is assigned."},
+            {'prompt': "onye_Nchọgharị > ", 'text': "Antikythera, can we get a bay?", 'color': '#c499ff'},
+            {'prompt': "comms_array/Nysa's_Wake/Antikythera > ", 'text': "Starboard Bay 9J is available. Dr. Agnès Lemaître will be arriving within the hour to begin loading her lab onto your freighter.", 'color': (255, 255, 255)},
+            {'prompt': "onye_Nchọgharị > ", 'text': "eh? why are we running that, wouldn't she prefer somebody from the Research Logistics team?", 'color': '#c499ff'},
+            {'prompt': "comms_array/Nysa's_Wake/Antikythera > ", 'text': "Dr. Lemaître preferred your support. No other pilot is assigned.", 'color': (255, 255, 255)},
         ],
     },
     {
@@ -61,9 +61,9 @@ events = [
     {
         'id': 'boot-doc-chat',
         'lines': [
-            {'prompt': "onye_Nchọgharị > ", 'text': "well, don't argue with the Doc."},
-            {'prompt': "comms_array/local/Mkpụrụobi_mepụta > ", 'text': "U+1F469U+200DU+1F52C"},
-            {'prompt': "onye_Nchọgharị > ", 'text': "of course you're excited, she's always sweet on you."},
+            {'prompt': "onye_Nchọgharị > ", 'text': "well, don't argue with the Doc.", 'color': '#c499ff'},
+            {'prompt': "comms_array/local/Mkpụrụobi_mepụta > ", 'text': "U+1F469U+200DU+1F52C", 'color': '#99f6ff'},
+            {'prompt': "onye_Nchọgharị > ", 'text': "of course you're excited, she's always sweet on you.", 'color': '#c499ff'},
         ],
     },
     {
@@ -77,9 +77,9 @@ events = [
     {
         'id': 'boot-final-obi',
         'lines': [
-            {'prompt': "onye_Nchọgharị > ", 'text': "i've got the ship. all good for landing, Obi?"},
-            {'prompt': "comms_array/local/Mkpụrụobi_mepụta > ", 'text': "bay lock 5: INTERMITTENT FAULT"},
-            {'prompt': "onye_Nchọgharị > ", 'text': "not ideal, but surely the Doc won't have packed us all the way to the brim. we'll manage."},
+            {'prompt': "onye_Nchọgharị > ", 'text': "i've got the ship. all good for landing, Obi?", 'color': '#c499ff'},
+            {'prompt': "comms_array/local/Mkpụrụobi_mepụta > ", 'text': "bay lock 5: INTERMITTENT FAULT", 'color': '#99f6ff'},
+            {'prompt': "onye_Nchọgharị > ", 'text': "not ideal, but surely the Doc won't have packed us all the way to the brim. we'll manage.", 'color': '#c499ff'},
         ],
     },
 ]

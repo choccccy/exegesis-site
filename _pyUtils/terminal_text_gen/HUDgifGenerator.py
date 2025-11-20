@@ -1,6 +1,6 @@
 from pathlib import Path
 
-from PIL import Image
+from PIL import Image, ImageColor
 
 from tiny5mk2 import bitmap as ORIGINAL_FONT
 
@@ -25,7 +25,7 @@ START_FROM_BOTTOM = False  # False = start at top, True = start at bottom and "p
 TRANSPARENT_BG = False     # True = fully transparent background in GIF
 
 PROMPT_FG = (160, 160, 160)
-TEXT_FG = (255, 255, 255)
+TEXT_FG = (160, 160, 160)
 
 PIXEL_COLORS = {  # Map emoji cells to RGB colors
     '⬛': None,
@@ -84,6 +84,22 @@ def build_normalized_font(font):
 
 
 FONT = build_normalized_font(ORIGINAL_FONT)
+
+def parse_color(value):
+    """
+    Accepts either an (R, G, B) tuple or a hex string like '#ffcc00'.
+    Returns an (R, G, B) tuple, or None if value is falsy.
+    """
+    if not value:
+        return None
+
+    if isinstance(value, tuple) and len(value) == 3:
+        return value
+
+    if isinstance(value, str):
+        return ImageColor.getrgb(value)
+
+    raise TypeError(f'Unsupported color format: {value!r}')
 
 # ━━━━━━ Font configuration ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 FONT_HEIGHT = len(next(iter(FONT.values())))
@@ -209,7 +225,9 @@ def apply_line(img, line, cursor_x, cursor_y, text_left, text_right, text_bottom
     """
     Render one prompt+text line:
     - Prompt is drawn instantly in gray, then one frame is captured (DELAY_PROMPT_MS).
-    - Text is typed out character by character, wrapping as needed.
+    - Body text is typed out character by character, wrapping as needed.
+    - If line['color'] is set, body text white pixels (⬜) are recolored to that RGB/hex,
+      while colored emoji squares (🟥, etc.) keep their own colors.
     - After the body finishes, a newline-style pause (DELAY_NEWLINE_MS) is added
       before moving to the next prompt.
     Returns updated (img, cursor_x, cursor_y).
@@ -217,6 +235,7 @@ def apply_line(img, line, cursor_x, cursor_y, text_left, text_right, text_bottom
     line_height = FONT_HEIGHT + LINE_SPACING
     prompt = line.get('prompt', '')
     body = line.get('text', '')
+    body_color = parse_color(line.get('color'))  # None = default TEXT_FG as in PIXEL_COLORS
 
     # Draw full prompt in gray, no per-char frames
     for ch in prompt:
@@ -268,7 +287,9 @@ def apply_line(img, line, cursor_x, cursor_y, text_left, text_right, text_bottom
                 img = scroll_up(img, line_height)
                 cursor_y -= line_height
 
-        draw_glyph(img, glyph, cursor_x, cursor_y, fg_override=None)
+        # For body text, recolor only ⬜ when body_color is set; emoji squares keep their colors
+        fg_for_body = body_color if body_color is not None else None
+        draw_glyph(img, glyph, cursor_x, cursor_y, fg_override=fg_for_body)
 
         if record_frames:
             frames.append(img.copy())
