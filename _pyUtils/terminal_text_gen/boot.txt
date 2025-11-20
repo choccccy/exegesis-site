@@ -1,0 +1,49 @@
+onye Nchọgharị > boot-up sequence initiated
+
+onye Nchọgharị/POST > Power-On Self Test initiated
+onye Nchọgharị/POST > Brain Crystal: ✅
+onye Nchọgharị/POST > Brain-body bus: ✅
+onye Nchọgharị/POST > Fusion Core: ✅
+onye Nchọgharị/POST > Cooling Systems: ⚠️ Water tanks at 28.73%. Refill soon.
+onye Nchọgharị/POST > External Sensor Suite: ✅
+onye Nchọgharị/POST > Skeletal Actuators: ❌ Arm 00 (left) joint 3 (elbow) requires 8.3% more torque to actuate than baseline calibration. Seek maintainence or replacement.
+onye Nchọgharị/POST > Proptioceptive Sensors: ✅
+onye Nchọgharị/POST > Touch sensors: ✅
+onye Nchọgharị/POST > RCS: ✅
+onye Nchọgharị/POST > Communication Array: ❌ Receiving antenna 01 (right) automatically adjusted to 300.0% (maximum) gain to maintain parity with receiving antenna 00 (left). Seek maintainence or replacement.
+onye Nchọgharị/POST > Magnetic Grip Pads: ✅
+onye Nchọgharị/POST > Magnetic Holsters: ✅
+
+onye Nchọgharị > HUD initializing
+
+Mkpụrụobi_mepụta > U+23F0
+onye_Nchọgharị > yeah, yeah, i'm up.
+comms_array/local/Mkpụrụobi_mepụta > ETA to Nysa's Wake: 12 MINUTES
+
+comms_array/Nysa's_Wake/Antikythera > Cognitive function measured within variance (101.53% compared to baseline). Good Morning, onye Nchọgharị.
+onye_Nchọgharị > gm to you, too.
+
+onye Nchọgharị/sensors/radar > enabled
+
+onye_Nchọgharị > ...alr, let's get ready for landing.
+
+onye Nchọgharị/sensors/cameras/IR > enabled
+
+onye_Nchọgharị > Antikythera, can we get a bay?
+comms_array/Nysa's_Wake/Antikythera > Starboard Bay 9J is available. Dr. Agnès Lemaître will be arriving within the hour to begin loading her lab onto your freighter.
+onye_Nchọgharị > eh? why are we running that, wouldn't she prefer somebody from the Research Logistics team?
+comms_array/Nysa's_Wake/Antikythera > Dr. Lemaître preferred your support. No other pilot is assigned.
+
+onye Nchọgharị/sensors/cameras/visible > enabled
+
+onye_Nchọgharị > well, don't argue with the Doc.
+comms_array/local/Mkpụrụobi_mepụta > U+1F469U+200DU+1F52C
+onye_Nchọgharị > of course you're excited, she's always sweet on you.
+
+onye Nchọgharị/tool/vehicle > connection established with Freighter_17c
+onye Nchọgharị/tool/Freighter17c > Synchronizing sensor data with pilot
+onye Nchọgharị/tool/Freighter17c > Autopilot enabled, ready for manual handoff
+
+onye_Nchọgharị > i've got the freighter. all good for landing, Obi?
+comms_array/local/Mkpụrụobi_mepụta > bay lock 5: INTERMITTENT FAULT
+onye_Nchọgharị > not ideal, but surely the Doc won't have packed us all the way to the brim. we'll manage.

@@ -1,6 +1,7 @@
 from pathlib import Path
 
 from PIL import Image
+
 from tiny5mk2 import bitmap as ORIGINAL_FONT
 
 
@@ -13,17 +14,22 @@ LINE_SPACING = 1
 BG_COLOR = (0, 0, 0)
 
 DELAY_CHAR_MS = 30
-DELAY_NEWLINE_MS = 240
+DELAY_PROMPT_MS = 480
+DELAY_NEWLINE_MS = 600
 DELAY_FINAL_MS = 7200
 
-PADDING_X = 4
-PADDING_Y = 4
+PADDING_X = 6
+PADDING_Y = 6
 
 START_FROM_BOTTOM = False  # False = start at top, True = start at bottom and "push up"
+TRANSPARENT_BG = False     # True = fully transparent background in GIF
+
+PROMPT_FG = (160, 160, 160)
+TEXT_FG = (255, 255, 255)
 
 PIXEL_COLORS = {  # Map emoji cells to RGB colors
     '⬛': None,
-    '⬜': (255, 255, 255),
+    '⬜': TEXT_FG,
     # Colored squares for emoji glyphs
     '🟥': (255, 0, 0),
     '🟩': (0, 255, 0),
@@ -37,8 +43,10 @@ PIXEL_COLORS = {  # Map emoji cells to RGB colors
 # ━━━━━━ Unicode / variation selector handling ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 VARIATION_SELECTORS = {'\ufe0f', '\ufe0e'}  # Variation selectors to ignore (emoji/text style markers)
 
+
 def strip_variation_selectors(s):
     return ''.join(ch for ch in s if ch not in VARIATION_SELECTORS)
+
 
 def build_normalized_font(font):
     """
@@ -61,7 +69,7 @@ def build_normalized_font(font):
         else:
             normalized[norm_key] = glyph
 
-    if had_vs_keys:  # Keep the first definition; just warn.
+    if had_vs_keys:
         print(
             'Warning: font keys contained variation selectors and were normalized: '
             + ' '.join(had_vs_keys)
@@ -73,6 +81,7 @@ def build_normalized_font(font):
             print(f'  normalized key {repr(norm_key)} had multiple glyphs (including {repr(key)})')
 
     return normalized
+
 
 FONT = build_normalized_font(ORIGINAL_FONT)
 
@@ -91,22 +100,31 @@ ERROR_GLYPH = [  # Loud error glyph: used when a character is missing from the b
     '🟨',
 ]
 
+
 # ━━━━━━ Low-level drawing helpers ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-def scroll_up(img, line_height, bg_color=BG_COLOR):
+def make_base_image():
+    if TRANSPARENT_BG:
+        return Image.new('RGBA', (WIDTH, HEIGHT), (0, 0, 0, 0))
+    return Image.new('RGB', (WIDTH, HEIGHT), BG_COLOR)
+
+
+def scroll_up(img, line_height):
     """
     Scroll the entire terminal image up by one line_height,
-    filling the new bottom area with bg_color.
+    filling the new bottom area with background.
     """
     width, height = img.size
     cropped = img.crop((0, line_height, width, height))
-    new_img = Image.new('RGB', (width, height), bg_color)
+    new_img = make_base_image()
     new_img.paste(cropped, (0, 0))
     return new_img
 
-def draw_glyph(img, glyph_rows, x, y):
+
+def draw_glyph(img, glyph_rows, x, y, fg_override=None):
     """
     Draw a single glyph (list of emoji-rows) at (x, y).
     Each row is a string of emoji, one per logical pixel.
+    If fg_override is provided, plain white cells (⬜) use that color.
     """
     width, height = img.size
     pixels = img.load()
@@ -116,18 +134,21 @@ def draw_glyph(img, glyph_rows, x, y):
         if py < 0 or py >= height:
             continue
 
-        # Iterating the string yields individual emoji codepoints
-        for col_index, cell in enumerate(row):
+        for col_index, cell in enumerate(row):  # Iterating the string yields individual emoji codepoints
             px = x + col_index
             if px < 0 or px >= width:
                 continue
 
-            color = PIXEL_COLORS.get(cell)
+            if cell == '⬜' and fg_override is not None:
+                color = fg_override
+            else:
+                color = PIXEL_COLORS.get(cell)
+
             if color is None:
-                # Background pixel; leave whatever is already there
-                continue
+                continue  # Background pixel; leave whatever is already there
 
             pixels[px, py] = color
+
 
 # ━━━━━━ Glyph lookup with error handling ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 def get_glyph(ch, missing):
@@ -150,30 +171,160 @@ def get_glyph(ch, missing):
 
     return glyph
 
-# ━━━━━━ Main rendering logic ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-def render_text_to_frames(text):
+
+# ━━━━━━ Event normalization ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+def normalize_events(raw_events):
     """
-    Render the given text into a sequence of frames and per-frame durations.
-    - Adds one character per frame.
-    - On '\\n', performs a terminal-style newline (with scroll when needed)
-      and emits a frame with a longer delay.
+    Accepts events in either shorthand:
+        {'id': '...', 'prompt': '...', 'text': '...'}
+    or full:
+        {'id': '...', 'lines': [{'prompt': '...', 'text': '...'}, ...]}
+    and normalizes everything to the full form.
     """
-    img = Image.new('RGB', (WIDTH, HEIGHT), BG_COLOR)
+    normalized = []
+
+    for e in raw_events:
+        if 'lines' in e:
+            normalized.append(e)
+            continue
+
+        if 'prompt' in e or 'text' in e:
+            line = {
+                'prompt': e.get('prompt', ''),
+                'text': e.get('text', ''),
+            }
+            e = {
+                'id': e.get('id'),
+                'lines': [line],
+            }
+
+        normalized.append(e)
+
+    return normalized
+
+
+# ━━━━━━ Core rendering over events ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+def apply_line(img, line, cursor_x, cursor_y, text_left, text_right, text_bottom,
+               frames, durations, record_frames, missing):
+    """
+    Render one prompt+text line:
+    - Prompt is drawn instantly in gray, then one frame is captured (DELAY_PROMPT_MS).
+    - Text is typed out character by character, wrapping as needed.
+    - After the body finishes, a newline-style pause (DELAY_NEWLINE_MS) is added
+      before moving to the next prompt.
+    Returns updated (img, cursor_x, cursor_y).
+    """
+    line_height = FONT_HEIGHT + LINE_SPACING
+    prompt = line.get('prompt', '')
+    body = line.get('text', '')
+
+    # Draw full prompt in gray, no per-char frames
+    for ch in prompt:
+        if ch in VARIATION_SELECTORS:
+            continue
+
+        glyph = get_glyph(ch, missing)
+        glyph_width = len(glyph[0]) if glyph else 0
+
+        if cursor_x + glyph_width > text_right:
+            cursor_x = text_left
+            cursor_y += line_height
+            if cursor_y + FONT_HEIGHT > text_bottom:
+                img = scroll_up(img, line_height)
+                cursor_y -= line_height
+
+        draw_glyph(img, glyph, cursor_x, cursor_y, fg_override=PROMPT_FG)
+        cursor_x += glyph_width + CHAR_SPACING
+
+    # After prompt, capture a single frame if recording, with prompt delay
+    if record_frames:
+        frames.append(img.copy())
+        durations.append(DELAY_PROMPT_MS)
+
+    # Now type out body text character by character
+    for ch in body:
+        if ch in VARIATION_SELECTORS:
+            continue
+
+        if ch == '\n':
+            cursor_x = text_left
+            cursor_y += line_height
+            if cursor_y + FONT_HEIGHT > text_bottom:
+                img = scroll_up(img, line_height)
+                cursor_y -= line_height
+
+            if record_frames:
+                frames.append(img.copy())
+                durations.append(DELAY_NEWLINE_MS)
+            continue
+
+        glyph = get_glyph(ch, missing)
+        glyph_width = len(glyph[0]) if glyph else 0
+
+        if cursor_x + glyph_width > text_right:
+            cursor_x = text_left
+            cursor_y += line_height
+            if cursor_y + FONT_HEIGHT > text_bottom:
+                img = scroll_up(img, line_height)
+                cursor_y -= line_height
+
+        draw_glyph(img, glyph, cursor_x, cursor_y, fg_override=None)
+
+        if record_frames:
+            frames.append(img.copy())
+            durations.append(DELAY_CHAR_MS)
+
+        cursor_x += glyph_width + CHAR_SPACING
+
+    # After finishing the body text, pause before the next prompt
+    if record_frames and frames:
+        frames.append(img.copy())
+        durations.append(DELAY_NEWLINE_MS)
+
+    # Move to next line
+    cursor_x = text_left
+    cursor_y += line_height
+    if cursor_y + FONT_HEIGHT > text_bottom:
+        img = scroll_up(img, line_height)
+        cursor_y -= line_height
+
+    return img, cursor_x, cursor_y
+
+
+def apply_event(img, event, cursor_x, cursor_y, text_left, text_top, text_right, text_bottom,
+                frames, durations, record_frames, missing):
+    """
+    Apply a whole event (possibly multiple lines) to img.
+    If record_frames is False, this only updates img and cursor.
+    """
+    for line in event['lines']:
+        img, cursor_x, cursor_y = apply_line(
+            img, line, cursor_x, cursor_y,
+            text_left, text_right, text_bottom,
+            frames, durations, record_frames, missing,
+        )
+    return img, cursor_x, cursor_y
+
+
+def render_events_to_frames(events, start_event_id=None):
+    """
+    Render a normalized list of events to frames.
+    If start_event_id is provided, pre-roll all events before that ID
+    without recording frames, then record from that event onward.
+    """
+    events = normalize_events(events)
+    img = make_base_image()
 
     frames = []
     durations = []
 
-    # Text area bounds (respect padding)
     text_left = PADDING_X
     text_top = PADDING_Y
     text_right = WIDTH - PADDING_X
     text_bottom = HEIGHT - PADDING_Y
 
-    line_height = FONT_HEIGHT + LINE_SPACING
     missing = set()
-    seen_variation_input = set()
 
-    # Initial cursor position: top or bottom mode
     if START_FROM_BOTTOM:
         cursor_x = text_left
         cursor_y = text_bottom - FONT_HEIGHT
@@ -181,80 +332,79 @@ def render_text_to_frames(text):
         cursor_x = text_left
         cursor_y = text_top
 
-    for ch in text:
-        # Skip variation selectors in input, but remember that they occurred
-        if ch in VARIATION_SELECTORS:
-            seen_variation_input.add(ch)
-            continue
+    # Find start index, if any
+    start_index = 0
+    if start_event_id is not None:
+        for i, e in enumerate(events):
+            if e.get('id') == start_event_id:
+                start_index = i
+                break
 
-        if ch == '\n':  # Move to next line
-            cursor_x = text_left
-            cursor_y += line_height
+    # Pre-roll
+    for e in events[:start_index]:
+        img, cursor_x, cursor_y = apply_event(
+            img, e, cursor_x, cursor_y,
+            text_left, text_top, text_right, text_bottom,
+            frames, durations, record_frames=False, missing=missing,
+        )
 
-            # Scroll if we go past the bottom of the text area
-            if cursor_y + FONT_HEIGHT > text_bottom:
-                img = scroll_up(img, line_height, BG_COLOR)
-                cursor_y -= line_height
-
-            # Capture a frame with the newline state, long delay
-            frames.append(img.copy())
-            durations.append(DELAY_NEWLINE_MS)
-            continue
-
-        glyph = get_glyph(ch, missing)
-        glyph_width = len(glyph[0]) if glyph else 0
-
-        # Auto-wrap if the glyph would cross the right text boundary
-        if cursor_x + glyph_width > text_right:
-            cursor_x = text_left
-            cursor_y += line_height
-
-            if cursor_y + FONT_HEIGHT > text_bottom:
-                img = scroll_up(img, line_height, BG_COLOR)
-                cursor_y -= line_height
-
-        draw_glyph(img, glyph, cursor_x, cursor_y)
-
-        # Snapshot frame after drawing this character
-        frames.append(img.copy())
-        durations.append(DELAY_CHAR_MS)
-
-        # Advance cursor: glyph width in pixels plus spacing
-        cursor_x += glyph_width + CHAR_SPACING
+    # Animated part
+    for e in events[start_index:]:
+        img, cursor_x, cursor_y = apply_event(
+            img, e, cursor_x, cursor_y,
+            text_left, text_top, text_right, text_bottom,
+            frames, durations, record_frames=True, missing=missing,
+        )
 
     if missing:
         for ch in sorted(missing):
             code = f'U+{ord(ch):04X}'
             print(f'Missing glyph: {repr(ch)} ({code})')
 
-    if seen_variation_input:
-        vs_list = ' '.join(repr(vs) for vs in seen_variation_input)
-        print(f'Note: input text contained variation selectors that were ignored: {vs_list}')
-
-    # Hold on the final frame using the dedicated final delay
+    # Final frame hold
     if durations:
         durations[-1] = DELAY_FINAL_MS
 
     return frames, durations
 
-def render_text_to_gif(text, output_path):
-    frames, durations = render_text_to_frames(text)
 
+# ━━━━━━ GIF saving (with optional transparency) ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+def render_frames_to_gif(frames, durations, output_path):
     if not frames:
-        raise ValueError('No frames generated; text may be empty.')
+        raise ValueError('No frames generated; nothing to save.')
 
-    frames[0].save(
-        output_path,
+    pal_frames = []
+    transparency_index = None
+
+    for frame in frames:
+        if TRANSPARENT_BG:
+            pal = frame.convert('P', palette=Image.ADAPTIVE)
+            trans_idx = pal.getpixel((0, 0))
+            pal_frames.append(pal)
+            transparency_index = trans_idx
+        else:
+            pal = frame.convert('P', palette=Image.ADAPTIVE)
+            pal_frames.append(pal)
+
+    save_kwargs = dict(
         save_all=True,
-        append_images=frames[1:],
+        append_images=pal_frames[1:],
         optimize=False,
-        duration=durations,  # ms per frame
+        duration=durations,
         loop=0,
         disposal=2,
     )
 
-# ━━━━━━ Batch driver: input/*.txt -> output/*.gif ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-def process_input_directory():
+    if transparency_index is not None:
+        save_kwargs['transparency'] = transparency_index
+
+    pal_frames[0].save(output_path, **save_kwargs)
+
+
+# ━━━━━━ Batch drivers ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+def process_plain_text_directory():
     base_dir = Path(__file__).resolve().parent
     input_dir = base_dir / 'input'
     output_dir = base_dir / 'output'
@@ -273,10 +423,62 @@ def process_input_directory():
             print(f'Skipping empty file: {txt_path}')
             continue
 
+        events = [
+            {
+                'id': txt_path.stem,
+                'prompt': '',
+                'text': text,
+            }
+        ]
+
+        frames, durations = render_events_to_frames(events)
         out_path = output_dir / (txt_path.stem + '.gif')
-        render_text_to_gif(text, out_path)
+        render_frames_to_gif(frames, durations, out_path)
         print(f'wrote {out_path.absolute()}')
 
-# ━━━━━━ Example usage ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+def process_script_module(module_name, start_event_id=None, out_name=None):
+    """
+    Load a script from input/<module_name>.py that defines events = [...]
+    and render it to a GIF. Optional start_event_id enables checkpointing.
+    """
+    import importlib.util
+    import sys
+
+    base_dir = Path(__file__).resolve().parent
+    input_dir = base_dir / 'input'
+    output_dir = base_dir / 'output'
+
+    input_dir.mkdir(parents=True, exist_ok=True)
+    output_dir.mkdir(parents=True, exist_ok=True)
+
+    module_path = input_dir / f'{module_name}.py'
+    if not module_path.exists():
+        raise FileNotFoundError(f'No script module {module_path} found')
+
+    spec = importlib.util.spec_from_file_location(module_name, module_path)
+    module = importlib.util.module_from_spec(spec)
+    sys.modules[module_name] = module
+    spec.loader.exec_module(module)
+
+    events = getattr(module, 'events', None)
+    if events is None:
+        raise ValueError(f'Module {module_path} has no "events" variable.')
+
+    frames, durations = render_events_to_frames(events, start_event_id=start_event_id)
+
+    name = out_name or module_name
+    if start_event_id is not None:
+        name = f'{name}_{start_event_id}'
+
+    out_path = output_dir / (name + '.gif')
+    render_frames_to_gif(frames, durations, out_path)
+    print(f'wrote {out_path.absolute()}')
+
+
+# ━━━━━━ Entrypoint ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
 if __name__ == '__main__':
-    process_input_directory()
+    # process_plain_text_directory()
+    # For script mode (scripts live in ./input):
+    process_script_module('boot_script', start_event_id=None)
