@@ -15,7 +15,7 @@ BG_COLOR = (0, 0, 0)
 
 # DELAY_CHAR_MS = 30
 DELAY_PROMPT_MS = 480
-SEGMENT_DELAY_MS = 180
+SEGMENT_DELAY_MS = 240
 DELAY_NEWLINE_MS = 600
 DELAY_FINAL_MS = 7200
 
@@ -231,7 +231,7 @@ def apply_line(img, line, cursor_x, cursor_y, text_left, text_right, baseline_li
         * a string  -> rendered as a single segment
         * a list of strings -> rendered as segments; after each segment, a segment-like
           pause (SEGMENT_DELAY_MS) is added before the next segment.
-    - If line['character_delay'] is set and > 0, each segment is typed out one
+    - If line['char_delay'] is set and > 0, each segment is typed out one
       character at a time with that delay (ms) between characters.
       If missing or falsy, the segment appears all at once.
     - If line['color'] is set, body text white pixels (⬜) are recolored to that
@@ -245,7 +245,7 @@ def apply_line(img, line, cursor_x, cursor_y, text_left, text_right, baseline_li
     prompt = line.get('prompt', '')
     raw_body = line.get('text', '')
     body_color = parse_color(line.get('color'))
-    char_delay = line.get('character_delay')  # ms or None/0
+    char_delay = line.get('char_delay')  # ms or None/0
 
     # Normalize body into segments list
     if isinstance(raw_body, list):
@@ -462,6 +462,29 @@ def render_frames_to_gif(frames, durations, output_path):
     pal_frames[0].save(output_path, **save_kwargs)
 
 
+def render_frames_to_webp(frames, durations, output_path):
+    """
+    Save an animated WebP from a list of RGBA/RGB frames and per-frame
+    durations (in ms). Transparency from RGBA frames is preserved.
+    """
+    if not frames:
+        raise ValueError('No frames generated; nothing to save.')
+
+    # Pillow expects duration in ms; we already have that.
+    # save_all=True is required for animated WebP.
+    frames[0].save(
+        output_path,
+        format='WEBP',
+        save_all=True,
+        append_images=frames[1:],
+        duration=durations,
+        loop=0,    # 0 = infinite loop
+        lossless=True,
+        quality=100,
+        method=6,  # 0–6, higher is slower but better compression
+    )
+
+
 # ━━━━━━ Batch drivers ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 def process_plain_text_directory():
     base_dir = Path(__file__).resolve().parent
@@ -491,8 +514,13 @@ def process_plain_text_directory():
         ]
 
         frames, durations = render_events_to_frames(events)
-        out_path = output_dir / (txt_path.stem + '.gif')
-        render_frames_to_gif(frames, durations, out_path)
+
+        # out_path = output_dir / (txt_path.stem + '.gif')
+        # render_frames_to_gif(frames, durations, out_path)
+
+        out_path = output_dir / (txt_path.stem + '.webp')
+        render_frames_to_webp(frames, durations, out_path)
+
         print(f'wrote {out_path.absolute()}')
 
 
@@ -544,8 +572,12 @@ def process_script_module(module_name, start_event_id=None, out_name=None, rende
         if start_event_id is not None:
             name = f'{name}_{start_event_id}'
 
-        out_path = output_dir / (name + '.gif')
-        render_frames_to_gif(frames, durations, out_path)
+        # out_path = output_dir / (name + '.gif')
+        # render_frames_to_gif(frames, durations, out_path)
+
+        out_path = output_dir / (name + '.webp')
+        render_frames_to_webp(frames, durations, out_path)
+
         print(f'wrote {out_path.absolute()}')
         return
 
@@ -597,8 +629,13 @@ def process_script_module(module_name, start_event_id=None, out_name=None, rende
             durations[-1] = DELAY_FINAL_MS
 
         name = out_name or module_name
-        out_path = output_dir / f'{name}_{ev_id}.gif'
-        render_frames_to_gif(frames, durations, out_path)
+
+        # out_path = output_dir / f'{name}_{ev_id}.gif'
+        # render_frames_to_gif(frames, durations, out_path)
+
+        out_path = output_dir / f'{name}_{ev_id}.webp'
+        render_frames_to_webp(frames, durations, out_path)
+
         print(f'wrote {out_path.absolute()}')
 
 
