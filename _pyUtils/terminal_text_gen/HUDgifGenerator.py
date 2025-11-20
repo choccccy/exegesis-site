@@ -13,8 +13,9 @@ CHAR_SPACING = 1
 LINE_SPACING = 1
 BG_COLOR = (0, 0, 0)
 
-DELAY_CHAR_MS = 30
+# DELAY_CHAR_MS = 30
 DELAY_PROMPT_MS = 480
+SEGMENT_DELAY_MS = 180
 DELAY_NEWLINE_MS = 600
 DELAY_FINAL_MS = 7200
 
@@ -220,22 +221,37 @@ def normalize_events(raw_events):
 
 
 # ━━━━━━ Core rendering over events ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-def apply_line(img, line, cursor_x, cursor_y, text_left, text_right, text_bottom,
-               frames, durations, record_frames, missing):
+def apply_line(img, line, cursor_x, cursor_y, text_left, text_right, baseline_limit,
+               frames, durations, record_frames, missing, prompt_only=False):
     """
     Render one prompt+text line:
+
     - Prompt is drawn instantly in gray, then one frame is captured (DELAY_PROMPT_MS).
-    - Body text is typed out character by character, wrapping as needed.
-    - If line['color'] is set, body text white pixels (⬜) are recolored to that RGB/hex,
-      while colored emoji squares (🟥, etc.) keep their own colors.
-    - After the body finishes, a newline-style pause (DELAY_NEWLINE_MS) is added
-      before moving to the next prompt.
-    Returns updated (img, cursor_x, cursor_y).
+    - line['text'] may be either:
+        * a string  -> rendered as a single segment
+        * a list of strings -> rendered as segments; after each segment, a segment-like
+          pause (SEGMENT_DELAY_MS) is added before the next segment.
+    - If line['character_delay'] is set and > 0, each segment is typed out one
+      character at a time with that delay (ms) between characters.
+      If missing or falsy, the segment appears all at once.
+    - If line['color'] is set, body text white pixels (⬜) are recolored to that
+      RGB/hex, while colored emoji squares (🟥, etc.) keep their own colors.
+    - After the entire body (all segments) finishes, a newline-style pause
+      (DELAY_NEWLINE_MS) is added before moving to the next prompt.
+    - baseline_limit is the maximum allowed cursor_y for the baseline; if the
+      cursor would go past it, the image is scrolled up by one line_height.
     """
     line_height = FONT_HEIGHT + LINE_SPACING
     prompt = line.get('prompt', '')
-    body = line.get('text', '')
-    body_color = parse_color(line.get('color'))  # None = default TEXT_FG as in PIXEL_COLORS
+    raw_body = line.get('text', '')
+    body_color = parse_color(line.get('color'))
+    char_delay = line.get('character_delay')  # ms or None/0
+
+    # Normalize body into segments list
+    if isinstance(raw_body, list):
+        segments = raw_body
+    else:
+        segments = [raw_body]
 
     # Draw full prompt in gray, no per-char frames
     for ch in prompt:
@@ -248,7 +264,7 @@ def apply_line(img, line, cursor_x, cursor_y, text_left, text_right, text_bottom
         if cursor_x + glyph_width > text_right:
             cursor_x = text_left
             cursor_y += line_height
-            if cursor_y + FONT_HEIGHT > text_bottom:
+            if cursor_y > baseline_limit:
                 img = scroll_up(img, line_height)
                 cursor_y -= line_height
 
@@ -260,22 +276,22 @@ def apply_line(img, line, cursor_x, cursor_y, text_left, text_right, text_bottom
         frames.append(img.copy())
         durations.append(DELAY_PROMPT_MS)
 
-    # Now type out body text character by character
-    for ch in body:
+    def draw_body_char(ch, record_frame, frame_delay):
+        nonlocal img, cursor_x, cursor_y
+
         if ch in VARIATION_SELECTORS:
-            continue
+            return
 
         if ch == '\n':
             cursor_x = text_left
             cursor_y += line_height
-            if cursor_y + FONT_HEIGHT > text_bottom:
+            if cursor_y > baseline_limit:
                 img = scroll_up(img, line_height)
                 cursor_y -= line_height
-
-            if record_frames:
+            if record_frame and record_frames:
                 frames.append(img.copy())
                 durations.append(DELAY_NEWLINE_MS)
-            continue
+            return
 
         glyph = get_glyph(ch, missing)
         glyph_width = len(glyph[0]) if glyph else 0
@@ -283,46 +299,66 @@ def apply_line(img, line, cursor_x, cursor_y, text_left, text_right, text_bottom
         if cursor_x + glyph_width > text_right:
             cursor_x = text_left
             cursor_y += line_height
-            if cursor_y + FONT_HEIGHT > text_bottom:
+            if cursor_y > baseline_limit:
                 img = scroll_up(img, line_height)
                 cursor_y -= line_height
 
-        # For body text, recolor only ⬜ when body_color is set; emoji squares keep their colors
         fg_for_body = body_color if body_color is not None else None
         draw_glyph(img, glyph, cursor_x, cursor_y, fg_override=fg_for_body)
 
-        if record_frames:
-            frames.append(img.copy())
-            durations.append(DELAY_CHAR_MS)
-
         cursor_x += glyph_width + CHAR_SPACING
 
-    # After finishing the body text, pause before the next prompt
-    if record_frames and frames:
+        if record_frame and record_frames:
+            frames.append(img.copy())
+            durations.append(frame_delay)
+
+    # Render each segment in order
+    for idx, seg in enumerate(segments):
+        if char_delay:
+            # Typewriter mode: one frame per character
+            for ch in seg:
+                # record_frame = not prompt_only
+                draw_body_char(ch, record_frame=(not prompt_only), frame_delay=char_delay)
+        else:
+            # Instant mode: draw whole segment, then a single frame for that segment
+            for ch in seg:
+                draw_body_char(ch, record_frame=False, frame_delay=0)
+
+            if record_frames and not prompt_only:
+                frames.append(img.copy())
+                durations.append(SEGMENT_DELAY_MS)
+
+        # Between segments (except after the last), add a segment-style pause
+        if idx != len(segments) - 1 and record_frames and not prompt_only:
+            frames.append(img.copy())
+            durations.append(SEGMENT_DELAY_MS)
+
+    # After finishing the body text (all segments), pause before the next prompt
+    if record_frames and frames and not prompt_only:
         frames.append(img.copy())
         durations.append(DELAY_NEWLINE_MS)
 
     # Move to next line
     cursor_x = text_left
     cursor_y += line_height
-    if cursor_y + FONT_HEIGHT > text_bottom:
+    if cursor_y > baseline_limit:
         img = scroll_up(img, line_height)
         cursor_y -= line_height
 
     return img, cursor_x, cursor_y
 
 
-def apply_event(img, event, cursor_x, cursor_y, text_left, text_top, text_right, text_bottom,
-                frames, durations, record_frames, missing):
-    """
-    Apply a whole event (possibly multiple lines) to img.
-    If record_frames is False, this only updates img and cursor.
-    """
-    for line in event['lines']:
+def apply_event(img, event, cursor_x, cursor_y,
+                text_left, text_top, text_right, baseline_limit,
+                frames, durations, record_frames, missing,
+                prompt_only=False):
+    lines = event['lines']
+    for line in lines:
         img, cursor_x, cursor_y = apply_line(
             img, line, cursor_x, cursor_y,
-            text_left, text_right, text_bottom,
+            text_left, text_right, baseline_limit,
             frames, durations, record_frames, missing,
+            prompt_only=prompt_only,
         )
     return img, cursor_x, cursor_y
 
@@ -343,6 +379,7 @@ def render_events_to_frames(events, start_event_id=None):
     text_top = PADDING_Y
     text_right = WIDTH - PADDING_X
     text_bottom = HEIGHT - PADDING_Y
+    baseline_limit = text_bottom - (FONT_HEIGHT - 1)
 
     missing = set()
 
@@ -365,15 +402,18 @@ def render_events_to_frames(events, start_event_id=None):
     for e in events[:start_index]:
         img, cursor_x, cursor_y = apply_event(
             img, e, cursor_x, cursor_y,
-            text_left, text_top, text_right, text_bottom,
-            frames, durations, record_frames=False, missing=missing,
+            text_left, text_top, text_right, baseline_limit,
+            frames, durations,
+            record_frames=True,    # so we can keep the prompt frames
+            missing=missing,
+            prompt_only=True,      # but only keep prompt frames, no body timing
         )
 
     # Animated part
     for e in events[start_index:]:
         img, cursor_x, cursor_y = apply_event(
             img, e, cursor_x, cursor_y,
-            text_left, text_top, text_right, text_bottom,
+            text_left, text_top, text_right, baseline_limit,
             frames, durations, record_frames=True, missing=missing,
         )
 
@@ -390,7 +430,6 @@ def render_events_to_frames(events, start_event_id=None):
 
 
 # ━━━━━━ GIF saving (with optional transparency) ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-
 def render_frames_to_gif(frames, durations, output_path):
     if not frames:
         raise ValueError('No frames generated; nothing to save.')
@@ -424,7 +463,6 @@ def render_frames_to_gif(frames, durations, output_path):
 
 
 # ━━━━━━ Batch drivers ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-
 def process_plain_text_directory():
     base_dir = Path(__file__).resolve().parent
     input_dir = base_dir / 'input'
@@ -458,10 +496,22 @@ def process_plain_text_directory():
         print(f'wrote {out_path.absolute()}')
 
 
-def process_script_module(module_name, start_event_id=None, out_name=None):
+def process_script_module(module_name, start_event_id=None, out_name=None, render_all_events=False):
     """
     Load a script from input/<module_name>.py that defines events = [...]
-    and render it to a GIF. Optional start_event_id enables checkpointing.
+    and render it to one or more GIFs.
+
+    - If render_all_events is False (default):
+        * If start_event_id is None: render all events in one pass.
+        * If start_event_id is set:  pre-roll events before that ID, animate from that
+          event onward, and stop at the end of the script.
+
+    - If render_all_events is True:
+        * Ignore start_event_id.
+        * For each event i:
+            - Pre-roll events 0..i-1 without recording frames.
+            - Animate only event i, stopping at the end of that event.
+            - Write output as <module_name>_<event_id>.gif
     """
     import importlib.util
     import sys
@@ -486,20 +536,76 @@ def process_script_module(module_name, start_event_id=None, out_name=None):
     if events is None:
         raise ValueError(f'Module {module_path} has no "events" variable.')
 
-    frames, durations = render_events_to_frames(events, start_event_id=start_event_id)
+    if not render_all_events:
+        # Single GIF, optional checkpoint: reuse your existing pipeline
+        frames, durations = render_events_to_frames(events, start_event_id=start_event_id)
 
-    name = out_name or module_name
-    if start_event_id is not None:
-        name = f'{name}_{start_event_id}'
+        name = out_name or module_name
+        if start_event_id is not None:
+            name = f'{name}_{start_event_id}'
 
-    out_path = output_dir / (name + '.gif')
-    render_frames_to_gif(frames, durations, out_path)
-    print(f'wrote {out_path.absolute()}')
+        out_path = output_dir / (name + '.gif')
+        render_frames_to_gif(frames, durations, out_path)
+        print(f'wrote {out_path.absolute()}')
+        return
+
+    normalized = normalize_events(events)
+
+    for idx, ev in enumerate(normalized):
+        ev_id = ev.get('id') or f'event{idx:03d}'
+
+        img = make_base_image()
+
+        text_left = PADDING_X
+        text_top = PADDING_Y
+        text_right = WIDTH - PADDING_X
+        text_bottom = HEIGHT - PADDING_Y
+        baseline_limit = text_bottom - (FONT_HEIGHT - 1)
+
+        if START_FROM_BOTTOM:
+            cursor_x = text_left
+            cursor_y = baseline_limit
+        else:
+            cursor_x = text_left
+            cursor_y = text_top
+
+        frames = []
+        durations = []
+        missing = set()
+
+        # Pre-roll previous events without recording frames
+        for prev in normalized[:idx]:
+            img, cursor_x, cursor_y = apply_event(
+                img, prev, cursor_x, cursor_y,
+                text_left, text_top, text_right, baseline_limit,
+                frames, durations, record_frames=False, missing=missing,
+            )
+
+        # Animate only this event
+        img, cursor_x, cursor_y = apply_event(
+            img, ev, cursor_x, cursor_y,
+            text_left, text_top, text_right, baseline_limit,
+            frames, durations, record_frames=True, missing=missing,
+        )
+
+        if missing:
+            for ch in sorted(missing):
+                code = f'U+{ord(ch):04X}'
+                print(f'Missing glyph: {repr(ch)} ({code})')
+
+        if durations:
+            durations[-1] = DELAY_FINAL_MS
+
+        name = out_name or module_name
+        out_path = output_dir / f'{name}_{ev_id}.gif'
+        render_frames_to_gif(frames, durations, out_path)
+        print(f'wrote {out_path.absolute()}')
 
 
 # ━━━━━━ Entrypoint ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-
 if __name__ == '__main__':
-    # process_plain_text_directory()
-    # For script mode (scripts live in ./input):
-    process_script_module('boot_script', start_event_id=None)
+    # process_plain_text_directory()  # Render plaintext in /input
+
+    # process_script_module('black_tangent')  # Render formatted .py in /input
+    # process_script_module('black_tangent', start_event_id='boot-final-obi')  # Render whole thing starting from event
+    process_script_module('black_tangent', render_all_events=True)  # Render all events discretely
