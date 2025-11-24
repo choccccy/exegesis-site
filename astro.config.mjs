@@ -11,6 +11,9 @@ import remarkUnwrapImages from 'remark-unwrap-images';
 // https://astro.build/config
 export default defineConfig({
   site: 'https://exegesis.space',
+  redirects: {
+    '/': '/entry/sensor-contact',
+  },
   integrations: [mdx(), sitemap()],
 
   markdown: {
