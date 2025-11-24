@@ -179,14 +179,15 @@ hr {
   border: none;
   border-top: 1px solid white;
 }
-@media (max-width: 720px) {
+/* mobile formatting */
+/* @media (max-width: 720px) { 
   body {
     font-size: 18px;
   }
   main {
     padding: 1em;
   }
-}
+} */
 .sr-only {
   border: 0;
   padding: 0;
