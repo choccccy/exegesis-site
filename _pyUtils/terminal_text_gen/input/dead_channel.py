@@ -46,7 +46,7 @@ events = [
       {
         'prompt': "comms_array/Nysa's_Wake > ",
         'text': ["Antikythera backups: ", "⚠️", " PARTIAL SNAPSHOTS AVAILABLE ", "| INTEGRITY DEGRADED"],
-        'color': (255, 128, 128),
+        'color': (255, 255, 128),
         'char_delay': 20,
       },
       {
@@ -64,31 +64,31 @@ events = [
       {
         'prompt': "comms_array/Nysa's_Wake > ",
         'text': ["Antikythera Neural lattice cooling: ", "⚠️", " HEAT LOAD EXCEEDS DESIGN LIMITS ", "| +3.2 K/HOUR"],
-        'color': (255, 128, 128),
+        'color': (255, 255, 128),
         'char_delay': 20,
       },
       {
         'prompt': "comms_array/Nysa's_Wake > ",
         'text': ["Fusion core: ", "✅", " THROTTLED TO STANDBY LOAD"],
-        'color': (255, 128, 128),
+        'color': (255, 255, 255),
         'char_delay': 20,
       },
       {
         'prompt': "comms_array/Nysa's_Wake > ",
         'text': ["Attitude control: ", "✅", " RCS ONLY ", "| HOLDING STATION"],
-        'color': (255, 128, 128),
+        'color': (255, 255, 255),
         'char_delay': 20,
       },
       {
         'prompt': "comms_array/Nysa's_Wake > ",
         'text': ["Collision avoidance: ", "✅", " ENABLED"],
-        'color': (255, 128, 128),
+        'color': (255, 255, 255),
         'char_delay': 20,
       },
       {
         'prompt': "comms_array/Nysa's_Wake > ",
         'text': ["Autopilot systems: ", "✅", " STATION-KEEPING"],
-        'color': (255, 128, 128),
+        'color': (255, 255, 255),
         'char_delay': 20,
       },
       {
@@ -135,7 +135,7 @@ events = [
       {
         'prompt': "comms_array/Nysa's_Wake > ",
         'text': ["Antikythera backups: ", "⚠️", " PARTIAL SNAPSHOTS AVAILABLE ", "| INTEGRITY DEGRADED"],
-        'color': (255, 128, 128),
+        'color': (255, 255, 128),
         'char_delay': 20,
       },
       {
@@ -153,31 +153,31 @@ events = [
       {
         'prompt': "comms_array/Nysa's_Wake > ",
         'text': ["Antikythera Neural lattice cooling: ", "⚠️", " HEAT LOAD EXCEEDS DESIGN LIMITS ", "| +3.2 K/HOUR"],
-        'color': (255, 128, 128),
+        'color': (255, 255, 128),
         'char_delay': 20,
       },
       {
         'prompt': "comms_array/Nysa's_Wake > ",
         'text': ["Fusion core: ", "✅", " THROTTLED TO STANDBY LOAD"],
-        'color': (255, 128, 128),
+        'color': (255, 255, 255),
         'char_delay': 20,
       },
       {
         'prompt': "comms_array/Nysa's_Wake > ",
         'text': ["Attitude control: ", "✅", " RCS ONLY ", "| HOLDING STATION"],
-        'color': (255, 128, 128),
+        'color': (255, 255, 255),
         'char_delay': 20,
       },
       {
         'prompt': "comms_array/Nysa's_Wake > ",
         'text': ["Collision avoidance: ", "✅", " ENABLED"],
-        'color': (255, 128, 128),
+        'color': (255, 255, 255),
         'char_delay': 20,
       },
       {
         'prompt': "comms_array/Nysa's_Wake > ",
         'text': ["Autopilot systems: ", "✅", " STATION-KEEPING"],
-        'color': (255, 128, 128),
+        'color': (255, 255, 255),
         'char_delay': 20,
       },
       {
