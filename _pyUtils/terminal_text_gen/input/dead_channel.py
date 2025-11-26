@@ -1,5 +1,5 @@
 events = [
-  {
+  {  # covering loop
     'id': '1',
     'lines': [
       {
@@ -10,7 +10,7 @@ events = [
       },
     ],
   },
-  {
+  {  # covering loop
     'id': '2',
     'lines': [
       {
@@ -99,7 +99,7 @@ events = [
       },
     ],
   },
-  {
+  {  # actual render
     'id': '3',
     'lines': [
       {
