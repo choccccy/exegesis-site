@@ -11,9 +11,11 @@ LINE_SPACING = 1
 BG_COLOR = (0, 0, 0)
 
 START_FRAME_DELAY_MS = 960
-DELAY_PROMPT_MS = 480
-SEGMENT_DELAY_MS = 240
-DELAY_NEWLINE_MS = 960
+DELAY_PROMPT_MS = 600
+# SEGMENT_DELAY_MS = 240  # black tangent
+SEGMENT_DELAY_MS = 600  # dead channel
+# DELAY_NEWLINE_MS = 960  # black tangent
+DELAY_NEWLINE_MS = 1440  # dead channel
 DELAY_FINAL_MS = 7200
 
 # CURSOR_CHAR = '_'
@@ -679,6 +681,6 @@ if __name__ == '__main__':
 
     # process_script_module('black_tangent')  # Render formatted .py in /input
     # process_script_module('black_tangent', start_event_id='boot-final-obi')  # Render whole thing starting from event
-    process_script_module('black_tangent', render_all_events=True)  # Render all events discretely
+    # process_script_module('black_tangent', render_all_events=True)  # Render all events discretely
 
-    # process_script_module('dead_channel', render_all_events=True)  # Render all events discretely
+    process_script_module('dead_channel', render_all_events=True)  # Render all events discretely

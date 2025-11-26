@@ -12,7 +12,7 @@ events = [
       {'prompt': "onye_Nchọgharị/POST > ", 'text': ["Chronometer Sync: ", "✅ [Stratum-1 Lock]"]}, 
       {'prompt': "onye_Nchọgharị/POST > ", 'text': ["Fusion Core: ", "✅"]},
       {'prompt': "onye_Nchọgharị/POST > ", 'text': ["HV Bus Regulators: ", "✅ [12kV Stable]"]},
-      {'prompt': "onye_Nchọgharị/POST > ", 'text': ["Liquid Water Thermal Mass Loop: ", "⚠️ Fluid levels at 28.73%. Refill soon."]},
+      {'prompt': "onye_Nchọgharị/POST > ", 'text': ["Liquid Water: ", "⚠️ Fluid levels at 28.73%. Refill soon."]},
       {'prompt': "onye_Nchọgharị/POST > ", 'text': ["Skeletal Actuators: ", "❌ Arm 00 node 3 (left elbow): Actuator torque demand +8.3% vs baseline. Hysteresis detected. Seek maintainence or replacement."]},
       {'prompt': "onye_Nchọgharị/POST > ", 'text': ["Joint Encoders: ", "✅"]},
       {'prompt': "onye_Nchọgharị/POST > ", 'text': ["Epidermal Haptics: ", "✅"]},
