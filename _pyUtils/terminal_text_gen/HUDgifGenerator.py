@@ -13,7 +13,7 @@ BG_COLOR = (0, 0, 0)
 START_FRAME_DELAY_MS = 960
 DELAY_PROMPT_MS = 480
 SEGMENT_DELAY_MS = 240
-DELAY_NEWLINE_MS = 1200
+DELAY_NEWLINE_MS = 960
 DELAY_FINAL_MS = 7200
 
 # CURSOR_CHAR = '_'
@@ -223,15 +223,15 @@ def normalize_events(raw_events):
 
 
 # ━━━━━━ Cursor blinking helper ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-def blink_cursor(img, cursor_x, cursor_y, color, total_ms, frames, durations, missing):
+def blink_cursor(img, cursor_x, cursor_y, color, total_ms, frames, durations, missing, start_on=True):
     """
     Append blinking cursor frames for total_ms at (cursor_x, cursor_y).
+    start_on: if True, starts with ON frame. If False, starts with OFF frame.
     """
     if total_ms <= 0:
         return
 
     if CURSOR_BLINK_DELAY_MS <= 0:
-        # Fallback: single hold frame
         frame_on = img.copy()
         cursor_glyph = get_glyph(CURSOR_CHAR, missing)
         draw_glyph(frame_on, cursor_glyph, cursor_x, cursor_y, fg_override=color)
@@ -239,26 +239,23 @@ def blink_cursor(img, cursor_x, cursor_y, color, total_ms, frames, durations, mi
         durations.append(total_ms)
         return
 
-    cycle_ms = CURSOR_BLINK_DELAY_MS * 2
-    full_cycles = max(1, total_ms // cycle_ms)
-    remaining = total_ms - full_cycles * cycle_ms
     cursor_glyph = get_glyph(CURSOR_CHAR, missing)
+    remaining_ms = total_ms
+    is_on = start_on
 
-    for _ in range(full_cycles):
-        # ON
-        frame_on = img.copy()
-        draw_glyph(frame_on, cursor_glyph, cursor_x, cursor_y, fg_override=color)
-        frames.append(frame_on)
-        durations.append(CURSOR_BLINK_DELAY_MS)
-        # OFF
-        frames.append(img.copy())
-        durations.append(CURSOR_BLINK_DELAY_MS)
-
-    if remaining > 0:
-        frame_on = img.copy()
-        draw_glyph(frame_on, cursor_glyph, cursor_x, cursor_y, fg_override=color)
-        frames.append(frame_on)
-        durations.append(remaining)
+    while remaining_ms > 0:
+        current_dur = min(remaining_ms, CURSOR_BLINK_DELAY_MS)
+        
+        if is_on:
+            frame = img.copy()
+            draw_glyph(frame, cursor_glyph, cursor_x, cursor_y, fg_override=color)
+            frames.append(frame)
+        else:
+            frames.append(img.copy())
+            
+        durations.append(current_dur)
+        remaining_ms -= current_dur
+        is_on = not is_on
 
 
 # ━━━━━━ Core rendering over events ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
@@ -403,7 +400,7 @@ def render_events_to_frames(events, start_event_id=None):
     """
     Render a normalized list of events to frames.
     If start_event_id is provided, pre-roll all events before that ID
-    with prompt-only recording, then record from that event onward.
+    without recording frames, then record from that event onward.
     """
     events = normalize_events(events)
     img = make_base_image()
@@ -434,7 +431,7 @@ def render_events_to_frames(events, start_event_id=None):
                 start_index = i
                 break
 
-    # Pre-roll (keep prompts, no body typing)
+    # Pre-roll
     for e in events[:start_index]:
         img, cursor_x, cursor_y = apply_event(
             img, e, cursor_x, cursor_y,
@@ -461,9 +458,16 @@ def render_events_to_frames(events, start_event_id=None):
             code = f'U+{ord(ch):04X}'
             print(f'Missing glyph: {repr(ch)} ({code})')
 
-    # Final blinking cursor hold
+    # Final frame hold
     if frames:
-        blink_cursor(img, cursor_x, cursor_y, PROMPT_FG, DELAY_FINAL_MS, frames, durations, missing)
+        # Determine continuity from the previous newline blink
+        cycle_ms = CURSOR_BLINK_DELAY_MS * 2
+        newline_rem = DELAY_NEWLINE_MS % cycle_ms
+        start_final_on = True
+        if 0 < newline_rem <= CURSOR_BLINK_DELAY_MS:
+            start_final_on = False
+
+        blink_cursor(img, cursor_x, cursor_y, PROMPT_FG, DELAY_FINAL_MS, frames, durations, missing, start_on=start_final_on)
 
     return frames, durations
 
@@ -653,7 +657,13 @@ def process_script_module(module_name, start_event_id=None, out_name=None, rende
 
         # Final blinking cursor hold for this event
         if frames:
-            blink_cursor(img, cursor_x, cursor_y, PROMPT_FG, DELAY_FINAL_MS, frames, durations, missing)
+            cycle_ms = CURSOR_BLINK_DELAY_MS * 2
+            newline_rem = DELAY_NEWLINE_MS % cycle_ms
+            start_final_on = True
+            if 0 < newline_rem <= CURSOR_BLINK_DELAY_MS:
+                start_final_on = False
+            
+            blink_cursor(img, cursor_x, cursor_y, PROMPT_FG, DELAY_FINAL_MS, frames, durations, missing, start_on=start_final_on)
 
         name = out_name or module_name
         out_path = output_dir / f'{name}_{ev_id}.gif'
