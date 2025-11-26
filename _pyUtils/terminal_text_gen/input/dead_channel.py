@@ -57,7 +57,7 @@ events = [
       },
       {
         'prompt': "comms_array/Nysa's_Wake > ",
-        'text': ["Crew status: ", "❌", " UNRESPONSIVE ", "| NO VOLUNTARY ACTIVITY DETECTED"],
+        'text': ["Crew status: ", "❌", " NO RESPONSE ", "| NO VOLUNTARY ACTIVITY DETECTED"],
         'color': (255, 128, 128),
         'char_delay': 20,
       },
@@ -146,7 +146,7 @@ events = [
       },
       {
         'prompt': "comms_array/Nysa's_Wake > ",
-        'text': ["Crew status: ", "❌", " UNRESPONSIVE ", "| NO VOLUNTARY ACTIVITY DETECTED"],
+        'text': ["Crew status: ", "❌", " NO RESPONSE ", "| NO VOLUNTARY ACTIVITY DETECTED"],
         'color': (255, 128, 128),
         'char_delay': 20,
       },
