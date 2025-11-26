@@ -669,4 +669,6 @@ if __name__ == '__main__':
 
     # process_script_module('black_tangent')  # Render formatted .py in /input
     # process_script_module('black_tangent', start_event_id='boot-final-obi')  # Render whole thing starting from event
-    process_script_module('dead_channel', render_all_events=True)  # Render all events discretely
+    process_script_module('black_tangent', render_all_events=True)  # Render all events discretely
+
+    # process_script_module('dead_channel', render_all_events=True)  # Render all events discretely
