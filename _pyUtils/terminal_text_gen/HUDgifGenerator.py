@@ -12,10 +12,10 @@ BG_COLOR = (0, 0, 0)
 
 START_FRAME_DELAY_MS = 960
 DELAY_PROMPT_MS = 600
-SEGMENT_DELAY_MS = 480  # black tangent
-# SEGMENT_DELAY_MS = 600  # dead channel
-DELAY_NEWLINE_MS = 960  # black tangent
-# DELAY_NEWLINE_MS = 1440  # dead channel
+# SEGMENT_DELAY_MS = 480  # black tangent
+SEGMENT_DELAY_MS = 600  # dead channel
+# DELAY_NEWLINE_MS = 960  # black tangent
+DELAY_NEWLINE_MS = 1440  # dead channel
 DELAY_FINAL_MS = 7200
 
 # CURSOR_CHAR = '_'
@@ -438,8 +438,8 @@ def render_events_to_frames(events, start_event_id=None):
         img, cursor_x, cursor_y = apply_event(
             img, e, cursor_x, cursor_y,
             text_left, text_top, text_right, baseline_limit,
-            frames, durations,
-            record_frames=True,
+            [], [],  # Pass empty lists to prevent frame recording
+            record_frames=False,
             missing=missing,
             prompt_only=True,
         )
@@ -683,4 +683,4 @@ if __name__ == '__main__':
     # process_script_module('black_tangent', start_event_id='boot-final-obi')  # Render whole thing starting from event
     process_script_module('black_tangent', render_all_events=True)  # Render all events discretely
 
-    # process_script_module('dead_channel', start_event_id='3')  # only render the last repeat so that it loops nicely
+    process_script_module('dead_channel', start_event_id='3')  # only render the last repeat so that it loops nicely
