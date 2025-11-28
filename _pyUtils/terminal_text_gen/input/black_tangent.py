@@ -17,8 +17,9 @@ events = [
       {'prompt': "/POST > ", 'text': ["Joint Encoders: ", "✅"]},
       {'prompt': "/POST > ", 'text': ["Epidermal Haptics: ", "✅"]},
       {'prompt': "/POST > ", 'text': ["Reaction Control: ", "✅"]},
-      {'prompt': "/POST > ", 'text': ["Comms Array: ", "❌ Rx-01 (right) automatically adjusted to 300.0% (maximum) gain to maintain parity with receiving antenna 00 (left). Seek maintainence or replacement."]},
-      {'prompt': "/POST > ", 'text': ["Mag-Lock Arrays: ", "✅"]},
+      {'prompt': "/POST > ", 'text': ["Magnetic Anchors: ", "✅"]},
+      {'prompt': "/POST > ", 'text': ["Magnetic Holsters: ", "✅"]},
+      {'prompt': "/POST > ", 'text': ["Comms Array: ", "❌ Rx-01 (right) automatically adjusted to 300.0% (maximum) gain to maintain parity with Rx-00 (left). Seek maintainence or replacement."]},
     ],
   },
   {

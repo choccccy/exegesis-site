@@ -31,19 +31,6 @@ TRANSPARENT_BG = False     # True = fully transparent background in GIF
 PROMPT_FG = (160, 160, 160)
 TEXT_FG = (160, 160, 160)
 
-PIXEL_COLORS = {  # Map emoji cells to RGB colors
-    '⬛': None,
-    '⬜': TEXT_FG,
-    # Colored squares for emoji glyphs
-    '🟥': (255, 0, 0),
-    '🟩': (0, 255, 0),
-    '🟨': (255, 255, 0),
-    '🟦': (0, 0, 255),
-    '🟧': (255, 165, 0),
-    '🟪': (128, 0, 128),
-    '🟫': (139, 69, 19),
-}
-
 # ━━━━━━ Unicode / variation selector handling ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 VARIATION_SELECTORS = {'\ufe0f', '\ufe0e'}  # Variation selectors to ignore (emoji/text style markers)
 
@@ -109,6 +96,19 @@ def parse_color(value):
 
 # ━━━━━━ Font configuration ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 FONT_HEIGHT = len(next(iter(FONT.values())))
+
+PIXEL_COLORS = {  # Map emoji cells to RGB colors
+    '⬛': None,
+    '⬜': TEXT_FG,
+    # Colored squares for emoji glyphs
+    '🟥': (255, 0, 0),
+    '🟩': (0, 255, 0),
+    '🟨': (255, 255, 0),
+    '🟦': (0, 0, 255),
+    '🟧': (255, 165, 0),
+    '🟪': (128, 0, 128),
+    '🟫': (139, 69, 19),
+}
 
 ERROR_GLYPH = [  # Loud error glyph: used when a character is missing from the bitmap
     '⬛',
@@ -388,6 +388,7 @@ def apply_event(img, event, cursor_x, cursor_y,
                 prompt_only=False):
     lines = event['lines']
     for i, line in enumerate(lines):
+        # print(f'rendering line {i}: "{line}"...')
         img, cursor_x, cursor_y = apply_line(
             img, line, cursor_x, cursor_y,
             text_left, text_right, baseline_limit,
@@ -524,7 +525,7 @@ def render_frames_to_webp(frames, durations, output_path):
         loop=0,
         lossless=True,
         quality=100,
-        method=6,  # 0–6, higher is slower but better compression
+        method=6,  # 0-6, higher is slower but better compression
     )
 
 
@@ -557,10 +558,13 @@ def process_plain_text_directory():
         ]
 
         frames, durations = render_events_to_frames(events)
-        out_path = output_dir / (txt_path.stem + '.gif')
-        render_frames_to_gif(frames, durations, out_path)
-        # out_path_webp = output_dir / (txt_path.stem + '.webp')
-        # render_frames_to_webp(frames, durations, out_path_webp)
+
+        # out_path = output_dir / (txt_path.stem + '.gif')
+        # render_frames_to_gif(frames, durations, out_path)
+
+        out_path = output_dir / (txt_path.stem + '.webp')
+        render_frames_to_webp(frames, durations, out_path)
+
         print(f'wrote {out_path.absolute()}')
 
 
@@ -599,10 +603,12 @@ def process_script_module(module_name, start_event_id=None, out_name=None, rende
         if start_event_id is not None:
             name = f'{name}_{start_event_id}'
 
-        out_path = output_dir / (name + '.gif')
-        render_frames_to_gif(frames, durations, out_path)
-        # out_path_webp = output_dir / (name + '.webp')
-        # render_frames_to_webp(frames, durations, out_path_webp)
+        # out_path = output_dir / (name + '.gif')
+        # render_frames_to_gif(frames, durations, out_path)
+
+        out_path = output_dir / (name + '.webp')
+        render_frames_to_webp(frames, durations, out_path)
+
         print(f'wrote {out_path.absolute()}')
         return
 
@@ -668,10 +674,13 @@ def process_script_module(module_name, start_event_id=None, out_name=None, rende
             blink_cursor(img, cursor_x, cursor_y, PROMPT_FG, DELAY_FINAL_MS, frames, durations, missing, start_on=start_final_on)
 
         name = out_name or module_name
-        out_path = output_dir / f'{name}_{ev_id}.gif'
-        render_frames_to_gif(frames, durations, out_path)
-        # out_path_webp = output_dir / f'{name}_{ev_id}.webp'
-        # render_frames_to_webp(frames, durations, out_path_webp)
+
+        # out_path = output_dir / f'{name}_{ev_id}.gif'
+        # render_frames_to_gif(frames, durations, out_path)
+
+        out_path = output_dir / f'{name}_{ev_id}.webp'
+        render_frames_to_webp(frames, durations, out_path)
+
         print(f'wrote {out_path.absolute()}')
 
 
@@ -681,6 +690,6 @@ if __name__ == '__main__':
 
     # process_script_module('black_tangent')  # Render formatted .py in /input
     # process_script_module('black_tangent', start_event_id='boot-final-obi')  # Render whole thing starting from event
-    process_script_module('black_tangent', render_all_events=True)  # Render all events discretely
+    # process_script_module('black_tangent', render_all_events=True)  # Render all events discretely
 
     process_script_module('dead_channel', start_event_id='3')  # only render the last repeat so that it loops nicely
