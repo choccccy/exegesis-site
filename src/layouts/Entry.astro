@@ -73,13 +73,12 @@ const { published, title, showTitle, description, previousEntry, nextEntry, hero
     <div class="bg-grid"></div>
 
     <Header />
-
+    
+    {showTitle !== false && (
     <div class="title">
-      {showTitle !== false && (
       <h1>{title}</h1>
-      )}
-      {/* <hr /> */}
     </div>
+    )}
 
     {published == false && (<WarningBanner lines={[ 'this entry is unfinished! content is subject to change.' ]} />)}
 
