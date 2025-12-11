@@ -13,10 +13,6 @@ export default defineConfig({
   site: 'https://exegesis.space',
   integrations: [mdx(), sitemap()],
 
-  redirects: {
-    '/': '/entry/sensor-contact',
-  },
-
   markdown: {
     remarkPlugins: [remarkUnwrapImages]
   },

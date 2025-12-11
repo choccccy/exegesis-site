@@ -1,0 +1,32 @@
+---
+import PageLayout from '../layouts/PageLayout.astro';
+import NavButton from '../components/NavButton.astro';
+---
+
+<PageLayout
+  description="Exegesis is a hard sci-fi setting about strange people and stranger AI in mechanical bodies on an existentially important mission to investigate a Dyson sphere that is damaging their minds, eons from home."
+>
+  <p>
+    Exegesis is a hard sci-fi, zone-fiction setting about strange people and stranger AI in mechanical bodies on an existentially important mission to investigate a Dyson sphere that is eating their minds, 112.21 light-years from home.
+  </p>
+  <p>
+    Expect themes of existentialism, loneliness, death, cooperation, strange friendship & stranger love, and cosmic & body horror.
+  </p>
+
+  <div class="start-reading">
+    <NavButton
+      type="next"
+      href={`/entry/sensor-contact/`}
+      ariaLabel={`Sensor Contact`}
+    >
+      Start Reading
+    </NavButton>
+  </div>
+</PageLayout>
+
+<style>
+  .start-reading {
+    margin: 1.5em 0;
+    text-align: center;
+  }
+</style>
