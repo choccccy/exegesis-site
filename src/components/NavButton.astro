@@ -1,17 +1,21 @@
 ---
+type ButtonType = 'default' | 'current' | 'previous' | 'next' | 'disabled' | 'placeholder' | 'warning';
+
 export interface Props {
-  type?: 'default' | 'current' | 'previous' | 'next' | 'disabled' | 'placeholder' | 'unavailable' | 'warning'
+  type?: ButtonType | ButtonType[];
   href?: string
   id?: string
   ariaLabel?: string
   [key: string]: unknown
 }
 const { type = 'default', href, id, ariaLabel, ...rest } = Astro.props;
+
+const typeClasses = (Array.isArray(type) ? type : [type]).map(t => `nav-button--${t}`).join(' ');
 ---
 {href ? (
   <a
     href={href}
-    class={`nav-button nav-button--${type}`}
+    class:list={['nav-button', typeClasses]}
     aria-label={ariaLabel}
     id={id}
     {...rest}
@@ -20,7 +24,7 @@ const { type = 'default', href, id, ariaLabel, ...rest } = Astro.props;
   </a>
 ) : (
   <button
-    class={`nav-button nav-button--${type}`}
+    class:list={['nav-button', typeClasses]}
     aria-label={ariaLabel}
     id={id}
     type="button"
@@ -82,12 +86,10 @@ const { type = 'default', href, id, ariaLabel, ...rest } = Astro.props;
     justify-self: center;
   }
 
-  .nav-button--disabled,
-  .nav-button--unavailable {
+  .nav-button--disabled {
     background: #808080;
     color: black;
     cursor: not-allowed;
-    justify-self: start;
   }
 
   .nav-button--placeholder {
@@ -133,9 +135,9 @@ const { type = 'default', href, id, ariaLabel, ...rest } = Astro.props;
     .nav-button--next,
     .nav-button--current,
     .nav-button--default {
-      /* width: 80%; */
+      width: 80%;
       /* clip-path: none; */
-      /* padding: 0.75rem 1.25rem; */
+      padding: 0.75rem 1.25rem;
     }
     .nav-button--placeholder {
       display: none;

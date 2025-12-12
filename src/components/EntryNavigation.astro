@@ -40,11 +40,11 @@ const isNextPublished = nextEntry ? isEntryPublished(nextEntry) : false
         </NavButton>
       ) : (
         <NavButton
-          type="disabled"
+          type={['previous', 'disabled']}
           ariaLabel={`Previous entry not yet published: ${previousEntry}`}
           title="This entry is not yet published"
         >
-          {previousEntry}
+          {'{...}'}
         </NavButton>
       )
     ) : (
@@ -70,7 +70,7 @@ const isNextPublished = nextEntry ? isEntryPublished(nextEntry) : false
         </NavButton>
       ) : (
         <NavButton
-          type="disabled"
+          type={['next', 'disabled']}
           ariaLabel="No next entry available"
         >
           {'{...}'}
@@ -78,7 +78,7 @@ const isNextPublished = nextEntry ? isEntryPublished(nextEntry) : false
       )
     ) : (
       <NavButton
-        type="unavailable"
+        type={['next', 'disabled']}
         ariaLabel="No next entry available"
       >
         {'{...}'}
