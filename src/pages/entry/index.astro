@@ -28,6 +28,11 @@ if (publishedEntries.length > 0) {
       });
     }
   }
+  // Add one more "in-progress" entry at the end. Remove if Exegesis is ever "finished"
+  allEntries.push({
+    isPlaceholder: true,
+    data: { entryNumber: max + 1, title: 'in-progress' },
+  });
 }
 ---
 
@@ -61,12 +66,12 @@ if (publishedEntries.length > 0) {
         margin-bottom: 1rem;
         text-align: center;
       } */
-      ul li:first-child img {
+      /* ul li:first-child img {
         width: 100%;
       }
       ul li:first-child .entry-title {
         font-size: 2.369rem;
-      }
+      } */
       ul li img {
         margin-bottom: 0.5rem;
       }
@@ -90,12 +95,19 @@ if (publishedEntries.length > 0) {
         font-family: "tiny5";
         text-align: center;
       }
-      .placeholder {
+      .placeholder-wrapper {
+        /* To make it look like other entries but not clickable */
+        display: block;
+      }
+      .placeholder-image {
+        background-color: #111;
         border: 1px dashed rgb(var(--gray));
-        height: 100%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
+        aspect-ratio: 4 / 3;
+        width: 100%;
+        margin-bottom: 0.5rem;
+      }
+      .placeholder-wrapper .entry-title {
+        opacity: 0.6;
       }
       @media (max-width: 840px) {
         ul {
@@ -104,12 +116,6 @@ if (publishedEntries.length > 0) {
         ul li {
           width: 100%;
           text-align: center;
-        }
-        ul li:first-child {
-          margin-bottom: 0;
-        }
-        ul li:first-child .title {
-          font-size: 1.563em;
         }
       }
     </style>
@@ -126,7 +132,8 @@ if (publishedEntries.length > 0) {
             allEntries.map((entry) => (
               <li>
                 {entry.isPlaceholder ? (
-                  <div class="placeholder">
+                  <div class="placeholder-wrapper">
+                    <div class="placeholder-image"></div>
                     <h4 class="entry-title">
                       <span class="entry-number">{entry.data.entryNumber}.</span> {entry.data.title}
                     </h4>
