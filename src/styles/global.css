@@ -179,7 +179,7 @@ hr {
   border: none;
   border-top: 1px solid white;
 }
-@media (max-width: 720px) {  /* mobile formatting */
+@media (max-width: 840px) {  /* mobile formatting */
   main {
     width: 90vw;
   }

@@ -119,10 +119,19 @@ import TextLogo from '../assets/exegesis_textlogo.svg';
   .social-links a {
     display: flex;
   }
-  /* mobile formatting */
-  /* @media (max-width: 720px) {
-    .social-links {
-      display: none;
+  @media (max-width: 840px) {
+    nav {
+      flex-direction: column;
+      height: auto;
+      gap: 1rem;
     }
-  } */
+    .internal-links {
+      position: static;
+      transform: none;
+    }
+    .logo-img {
+      width: 100%;
+      height: auto;
+    }
+  }
 </style>
