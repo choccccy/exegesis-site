@@ -7,103 +7,145 @@ import FormattedDate from '../../components/FormattedDate.astro';
 import Header from '../../components/Header.astro';
 import { SITE_DESCRIPTION, SITE_TITLE } from '../../consts';
 
-const entries = (await getCollection('entry', ({ data }) => {
+const publishedEntries = (await getCollection('entry', ({ data }) => {
   return data.published === true;
 })).sort(
-  (b, a) => b.data.entryNumber.valueOf() - a.data.entryNumber.valueOf(),
+  (a, b) => a.data.entryNumber - b.data.entryNumber,
 );
+
+const allEntries = [];
+if (publishedEntries.length > 0) {
+  const min = publishedEntries[0].data.entryNumber;
+  const max = publishedEntries[publishedEntries.length - 1].data.entryNumber;
+  const entryMap = new Map(publishedEntries.map(entry => [entry.data.entryNumber, entry]));
+
+  for (let i = min; i <= max; i++) {
+    if (entryMap.has(i)) {
+      allEntries.push(entryMap.get(i));
+    } else {
+      allEntries.push({
+        isPlaceholder: true,
+        data: { entryNumber: i, title: 'in-progress' },
+      });
+    }
+  }
+}
 ---
 
 <!doctype html>
 <html lang="en">
-    <head>
-        <BaseHead title={SITE_TITLE} description={SITE_DESCRIPTION} />
-        <style>
-            main {
-                width: 960px;
-            }
-            ul {
-                display: flex;
-                flex-wrap: wrap;
-                gap: 2rem;
-                list-style-type: none;
-                margin: 0;
-                padding: 0;
-            }
-            ul li {
-                width: calc(50% - 1rem);
-            }
-            ul li * {
-                text-decoration: none;
-                transition: 0.2s ease;
-            }
-            ul li:first-child {
-                width: 100%;
-                margin-bottom: 1rem;
-                text-align: center;
-            }
-            ul li:first-child img {
-                width: 100%;
-            }
-            ul li:first-child .title {
-                font-size: 2.369rem;
-            }
-            ul li img {
-                margin-bottom: 0.5rem;
-                border-radius: 12px;
-            }
-            ul li a {
-                display: block;
-            }
-            .title {
-                margin: 0;
-                color: white;
-                line-height: 1;
-            }
-            .date {
-                margin: 0;
-                color: rgb(var(--gray));
-            }
-            @media (max-width: 720px) {
-                ul {
-                    gap: 0.5em;
-                }
-                ul li {
-                    width: 100%;
-                    text-align: center;
-                }
-                ul li:first-child {
-                    margin-bottom: 0;
-                }
-                ul li:first-child .title {
-                    font-size: 1.563em;
-                }
-            }
-        </style>
-    </head>
-    <body>
-        <div class="bg-grid"></div>
-        
-        <Header />
-        
-        <main>
-            <section>
-                <ul>
-                    {
-                        entries.map((entry) => (
-                            <li>
-                                <a href={`/entry/${entry.id}/`}>
-                                    {entry.data.heroImage && (
-                                        <Image width={720} height={360} src={entry.data.heroImage} alt="" />
-                                    )}
-                                    <h4 class="entry-title">{entry.data.title}</h4>
-                                </a>
-                            </li>
-                        ))
-                    }
-                </ul>
-            </section>
-        </main>
-        <!-- <Footer /> -->
-    </body>
+  <head>
+    <BaseHead title={SITE_TITLE} description={SITE_DESCRIPTION} />
+    <style>
+      main {
+        width: 960px;
+        margin-bottom: 10vh;
+        /* background: #00000000; */
+      }
+      ul {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 2rem;
+        list-style-type: none;
+        margin: 0;
+        padding: 0;
+      }
+      ul li {
+        width: calc(50% - 1rem);
+      }
+      ul li * {
+        text-decoration: none;
+        transition: 0.2s ease;
+      }
+      /* ul li:first-child {
+        width: 100%;
+        margin-bottom: 1rem;
+        text-align: center;
+      } */
+      ul li:first-child img {
+        width: 100%;
+      }
+      ul li:first-child .entry-title {
+        font-size: 2.369rem;
+      }
+      ul li img {
+        margin-bottom: 0.5rem;
+      }
+      ul li a {
+        display: block;
+      }
+      .title {
+        margin: 0;
+        color: white;
+        line-height: 1;
+      }
+      .date {
+        margin: 0;
+        color: rgb(var(--gray));
+      }
+      .entry-number {
+        color: rgb(var(--gray));
+      }
+      .entry-title {
+        color: white;
+        font-family: "tiny5";
+        text-align: center;
+      }
+      .placeholder {
+        border: 1px dashed rgb(var(--gray));
+        height: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+      @media (max-width: 720px) {
+        ul {
+          gap: 0.5em;
+        }
+        ul li {
+          width: 100%;
+          text-align: center;
+        }
+        ul li:first-child {
+          margin-bottom: 0;
+        }
+        ul li:first-child .title {
+          font-size: 1.563em;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="bg-grid"></div>
+    
+    <Header />
+    
+    <main>
+      <section>
+        <ul>
+          {
+            allEntries.map((entry) => (
+              <li>
+                {entry.isPlaceholder ? (
+                  <div class="placeholder">
+                    <h4 class="entry-title">
+                      <span class="entry-number">{entry.data.entryNumber}.</span> {entry.data.title}
+                    </h4>
+                  </div>
+                ) : (
+                  <a href={`/entry/${entry.id}/`}>
+                    {entry.data.heroImage && <Image width={720} height={360} src={entry.data.heroImage} alt="" />}
+                    <h4 class="entry-title">
+                      <span class="entry-number">{entry.data.entryNumber}.</span> {entry.data.title}
+                    </h4>
+                  </a>
+                )}
+              </li>
+            ))
+          }
+        </ul>
+      </section>
+    </main>
+    <!-- <Footer /> -->
+  </body>
 </html>
