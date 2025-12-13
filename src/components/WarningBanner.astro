@@ -32,7 +32,14 @@ const { lines = [] } = Astro.props;
     z-index: 1;
     /* font-weight: bold; */
   }
+  @media (max-width: 840px) {
+    .unfinished-warning-text {
+      width: 80%;
+      text-align: center;
+    }
+  }
 </style>
+
 <div class='unfinished-warning'>
   <span class='unfinished-warning-text'>
     {lines.map((line: string, idx: number) => (
