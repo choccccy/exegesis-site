@@ -12,7 +12,8 @@ const palette = {
 const backgroundAlpha = 0.16;
 const borderDarken = 0.5;
 
-const { char = 'default', color, bgOverride } = Astro.props;
+const { char: rawChar = 'default', color, bgOverride } = Astro.props;
+const char = rawChar.toLowerCase();
 
 function withAlpha(hex, alpha) {
   const [, r, g, b] = hex.match(/^#(..)(..)(..)$/).map(x => parseInt(x, 16));
