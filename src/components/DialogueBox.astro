@@ -1,21 +1,27 @@
 ---
 const palette = {
-  antikythera: '#C0C0C0',
-  ncho: '#C499FF',
-  obi: ['#99f6ff', '#202020'],
-  lemaitre: '#6E8EFF',
-  v3n: '#FFA500',
-  tl: '#98FBCB',
-  medic: '#9F9FFF',
-  so: ['#FF8080', '#202020'],
-  co: ['#FFFF00', '#202020'],
-  default: '#FF00FF'
+  Antikythera: '#C0C0C0',
+  // Ncho team
+  Ncho: '#C499FF',
+  Obi: ['#99f6ff', '#202020'],
+  // SnR team
+  V3N: '#FFA500',
+  TL: '#98FBCB',
+  Medic: '#9F9FFF',
+  SO: ['#FF8080', '#202020'],
+  CO: ['#FFFF00', '#202020'],
+  // Misc.
+  Lemaitre: '#6E8EFF',
+  Muhammad: '#00C000',
+  Delta_Titan: '#C00000',
+  // Misc.
+  fallback: '#FF00FF'
 };
 
 const backgroundAlpha = 0.16;
 const borderDarken = 0.5;
 
-const { char: rawChar = 'default', color, bgOverride } = Astro.props;
+const { char: rawChar = 'default', bgOverride } = Astro.props;
 const char = rawChar.toLowerCase();
 
 function withAlpha(hex, alpha) {
@@ -27,7 +33,11 @@ function darken(hex, factor = borderDarken) {
   return `rgb(${Math.round(r*factor)}, ${Math.round(g*factor)}, ${Math.round(b*factor)})`;
 }
 
-const entry = color ?? palette[char] ?? palette.default;
+const paletteKey = Object.keys(palette).find(k => k.toLowerCase() === char);
+const characterName = paletteKey || rawChar;
+
+const entry = (paletteKey ? palette[paletteKey] : undefined) ?? palette.fallback;
+
 const baseColor = Array.isArray(entry) ? entry[0] : entry;
 const background =
   bgOverride ? bgOverride :
@@ -40,6 +50,7 @@ const border = darken(baseColor, borderDarken);
 <span
   class={`db ${char}`}
   style={`color:${baseColor}; background:${background}; border-left:4px solid ${border};`}
+  title={`${characterName} dialogue`}
 >
   <slot />
 </span>
