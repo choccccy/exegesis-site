@@ -7,9 +7,9 @@ events = [
     'id': '2',
     'lines': [
       {'prompt': "/POST > ", 'text': "Power-On Self Test initiated"},
-      {'prompt': "/POST > ", 'text': ["Neural Lattice: ", "✅ [Temp: 840K - Pre-heating active]"]},
+      {'prompt': "/POST > ", 'text': ["Neural Lattice: ", "✅ [Temp: 901.2K - Pre-heating active]"]},
       {'prompt': "/POST > ", 'text': ["Somatic Bus: ", "✅"]},
-      {'prompt': "/POST > ", 'text': ["Chronometer Sync: ", "✅ [Stratum-1 Lock]"]}, 
+      {'prompt': "/POST > ", 'text': ["Chronometer Sync: ", "✅ [Delay-adjusted Lock with Nysa's_Wake]"]}, 
       {'prompt': "/POST > ", 'text': ["Fusion Core: ", "✅"]},
       {'prompt': "/POST > ", 'text': ["HV Bus Regulators: ", "✅ [12kV Stable]"]},
       {'prompt': "/POST > ", 'text': ["Liquid Water: ", "⚠️ Fluid levels at 28.73%. Refill soon."]},
