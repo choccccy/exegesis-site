@@ -66,9 +66,9 @@ events = [
   {
     'id': '8',
     'lines': [
-      {'prompt': "/tool/vehicle > ", 'text': "connection established with Freighter_17c"},
-      {'prompt': "/tool/Freighter17c > ", 'text': "Synchronizing sensor data with pilot"},
-      {'prompt': "/tool/Freighter17c > ", 'text': "Autopilot enabled, ready for manual handoff"},
+      {'prompt': "/tool/vehicle > ", 'text': "Connection established with Freighter_17c"},
+      {'prompt': "/tool/Freighter_17c > ", 'text': "Synchronizing sensor data with pilot"},
+      {'prompt': "/tool/Freighter_17c > ", 'text': "Autopilot enabled, ready for manual handoff"},
       {'prompt': "/comms_array/local/onye_Nchọgharị > ", 'text': "i've got the ship. all good for landing, Obi?", 'color': '#c499ff', 'char_delay': 50},
       {'prompt': "/comms_array/local/Mkpụrụobi_mepụta > ", 'text': "bay lock 5: ⚠️ INTERMITTENT FAULT", 'color': '#99f6ff', 'char_delay': 30},
       {'prompt': "/comms_array/local/onye_Nchọgharị > ", 'text': "tsk. not ideal, but surely the Doc won't have packed us all the way to the brim. we'll manage.", 'color': '#c499ff', 'char_delay': 50},
