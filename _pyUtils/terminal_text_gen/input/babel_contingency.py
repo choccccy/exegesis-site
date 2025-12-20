@@ -41,16 +41,16 @@ events = [
   },
   {
     'id': '5',
-    'lines': [{'prompt': "/comms_array/Nysa's_Wake/onye_Nchọgharị > ", 'text': "...the Antikythera is offline, isn't it? I still haven't gotten a good morning packet. And the primion exitation that took us down... oh no, this is the Babel Contingency.", 'color': '#c499ff', 'char_delay': 50}],
+    'lines': [{'prompt': "/comms_array/Nysa's_Wake/onye_Nchọgharị > ", 'text': "...the Antikythera is offline, isn't it? i still haven't gotten a good morning packet. and the primion excitation that took us down...", 'color': '#c499ff', 'char_delay': 50}],
   },
   {
     'id': '6',
     'lines': [
-      {'prompt': "/tool/vehicle > ", 'text': "Connection established with Freighter_17c"},
+      {'prompt': "/tool/vehicle > ", 'text': "Connection re-established with Freighter_17c"},
       {'prompt': "/tool/Freighter_17c > ", 'text': "Synchronizing sensor data with pilot"},
       {'prompt': "/tool/Freighter_17c > ", 'text': ["Freighter_17c Disabled: ", "❌ Several critical subsystems offline"]},
       {'prompt': "/tool/Freighter_17c > ", 'text': "Autopilot disabled"},
-      {'prompt': "/comms_array/local/onye_Nchọgharị > ", 'text': "'Several subsystems offline', no shit. I don't think we're gonna be able to recover much from this thing. any takers", 'color': '#c499ff', 'char_delay': 50},
+      {'prompt': "/comms_array/local/onye_Nchọgharị > ", 'text': "'Several subsystems offline', no shit. i don't think we're gonna be able to recover much from this thing. looks like even its core was dumped, glad it failed safe.", 'color': '#c499ff', 'char_delay': 50},
     ],
   },
 ]
