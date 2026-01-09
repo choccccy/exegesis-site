@@ -94,3 +94,19 @@
 **Speech Pattern:** Slurred, melodic, speaks in synesthetic metaphor.
 **Mission Role:** Atmospheric sampling, intrusive gas/spore hazard warning, acts as a canary for subtle shifts.
 **Social Role:** Calms nightmares, shares atmospheric "stories" to settle crew anxieties.
+
+---
+
+## ncho's team
+Lead: gruff no nonsense slavic wolf lady
+Assistant Lead: her quiet but competent american southern husband, just a big stocky 8ft tall dude
+Logistics/pilot: Nchọ & Obi
+SO: punkass spider they/them AI, mischeivous because spiders must be mischeivous them's the rulez
+CO: bookish swedish twink, really into music
+
+## V3N's team
+Lead: militaristic leader
+Medic: hypercompetent surgeon type, enjoys nicknames
+logistics/pilot: V3N
+SO: boston dynamics dog, bossy AI, cute partner with CO
+CO: bipedal humanoid, matter of fact (but goofy) AI, cute partner with CO

@@ -3,8 +3,10 @@ from PIL import Image, ImageColor
 from tiny5mk2 import bitmap as ORIGINAL_FONT
 
 # ━━━━━━ Rendering configuration ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-WIDTH = 320
-HEIGHT = 240
+# WIDTH = 320  # full height log
+WIDTH = 256  # HUD log
+# HEIGHT = 240  # full height log
+HEIGHT = 24  # HUD log
 
 CHAR_SPACING = 1
 LINE_SPACING = 1
@@ -22,8 +24,10 @@ DELAY_FINAL_MS = 7200
 CURSOR_CHAR = '█'
 CURSOR_BLINK_DELAY_MS = 360
 
-PADDING_X = 6
-PADDING_Y = 6
+# PADDING_X = 6  # full height log
+PADDING_X = 2  # HUD log
+# PADDING_Y = 6  # full height log
+PADDING_Y = 2  # HUD log
 
 START_FROM_BOTTOM = False  # False = start at top, True = start at bottom and "push up"
 TRANSPARENT_BG = False     # True = fully transparent background in GIF
@@ -603,11 +607,11 @@ def process_script_module(module_name, start_event_id=None, out_name=None, rende
         if start_event_id is not None:
             name = f'{name}_{start_event_id}'
 
-        # out_path = output_dir / (name + '.gif')
-        # render_frames_to_gif(frames, durations, out_path)
+        out_path = output_dir / (name + '.gif')
+        render_frames_to_gif(frames, durations, out_path)
 
-        out_path = output_dir / (name + '.webp')
-        render_frames_to_webp(frames, durations, out_path)
+        # out_path = output_dir / (name + '.webp')
+        # render_frames_to_webp(frames, durations, out_path)
 
         print(f'wrote {out_path.absolute()}')
         return
@@ -688,11 +692,11 @@ def process_script_module(module_name, start_event_id=None, out_name=None, rende
 if __name__ == '__main__':
     # process_plain_text_directory()  # Render plaintext in /input
 
-    # process_script_module('black_tangent')  # Render formatted .py in /input
+    process_script_module('black_tangent')  # Render formatted .py in /input
     # process_script_module('black_tangent', start_event_id='boot-final-obi')  # Render whole thing starting from event
-    process_script_module('black_tangent', render_all_events=True)  # Render all events discretely
+    # process_script_module('black_tangent', render_all_events=True)  # Render all events discretely
 
     # process_script_module('dead_channel', start_event_id='3')  # only render the last repeat so that it loops nicely
 
     # process_script_module('babel_contingency')
-    process_script_module('babel_contingency', render_all_events=True)
+    # process_script_module('babel_contingency', render_all_events=True)
