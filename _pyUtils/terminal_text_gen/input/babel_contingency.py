@@ -1,3 +1,28 @@
+CONFIG = {
+    'WIDTH': 320,
+    'HEIGHT': 240,
+    'BG_COLOR': (0, 0, 0),
+    'START_FRAME_DELAY_MS': 960,
+    'DELAY_PROMPT_MS': 600,
+    'SEGMENT_DELAY_MS': 480,
+    'DELAY_NEWLINE_MS': 960,
+    'DELAY_FINAL_MS': 7200,
+    'CURSOR_CHAR': '|',
+    'CURSOR_BLINK_DELAY_MS': 360,
+    'PADDING_X': 6,
+    'PADDING_Y': 6,
+    'START_FROM_BOTTOM': False,  # False = start at top, True = start at bottom and "push up"
+    'TRANSPARENT_BG': False,     # True = fully transparent background in GIF
+    'PROMPT_FG': (160, 160, 160),
+    'TEXT_FG': (160, 160, 160),
+    'CHAR_SPACING': 1,
+    'LINE_SPACING': 1,
+}
+START_EVENT_ID = None      # Change to e.g. 3 to start from event ID 3
+RENDER_ALL_EVENTS = False  # Set True to render one file per event
+OUTPUT_FORMAT = 'webp'     # webp or gif
+OUTPUT_NAME = 'babel_contingency'
+
 events = [
   {
     'id': '1',
