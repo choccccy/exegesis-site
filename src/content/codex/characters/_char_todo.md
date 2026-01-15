@@ -97,14 +97,14 @@
 
 ---
 
-## ncho's team
-Lead: gruff no nonsense slavic wolf lady
+## Amur Team
+Lead: gruff no nonsense siberian wolf lady
 Assistant Lead: her quiet but competent american southern husband, just a big stocky 8ft tall dude
 Logistics/pilot: Nchọ & Obi
 SO: punkass spider they/them AI, mischeivous because spiders must be mischeivous them's the rulez
 CO: bookish swedish twink, really into music
 
-## V3N's team
+## V3N's Team
 Lead: militaristic leader
 Medic: hypercompetent surgeon type, enjoys nicknames
 logistics/pilot: V3N
