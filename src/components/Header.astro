@@ -1,28 +1,36 @@
 ---
-import { SITE_TITLE } from '../consts';
-import HeaderLink from './HeaderLink.astro';
+import { SITE_TITLE } from "../consts";
+import HeaderLink from "./HeaderLink.astro";
 
-import { Image } from 'astro:assets';
+import { Image } from "astro:assets";
 // import TextLogo from "/exegesis_textlogo.svg";
-import TextLogo from '../assets/exegesis_textlogo.svg';
+import TextLogo from "../assets/exegesis_textlogo.svg";
 ---
 
 <header>
   <nav>
     <!-- <a href="/" class="logo-link"> -->
-      <Image
-        class="logo-img"
-        src={TextLogo}
-        title={SITE_TITLE}
-        alt="Exegesis text logo"
-      />
+    <Image
+      class="logo-img"
+      src={TextLogo}
+      title={SITE_TITLE}
+      alt="Exegesis text logo"
+    />
     <!-- </a> -->
     <div class="internal-links">
       <HeaderLink href="/">home</HeaderLink>
       <HeaderLink href="/entry">entries</HeaderLink>
-      <HeaderLink href="https://discord.gg/CAHWY2wKWu" target="_blank">discord</HeaderLink>
+      <HeaderLink href="https://discord.gg/CAHWY2wKWu" target="_blank">
+        discord
+      </HeaderLink>
       <!-- <HeaderLink href="/codex">codex</HeaderLink> -->
       <!-- <HeaderLink href="/about">About</HeaderLink> -->
+      <HeaderLink
+        href="https://github.com/choccccy/exegesis_social_VR"
+        target="_blank"
+      >
+        VR<br />avatars
+      </HeaderLink>
     </div>
     <!-- <div class="social-links">
       <a href="https://discord.gg/CAHWY2wKWu" target="_blank">
@@ -67,6 +75,8 @@ import TextLogo from '../assets/exegesis_textlogo.svg';
   .internal-links a {
     display: flex;
     align-items: center;
+    justify-content: center;
+    text-align: center;
     height: 100%;
     border-bottom: 4px solid transparent;
     text-decoration: none;
@@ -81,7 +91,12 @@ import TextLogo from '../assets/exegesis_textlogo.svg';
     display: flex;
     align-items: center;
     justify-content: center;
-    clip-path: polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%);  /* diamond with four points at mid-top/right/bottom/left */
+    clip-path: polygon(
+      50% 0%,
+      100% 50%,
+      50% 100%,
+      0% 50%
+    ); /* diamond with four points at mid-top/right/bottom/left */
     background: currentColor;
   }
   .diamond-icon svg {
@@ -105,13 +120,62 @@ import TextLogo from '../assets/exegesis_textlogo.svg';
     align-items: center;
     justify-content: space-between;
     position: relative;
+    /* transition: all 0.3s ease; Removed to avoid jitter during resize */
   }
+
+  /* Dynamic stacking styles */
+  header.is-stacked nav {
+    flex-direction: column;
+    height: auto;
+    gap: 1rem;
+    padding-bottom: 0; /* Remove padding so tabs can hit the bottom */
+    align-items: center; /* Ensure centered alignment in column mode */
+  }
+
+  header.is-stacked .internal-links {
+    position: static;
+    transform: none;
+    flex-wrap: wrap;
+    justify-content: center;
+    width: 100%; /* Ensure full width for centering */
+    display: flex;
+    height: auto; /* Allow container to grow if wrapped */
+  }
+
+  header.is-stacked .logo-img {
+    width: 65vw;
+    max-width: 400px;
+    height: auto;
+    margin-bottom: 1rem;
+  }
+
+  /* Specific fix for active tab indicator in stacked mode */
+  header.is-stacked nav a {
+    height: 3.5em; /* Force a fixed height to create the "square" box feel */
+    display: flex;
+    align-items: center;
+    padding: 0 1em; /* Horizontal padding only */
+    border-bottom: 4px solid transparent; /* Ensure border is at the bottom of this fixed height */
+    box-sizing: border-box;
+  }
+
+  header.is-stacked nav a.active {
+    border-bottom-color: white;
+  }
+
   nav a {
-    padding: 1em 0.5em;
+    padding: 1em 0.5em; /* Restore padding for clickability */
     color: var(--black);
     border-bottom: 4px solid transparent;
     text-decoration: none;
+    /* Ensure height consistency for vertical centering */
+    height: 100%;
+    display: flex;
+    align-items: center;
+    line-height: 1.2; /* Tighten line height for the two-liner */
+    box-sizing: border-box; /* Ensure padding doesn't affect height calculation weirdly */
   }
+
   nav a.active {
     text-decoration: none;
     border-bottom-color: white;
@@ -125,14 +189,81 @@ import TextLogo from '../assets/exegesis_textlogo.svg';
       flex-direction: column;
       height: auto;
       gap: 1rem;
+      align-items: center;
+      padding-bottom: 0;
     }
     .internal-links {
       position: static;
       transform: none;
+      flex-wrap: wrap;
+      justify-content: center;
+      height: auto;
+      width: 100%;
     }
     .logo-img {
       width: 65vw;
+      max-width: 400px;
       height: auto;
+      margin-bottom: 1rem;
     }
   }
 </style>
+
+<script>
+  /**
+   * Performance-optimized header stacking detector.
+   * Uses ResizeObserver to detect when the logo and nav links are about to collide.
+   */
+  const header = document.querySelector("header");
+  const nav = header?.querySelector("nav");
+  const logo = nav?.querySelector(".logo-img");
+  const links = nav?.querySelector(".internal-links");
+
+  if (header && nav && logo && links) {
+    const checkOverlap = () => {
+      // Force non-stacked state temporarily to measure original dimensions
+      const wasStacked = header.classList.contains("is-stacked");
+      header.classList.remove("is-stacked");
+
+      const navRect = nav.getBoundingClientRect();
+      const logoRect = logo.getBoundingClientRect();
+      const linksRect = links.getBoundingClientRect();
+
+      // Calculate total required width with a small safety margin (20px)
+      // The links are centered via absolute pos usually, so we check if
+      // the space between logo and links is getting too small.
+
+      // Calculate the distance between the right edge of the logo and the left edge of the links
+      const logoRight = logoRect.right;
+      const linksLeft = linksRect.left;
+      const gap = linksLeft - logoRight;
+
+      // Also account for the links taking up space on the right side if they were centered
+      // BUT since the links are absolute positioned at 50%, they overlap if
+      // (navWidth / 2) - (linksWidth / 2) < logoWidth + margin
+
+      const threshold = logoRect.width + linksRect.width / 2 + 40; // 40px padding/margin
+      const availableHalfWidth = navRect.width / 2;
+
+      if (availableHalfWidth < threshold) {
+        header.classList.add("is-stacked");
+      } else if (wasStacked && availableHalfWidth >= threshold) {
+        // Keep it unstacked (already removed above)
+      } else if (wasStacked) {
+        // Restore if it was stacked and still needs to be
+        header.classList.add("is-stacked");
+      }
+    };
+
+    // Use ResizeObserver for efficient updates
+    const observer = new ResizeObserver(() => {
+      // Debounce slightly if needed, but ResizeObserver is already performant
+      requestAnimationFrame(checkOverlap);
+    });
+
+    observer.observe(nav);
+
+    // Initial check
+    checkOverlap();
+  }
+</script>
