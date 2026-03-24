@@ -1,6 +1,8 @@
 # Entries
 
-## intro
+## main
+
+### intro
 introduction to Exegesis
 - [x] 000 - Sensor Contact
 - [x] 001 - Orbital Insertion - Wide - initial worldbuilding/setting textpost
@@ -8,7 +10,7 @@ introduction to Exegesis
 - [ ] 003 - Contact Light - Narrow - intro to Dr. Lemaître
 - [ ] 004 - Situation Report - Narrow - Contact Light spinoff where V3N does whatever they're doing
 
-## Nysa's Wake gets microwaved
+### Nysa's Wake gets microwaved
 set the fuckin tone; this thing is way, way outside of our understanding, and could wipe the crew of Nysa's Wake incidentally
   - [x] 005 - Dead Channel - Wide - Nysa's Wake relays a "dead ship" SOS; it's being hit by massive, concentrated primion exitation beam from a specific spot on the Slumbering Empyrean
   - [ ] 006 - Babel Contingency - Narrow - Ncho and Obi crash the freighter after the primion beam knocks both of them out
@@ -27,6 +29,12 @@ After being teleported deep into the Slumbering Empyrean during Hasty Reconnaiss
 - [ ] 014 - {Title Title} - Wide - character montage over GUILTY LANDSCAPES
 - [ ] 015 - {Title Title} - Narrow - escape sequence to Light it Up, culminating in the final post-drop having all characters pushing heat limits
 - [ ] 016 - Clockwork Routines - Narrow - The Antikythera runs a self-diagnostic routine on Nysa's Wake and itself
+
+### Prelude from Nysa's Wake's departure
+A set of short stories from existing, established (human) characters' perspectives right after they're digitized. From getting to grips with their new bodies, to saying goodbye to their friends and families, ending with Nysa's Wake making its initial set of burns to leave the Sol system on a set of gravity slingshots.
+  - [ ] XXX - {Title Title} - Narrow - Ncho wakes up a "standard bipedal frame" and has to figure out how to use it
+  - [ ] XXX - {Title Title} - Narrow - Lemaitre says goodbye to her family and scientific community; she was a professor
+  - [ ] XXX - {Title Title} - Wide - Nysa's Wake makes its initial set of burns to leave the Sol system on a set of gravity slingshots
 
 ## Evil
 - [ ] 017 - Precision Bombardment - Narrow - Dr. Lemaître uses her many bodies to "attack" {character (probably Obi)}
