@@ -4,16 +4,17 @@ import NavButton from '../components/NavButton.astro'
 
 interface Props {
   currentEntry: string
+  currentStatus: string
   previousEntry?: string | null
   nextEntry?: string | null
 }
 
-const { currentEntry, previousEntry, nextEntry } = Astro.props
+const { currentEntry, currentStatus, previousEntry, nextEntry } = Astro.props
 
-const publishedEntries = await getCollection('entry', ({ data }) => data.published === true)
+const allEntries = await getCollection('entry')
 
-function isEntryPublished(entryTitle: string): boolean {
-  return publishedEntries.some(entry => entry.data.title === entryTitle)
+function getEntryStatus(entryTitle: string): string | undefined {
+  return allEntries.find(e => e.data.title === entryTitle)?.data.status
 }
 
 function titleToSlug(title: string): string {
@@ -23,14 +24,24 @@ function titleToSlug(title: string): string {
     .replace(/^-|-$/g, '')
 }
 
-const isPreviousPublished = previousEntry ? isEntryPublished(previousEntry) : false
-const isNextPublished = nextEntry ? isEntryPublished(nextEntry) : false
+const previousStatus = previousEntry ? getEntryStatus(previousEntry) : undefined
+const nextStatus = nextEntry ? getEntryStatus(nextEntry) : undefined
+
+// Previous link is active if the previous entry is published or in-progress (never draft)
+const isPreviousActive = previousStatus === 'published' || previousStatus === 'in-progress'
+
+// Next link is active if:
+//   - target is 'published' (always OK), OR
+//   - current is 'in-progress' or 'draft' AND target is 'in-progress' (flow continues within unpublished content)
+const isNextActive =
+  nextStatus === 'published' ||
+  ((currentStatus === 'in-progress' || currentStatus === 'draft') && nextStatus === 'in-progress')
 ---
 
 <nav class="entry-navigation" role="navigation" aria-label="Entry navigation">
   <div class="nav-group">
     {previousEntry ? (
-      isPreviousPublished ? (
+      isPreviousActive ? (
         <NavButton
           type="previous"
           href={`/entry/${titleToSlug(previousEntry)}/`}
@@ -60,7 +71,7 @@ const isNextPublished = nextEntry ? isEntryPublished(nextEntry) : false
     </NavButton>
 
     {nextEntry ? (
-      isNextPublished ? (
+      isNextActive ? (
         <NavButton
           type="next"
           href={`/entry/${titleToSlug(nextEntry)}/`}

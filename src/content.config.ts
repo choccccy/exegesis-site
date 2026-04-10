@@ -17,7 +17,7 @@ const entry = defineCollection({
     // Type-check frontmatter using a schema
     schema: ({ image }) =>
         z.object({
-            published: z.boolean(),
+            status: z.enum(['published', 'in-progress', 'draft']).default('draft'),
             entryNumber: z.number().int(),
             title: z.string(),
             showTitle: z.boolean().default(true),

@@ -11,7 +11,7 @@ import NavButton from '../components/NavButton.astro'
 
 type Props = CollectionEntry<'entry'>['data'];
 
-const { published, title, showTitle, description, previousEntry, nextEntry, heroImage, NSFW } = Astro.props;
+const { status, title, showTitle, description, previousEntry, nextEntry, heroImage, NSFW } = Astro.props;
 ---
 
 <html lang="en">
@@ -80,7 +80,7 @@ const { published, title, showTitle, description, previousEntry, nextEntry, hero
     </div>
     )}
 
-    {published == false && (<WarningBanner lines={[ 'this entry is unfinished! content is subject to change.' ]} />)}
+    {(status === 'in-progress' || status === 'draft') && (<WarningBanner lines={[ 'this entry is unfinished! content is subject to change.' ]} />)}
 
     <main>
       {!NSFW ? (
@@ -122,13 +122,14 @@ const { published, title, showTitle, description, previousEntry, nextEntry, hero
       )}
     </main>
 
-    {published == false && (
+    {(status === 'in-progress' || status === 'draft') && (
       <WarningBanner lines={['this entry is unfinished! content is subject to change.']} />
     )}
 
     <div id="entry-nav-wrapper" style={NSFW ? 'display:none;' : ''}>
       <EntryNavigation
         currentEntry={title}
+        currentStatus={status}
         previousEntry={previousEntry}
         nextEntry={nextEntry}
       />

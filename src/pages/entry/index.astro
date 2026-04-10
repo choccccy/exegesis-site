@@ -6,17 +6,18 @@ import FormattedDate from '../../components/FormattedDate.astro';
 import Header from '../../components/Header.astro';
 import { SITE_DESCRIPTION, SITE_TITLE } from '../../consts';
 
-const publishedEntries = (await getCollection('entry', ({ data }) => {
-  return data.published === true;
+// Fetch entries that should be visible: published + in-progress
+const activeEntries = (await getCollection('entry', ({ data }) => {
+  return data.status === 'published' || data.status === 'in-progress';
 })).sort(
   (a, b) => a.data.entryNumber - b.data.entryNumber,
 );
 
 const allEntries = [];
-if (publishedEntries.length > 0) {
-  const min = publishedEntries[0].data.entryNumber;
-  const max = publishedEntries[publishedEntries.length - 1].data.entryNumber;
-  const entryMap = new Map(publishedEntries.map(entry => [entry.data.entryNumber, entry]));
+if (activeEntries.length > 0) {
+  const min = activeEntries[0].data.entryNumber;
+  const max = activeEntries[activeEntries.length - 1].data.entryNumber;
+  const entryMap = new Map(activeEntries.map(entry => [entry.data.entryNumber, entry]));
 
   for (let i = min; i <= max; i++) {
     if (entryMap.has(i)) {
@@ -72,6 +73,41 @@ if (publishedEntries.length > 0) {
       ul li:first-child .entry-title {
         font-size: 2.369rem;
       } */
+      .entry-card {
+        display: block;
+        position: relative;
+      }
+      .entry-card img {
+        display: block;
+        width: 100%;
+      }
+      .entry-card .unfinished-banner {
+        position: absolute;
+        top: 66.66%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        width: 100%;
+        background: repeating-linear-gradient(
+          45deg,
+          black 0px,
+          black 20px,
+          yellow 20px,
+          yellow 40px
+        );
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        padding: 0.72em 0;
+        overflow: hidden;
+        z-index: 1;
+      }
+      .entry-card .unfinished-banner span {
+        background: black;
+        color: yellow;
+        padding: 0.1em 1em;
+        font-family: "tiny5", monospace;
+        text-transform: uppercase;
+      }
       ul li img {
         margin-bottom: 0.5rem;
       }
@@ -139,8 +175,13 @@ if (publishedEntries.length > 0) {
                     </h4>
                   </div>
                 ) : (
-                  <a href={`/entry/${entry.id}/`}>
+                  <a class="entry-card" href={`/entry/${entry.id}/`}>
                     {entry.data.heroImage && <img src={entry.data.heroImage.src} alt="" />}
+                    {entry.data.status === 'in-progress' && (
+                      <div class="unfinished-banner">
+                        <span>Unfinished</span>
+                      </div>
+                    )}
                     <h4 class="entry-title">
                       <span class="entry-number">{entry.data.entryNumber}.</span> {entry.data.title}
                     </h4>
