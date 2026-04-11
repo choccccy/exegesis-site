@@ -1,5 +1,6 @@
 ---
-const { lines = [] } = Astro.props;
+const { lines = [], variant = 'warning' } = Astro.props;
+const gradientClass = variant === 'nsfw' ? 'nsfw-banner' : '';
 ---
 
 <style>
@@ -17,6 +18,9 @@ const { lines = [] } = Astro.props;
     margin-bottom: 1em;
     overflow: hidden;
   }
+  .unfinished-warning.nsfw-banner {
+    background: var(--nsfw-gradient);
+  }
   .unfinished-warning-text {
     background: black;
     color: yellow;
@@ -24,6 +28,9 @@ const { lines = [] } = Astro.props;
     font-family: var(--font-tiny5);
     text-transform: uppercase;
     z-index: 1;
+  }
+  .unfinished-warning.nsfw-banner .unfinished-warning-text {
+    color: #cc7a00;
   }
   @media (max-width: 840px) {
     .unfinished-warning-text {
@@ -33,7 +40,7 @@ const { lines = [] } = Astro.props;
   }
 </style>
 
-<div class='unfinished-warning'>
+<div class:list={['unfinished-warning', gradientClass]}>
   <span class='unfinished-warning-text'>
     {lines.map((line: string, idx: number) => (
       <>

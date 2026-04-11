@@ -70,6 +70,7 @@ const { published, title, showTitle, description, previousEntry, nextEntry, hero
         <>
           <div id="nsfw-warning">
             <WarningBanner
+              variant="nsfw"
               lines={[
                 'This section contains mature, NSFW themes for adults.',
                 'Would you like to continue to read this entry, or skip this section?'
@@ -78,7 +79,6 @@ const { published, title, showTitle, description, previousEntry, nextEntry, hero
             <div id="nsfw-actions">
               <NavButton
                 id="nsfw-confirm-btn"
-                type="default"
                 type="warning"
                 ariaLabel="Confirm viewing NSFW content"
               >
