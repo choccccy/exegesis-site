@@ -105,10 +105,6 @@ p {
   margin-top: var(--paragraph-margin);
   margin-bottom: var(--paragraph-margin);
 }
-/* .prose p {
-  margin-top: var(--paragraph-margin);
-  margin-bottom: var(--paragraph-margin);
-} */
 textarea {
   width: 100%;
   font-size: 16px;
@@ -122,16 +118,13 @@ table {
 img {
   width: 100%;
   height: auto;
-  /* box-sizing: content-box; */
   outline: 1px solid white;
-  /* border-top: 1px solid white;
-  border-bottom: 1px solid white; */
 
   /* Use both for browser compatibility */
   image-rendering: -webkit-optimize-contrast; /* Chrome/Safari */
   image-rendering: crisp-edges; /* Firefox */
   image-rendering: pixelated; /* Chrome (preferred) */
-  
+
   /* Prevent smooth scaling */
   image-rendering: -moz-crisp-edges; /* Firefox fallback */
 }

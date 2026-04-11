@@ -1,6 +1,5 @@
 ---
 import BaseHead from '../components/BaseHead.astro';
-import Footer from '../components/Footer.astro';
 import Header from '../components/Header.astro';
 
 type Props = {
@@ -18,15 +17,7 @@ const { title, description, heroImage } = Astro.props;
     <style>
       main {
         max-width: 100%;
-        /* margin-top: 2vh; */
       }
-      /* .prose {
-        width: 720px;
-        max-width: calc(100% - 2em);
-        margin: auto;
-        padding: 1em;
-        color: rgb(var(--gray-light));
-      } */
       .prose p {
         margin-bottom: 1em;
       }
@@ -52,17 +43,11 @@ const { title, description, heroImage } = Astro.props;
 
     <Header />
 
-    <!-- <div class="title">
-        <h1>{title}</h1>
-    </div> -->
-
     <main>
         <div class="prose">
           <slot />
         </div>
     </main>
-
-    <!-- <Footer /> -->
 
   </body>
 </html>

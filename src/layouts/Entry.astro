@@ -99,7 +99,6 @@ const { status, title, showTitle, description, previousEntry, nextEntry, heroIma
             <div id="nsfw-actions">
               <NavButton
                 id="nsfw-confirm-btn"
-                type="default"
                 type="warning"
                 ariaLabel="Confirm viewing NSFW content"
               >
@@ -138,27 +137,31 @@ const { status, title, showTitle, description, previousEntry, nextEntry, heroIma
 </html>
 
 <script is:inline>
-  const warning = document.querySelector('#nsfw-warning')
-  const content = document.querySelector('#entry-content')
-  const navWrapper = document.querySelector('#entry-nav-wrapper')
-  const confirmed = localStorage.getItem('nsfwConfirmed')
+  try {
+    const warning = document.querySelector('#nsfw-warning')
+    const content = document.querySelector('#entry-content')
+    const navWrapper = document.querySelector('#entry-nav-wrapper')
+    const confirmed = localStorage.getItem('nsfwConfirmed')
 
-  if (confirmed === 'true') {
-    content.style.display = ''
-    warning.style.display = 'none'
-    navWrapper.style.display = ''
+    if (confirmed === 'true') {
+      content.style.display = ''
+      warning.style.display = 'none'
+      navWrapper.style.display = ''
+    }
+
+    document.querySelector('#nsfw-confirm-btn')?.addEventListener('click', () => {
+      localStorage.setItem('nsfwConfirmed', 'true')
+      content.style.display = ''
+      warning.style.display = 'none'
+      navWrapper.style.display = ''
+    })
+
+    document.querySelector('#nsfw-skip-btn')?.addEventListener('click', () => {
+      warning.style.display = 'none'
+      navWrapper.style.display = ''
+      window.scrollTo({ top: 0, behavior: 'smooth' })
+    })
+  } catch (e) {
+    // localStorage may be unavailable in privacy-mode browsers
   }
-
-  document.querySelector('#nsfw-confirm-btn')?.addEventListener('click', () => {
-    localStorage.setItem('nsfwConfirmed', 'true')
-    content.style.display = ''
-    warning.style.display = 'none'
-    navWrapper.style.display = ''
-  })
-
-  document.querySelector('#nsfw-skip-btn')?.addEventListener('click', () => {
-    warning.style.display = 'none'
-    navWrapper.style.display = ''
-    window.scrollTo({ top: 0, behavior: 'smooth' })
-  })
 </script>
