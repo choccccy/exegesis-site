@@ -1,15 +1,20 @@
 ---
 import { getCollection } from 'astro:content'
+import { ARCS } from '../consts';
 import NavButton from '../components/NavButton.astro'
 
 interface Props {
   currentEntry: string
   currentStatus: string
+  arc: string
   previousEntry?: string | null
   nextEntry?: string | null
 }
 
-const { currentEntry, currentStatus, previousEntry, nextEntry } = Astro.props
+const { currentEntry, currentStatus, arc, previousEntry, nextEntry } = Astro.props
+
+const arcInfo = ARCS[arc] ?? { name: arc, color: '#808080' };
+const arcHash = arc || '';
 
 const allEntries = await getCollection('entry')
 
@@ -98,9 +103,36 @@ const isNextActive =
   </div>
 </nav>
 
+<div class="arc-label-wrapper">
+  <a class="arc-label" href={`/entry/#${arcHash}`} style={`color: ${arcInfo.color};`}>{arcInfo.name}</a>
+</div>
+
 <style>
   .entry-navigation {
-    margin: 1.5em 0 10vh 0;
+    margin: 1.5em 0 0 0;
+  }
+
+  .arc-label-wrapper {
+    text-align: center;
+    margin: 0 0 10vh 0;
+  }
+
+  .arc-label {
+    display: inline-block;
+    padding: 0.3em 0.75em;
+    font-family: var(--font-tiny5);
+    font-size: 1.1rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    background: black;
+    text-decoration: none;
+    border: none;
+  }
+  .arc-label:hover,
+  .arc-label:active,
+  .arc-label:visited {
+    text-decoration: none;
+    border: none;
   }
 
   .nav-group {

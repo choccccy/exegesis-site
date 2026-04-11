@@ -9,7 +9,7 @@ import NavButton from '../components/NavButton.astro';
 
 type Props = CollectionEntry<'entry'>['data'];
 
-const { status, title, showTitle, description, previousEntry, nextEntry, heroImage, NSFW } = Astro.props;
+const { status, arc, title, showTitle, description, previousEntry, nextEntry, heroImage, NSFW } = Astro.props;
 ---
 
 <html lang="en">
@@ -109,6 +109,7 @@ const { status, title, showTitle, description, previousEntry, nextEntry, heroIma
       <EntryNavigation
         currentEntry={title}
         currentStatus={status}
+        arc={arc}
         previousEntry={previousEntry}
         nextEntry={nextEntry}
       />

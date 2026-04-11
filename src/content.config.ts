@@ -18,6 +18,7 @@ const entry = defineCollection({
     schema: ({ image }) =>
         z.object({
             status: z.enum(['published', 'in-progress', 'draft']).default('draft'),
+            arc: z.string().default('uncategorized'),
             entryNumber: z.number().int(),
             title: z.string(),
             showTitle: z.boolean().default(true),

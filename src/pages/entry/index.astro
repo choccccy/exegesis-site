@@ -2,7 +2,7 @@
 import { getCollection } from 'astro:content';
 import BaseHead from '../../components/BaseHead.astro';
 import Header from '../../components/Header.astro';
-import { SITE_DESCRIPTION, SITE_TITLE } from '../../consts';
+import { SITE_DESCRIPTION, SITE_TITLE, ARCS } from '../../consts';
 
 // Fetch entries that should be visible: published + in-progress
 const activeEntries = (await getCollection('entry', ({ data }) => {
@@ -11,27 +11,36 @@ const activeEntries = (await getCollection('entry', ({ data }) => {
   (a, b) => a.data.entryNumber - b.data.entryNumber,
 );
 
-const allEntries = [];
-if (activeEntries.length > 0) {
-  const min = activeEntries[0].data.entryNumber;
-  const max = activeEntries[activeEntries.length - 1].data.entryNumber;
-  const entryMap = new Map(activeEntries.map(entry => [entry.data.entryNumber, entry]));
+// Group entries by arc, sorted by arc order
+const entriesByArc = new Map<string, typeof activeEntries>();
+for (const entry of activeEntries) {
+  const arc = entry.data.arc || 'uncategorized';
+  if (!entriesByArc.has(arc)) entriesByArc.set(arc, []);
+  entriesByArc.get(arc)!.push(entry);
+}
 
+// Get arcs in order, only those that have entries
+const activeArcs = [...entriesByArc.keys()]
+  .sort((a, b) => (ARCS[a]?.order ?? 99) - (ARCS[b]?.order ?? 99));
+
+// Fill placeholders: for each arc, fill gaps between min/max entry numbers
+function buildArcEntries(entries: typeof activeEntries) {
+  const result: Array<typeof activeEntries[number] | { isPlaceholder: true; data: { entryNumber: number; title: string } }> = [];
+  if (entries.length === 0) return result;
+  const min = entries[0].data.entryNumber;
+  const max = entries[entries.length - 1].data.entryNumber;
+  const entryMap = new Map(entries.map(e => [e.data.entryNumber, e]));
   for (let i = min; i <= max; i++) {
     if (entryMap.has(i)) {
-      allEntries.push(entryMap.get(i));
+      result.push(entryMap.get(i)!);
     } else {
-      allEntries.push({
+      result.push({
         isPlaceholder: true,
         data: { entryNumber: i, title: 'in-progress' },
       });
     }
   }
-  // Add one more "in-progress" entry at the end. Remove if Exegesis is ever "finished"
-  allEntries.push({
-    isPlaceholder: true,
-    data: { entryNumber: max + 1, title: 'in-progress' },
-  });
+  return result;
 }
 ---
 
@@ -43,7 +52,36 @@ if (activeEntries.length > 0) {
       main {
         width: 960px;
         margin-bottom: 10vh;
-        /* background: #00000000; */
+      }
+      .arc-section {
+        margin-bottom: 2rem;
+      }
+      .arc-section:first-child {
+        margin-top: 2rem;
+      }
+      .arc-header {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        margin-bottom: 1rem;
+      }
+      .arc-header h3 {
+        margin: 0;
+        font-family: var(--font-tiny5);
+        font-size: 1.25rem;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        white-space: nowrap;
+      }
+      .arc-header h3 a {
+        color: inherit;
+        text-decoration: none;
+      }
+      .arc-header-line {
+        flex: 1;
+        height: 2px;
+        background: currentColor;
+        opacity: 0.5;
       }
       ul {
         display: flex;
@@ -131,41 +169,52 @@ if (activeEntries.length > 0) {
   </head>
   <body>
     <div class="bg-grid"></div>
-    
+
     <Header />
-    
+
     <main>
-      <section>
-        <ul>
-          {
-            allEntries.map((entry) => (
-              <li>
-                {entry.isPlaceholder ? (
-                  <div class="placeholder-wrapper">
-                    <div class="placeholder-image"></div>
-                    <h4 class="entry-title">
-                      <span class="entry-number">{entry.data.entryNumber}.</span> {entry.data.title}
-                    </h4>
-                  </div>
-                ) : (
-                  <a class="entry-card" href={`/entry/${entry.id}/`}>
-                    {entry.data.heroImage && <img src={entry.data.heroImage.src} alt="" />}
-                    {entry.data.status === 'in-progress' && (
-                      <div class="unfinished-banner">
-                        <span>Unfinished</span>
-                      </div>
-                    )}
-                    <h4 class="entry-title">
-                      <span class="entry-number">{entry.data.entryNumber}.</span> {entry.data.title}
-                    </h4>
-                  </a>
-                )}
-              </li>
-            ))
-          }
-        </ul>
-      </section>
+      {activeArcs.map((arc) => {
+        const arcInfo = ARCS[arc] ?? { name: arc, color: '#808080' };
+        const arcEntries = buildArcEntries(entriesByArc.get(arc)!);
+        return (
+          <div class="arc-section" id={arc}>
+            <div class="arc-header" style={`color: ${arcInfo.color};`}>
+              <div class="arc-header-line"></div>
+              <h3><a href={`#${arc}`}>{arcInfo.name}</a></h3>
+              <div class="arc-header-line"></div>
+            </div>
+            <ul>
+              {arcEntries.map((entry) => (
+                <li>
+                  {'isPlaceholder' in entry ? (
+                    <div class="placeholder-wrapper">
+                      <div class="placeholder-image"></div>
+                      <h4 class="entry-title">
+                        <span class="entry-number">{entry.data.entryNumber}.</span> {entry.data.title}
+                      </h4>
+                    </div>
+                  ) : (
+                    <a
+                      class="entry-card"
+                      href={`/entry/${entry.id}/`}
+                    >
+                      {entry.data.heroImage && <img src={entry.data.heroImage.src} alt="" />}
+                      {entry.data.status === 'in-progress' && (
+                        <div class="unfinished-banner">
+                          <span>Unfinished</span>
+                        </div>
+                      )}
+                      <h4 class="entry-title">
+                        <span class="entry-number">{entry.data.entryNumber}.</span> {entry.data.title}
+                      </h4>
+                    </a>
+                  )}
+                </li>
+              ))}
+            </ul>
+          </div>
+        );
+      })}
     </main>
-    <!-- <Footer /> -->
   </body>
 </html>
