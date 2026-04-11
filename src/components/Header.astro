@@ -35,11 +35,11 @@ import TextLogo from "../assets/exegesis_textlogo.svg";
     margin: 0;
     padding: 5vh 5vw 0 5vw;
     color: white;
-    background: #00000000;
+    background: transparent;
     box-shadow: 0 2px 8px rgba(var(--black), 5%);
   }
   .logo-img {
-    outline: 0px;
+    outline: 0;
     height: 80%;
     width: auto;
     display: block;
@@ -55,26 +55,23 @@ import TextLogo from "../assets/exegesis_textlogo.svg";
     gap: 1em;
     background-color: black;
   }
-  .internal-links a {
+  nav a {
+    padding: 1em 0.5em;
+    color: white;
+    border-bottom: 4px solid transparent;
+    text-decoration: none;
+    height: 100%;
     display: flex;
     align-items: center;
     justify-content: center;
     text-align: center;
-    height: 100%;
-    border-bottom: 4px solid transparent;
-    text-decoration: none;
+    font-family: var(--font-tiny5);
+    line-height: 1.2;
     transition: border-color 0.2s;
+    box-sizing: border-box;
   }
-  .internal-links a.active {
+  nav a.active {
     border-bottom-color: white;
-  }
-  h2 {
-    margin: 0;
-    font-size: 1em;
-  }
-  h2 a,
-  h2 a.active {
-    text-decoration: none;
   }
   nav {
     height: 10vh;
@@ -89,8 +86,8 @@ import TextLogo from "../assets/exegesis_textlogo.svg";
     flex-direction: column;
     height: auto;
     gap: 1rem;
-    padding-bottom: 0; /* Remove padding so tabs can hit the bottom */
-    align-items: center; /* Ensure centered alignment in column mode */
+    padding-bottom: 0;
+    align-items: center;
   }
 
   header.is-stacked .internal-links {
@@ -98,9 +95,9 @@ import TextLogo from "../assets/exegesis_textlogo.svg";
     transform: none;
     flex-wrap: wrap;
     justify-content: center;
-    width: 100%; /* Ensure full width for centering */
+    width: 100%;
     display: flex;
-    height: auto; /* Allow container to grow if wrapped */
+    height: auto;
   }
 
   header.is-stacked .logo-img {
@@ -110,37 +107,12 @@ import TextLogo from "../assets/exegesis_textlogo.svg";
     margin-bottom: 1rem;
   }
 
-  /* Specific fix for active tab indicator in stacked mode */
   header.is-stacked nav a {
-    height: 3.5em; /* Force a fixed height to create the "square" box feel */
-    display: flex;
-    align-items: center;
-    padding: 0 1em; /* Horizontal padding only */
-    border-bottom: 4px solid transparent; /* Ensure border is at the bottom of this fixed height */
+    height: 3.5em;
+    padding: 0 1em;
     box-sizing: border-box;
   }
 
-  header.is-stacked nav a.active {
-    border-bottom-color: white;
-  }
-
-  nav a {
-    padding: 1em 0.5em; /* Restore padding for clickability */
-    color: var(--black);
-    border-bottom: 4px solid transparent;
-    text-decoration: none;
-    /* Ensure height consistency for vertical centering */
-    height: 100%;
-    display: flex;
-    align-items: center;
-    line-height: 1.2; /* Tighten line height for the two-liner */
-    box-sizing: border-box; /* Ensure padding doesn't affect height calculation weirdly */
-  }
-
-  nav a.active {
-    text-decoration: none;
-    border-bottom-color: white;
-  }
   @media (max-width: 840px) {
     nav {
       flex-direction: column;

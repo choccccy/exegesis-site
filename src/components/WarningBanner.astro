@@ -8,13 +8,7 @@ const { lines = [] } = Astro.props;
     margin-left: 50%;
     transform: translateX(-50%);
     position: relative;
-    background: repeating-linear-gradient(
-      45deg,
-      black 0px,
-      black 20px,
-      yellow 20px,
-      yellow 40px
-    );
+    background: var(--warning-gradient);
     display: flex;
     justify-content: center;
     align-items: center;
@@ -27,10 +21,9 @@ const { lines = [] } = Astro.props;
     background: black;
     color: yellow;
     padding: 0.1em 1em;
-    font-family: "tiny5", monospace;
+    font-family: var(--font-tiny5);
     text-transform: uppercase;
     z-index: 1;
-    /* font-weight: bold; */
   }
   @media (max-width: 840px) {
     .unfinished-warning-text {

@@ -2,12 +2,10 @@
 import { Image } from 'astro:assets';
 import type { CollectionEntry } from 'astro:content';
 import BaseHead from '../components/BaseHead.astro';
-import Footer from '../components/Footer.astro';
 import EntryNavigation from '../components/EntryNavigation.astro';
-import FormattedDate from '../components/FormattedDate.astro';
 import Header from '../components/Header.astro';
 import WarningBanner from '../components/WarningBanner.astro';
-import NavButton from '../components/NavButton.astro'
+import NavButton from '../components/NavButton.astro';
 
 type Props = CollectionEntry<'entry'>['data'];
 
@@ -16,34 +14,22 @@ const { status, title, showTitle, description, previousEntry, nextEntry, heroIma
 
 <html lang="en">
   <head>
-    <BaseHead title={title} description={description} image={heroImage}/>
+    <BaseHead title={title} description={description} image={heroImage} embedCard="summary_large_image"/>
     <style>
       main {
-        /* width: calc(100% - 2em); */
         max-width: 100%;
-        /* margin: 0; */
-      }
-      .hero-image {
-        width: 100%;
-      }
-      .hero-image img {
-        display: block;
-        /* margin: 0 0; */
-        /* border-radius: 12px; */
-        /* box-shadow: var(--box-shadow); */
       }
       .prose {
         width: 100%;
         margin: 0;
         padding: 0;
-        /* color: rgb(var(--gray-dark)); */
       }
       .title {
         margin-bottom: 0;
-        padding: 1em 1em 0.25em 1em;
+        padding: 1em;
         text-align: center;
         line-height: 1;
-        font-family: "tiny5";
+        font-family: var(--font-tiny5);
         background: black;
         width: fit-content;
         margin-left: auto;
@@ -51,13 +37,6 @@ const { status, title, showTitle, description, previousEntry, nextEntry, heroIma
       }
       .title h1 {
         margin: 0;
-      }
-      .date {
-        margin-bottom: 0.5em;
-        color: rgb(var(--gray));
-      }
-      .last-updated-on {
-        font-style: italic;
       }
       #nsfw-actions {
         display: flex;

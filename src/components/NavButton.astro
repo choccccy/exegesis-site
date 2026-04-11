@@ -39,11 +39,11 @@ const typeClasses = (Array.isArray(type) ? type : [type]).map(t => `nav-button--
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    padding: 0.75rem 1.25rem;
+    padding: 0.75rem 1.5rem;
     background: white;
     color: black;
     text-decoration: none;
-    font-family: 'tiny5', monospace;
+    font-family: var(--font-tiny5);
     font-size: 2rem;
     cursor: pointer;
     transition: all 0.2s ease;
@@ -59,8 +59,7 @@ const typeClasses = (Array.isArray(type) ? type : [type]).map(t => `nav-button--
     background: white;
     color: black;
     border: 2px solid black;
-    border-radius: 0; /* square edges */
-    padding: 0.75rem 1.5rem;
+    border-radius: 0;
   }
 
   .nav-button--previous {
@@ -107,24 +106,18 @@ const typeClasses = (Array.isArray(type) ? type : [type]).map(t => `nav-button--
   }
 
   .nav-button--warning {
-    background: repeating-linear-gradient(
-      45deg,
-      black 0px,
-      black 20px,
-      yellow 20px,
-      yellow 40px
-    );
+    background: var(--warning-gradient);
     color: black;
     border: 2px solid black;
     border-radius: 0;
-    padding: 0.75rem 1.5rem; /* match default */
+    padding: 0.75rem 1.5rem;
     box-sizing: border-box;
   }
 
   .nav-button--warning .nav-text {
     background: black;
     color: yellow;
-    padding: 0 0.3em; /* much smaller, just enough for box effect */
+    padding: 0 0.3em;
     display: inline-block;
     line-height: 1.2;
     border-radius: 0;
@@ -136,7 +129,6 @@ const typeClasses = (Array.isArray(type) ? type : [type]).map(t => `nav-button--
     .nav-button--current,
     .nav-button--default {
       width: 80%;
-      /* clip-path: none; */
       padding: 0.75rem 1.25rem;
     }
     .nav-button--placeholder {

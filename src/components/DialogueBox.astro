@@ -61,28 +61,27 @@ const border = darken(baseColor, borderDarken);
     vertical-align: baseline;
     padding: 0.3em 0.4em;
     margin-right: 0.4em;
-    border-left: 4px solid;
     word-break: break-word;
     white-space: normal;
     line-height: 1.5;
   }
 
   .db:not(p .db) {
-    display: block !important;
+    display: block;
     margin-top: var(--paragraph-margin);
     margin-bottom: var(--paragraph-margin);
     width: fit-content;
-    max-width: 92%;
-    margin-left: 4%;  /* (100% - 92%) / 2 = 4% */
+    max-width: var(--prose-width);
+    margin-left: var(--prose-indent);
     margin-right: auto;
   }
 
-  p .db {  /* Ensure inline dialogue boxes stay inline */
-    display: inline !important;
+  p .db {
+    display: inline;
     margin-bottom: 0;
   }
 
-  .db code + code {  /* Code gapping */
+  .db code + code {
     margin-left: 1.5em;
   }
 </style>

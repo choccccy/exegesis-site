@@ -74,13 +74,7 @@ if (activeEntries.length > 0) {
         left: 50%;
         transform: translate(-50%, -50%);
         width: 100%;
-        background: repeating-linear-gradient(
-          45deg,
-          black 0px,
-          black 20px,
-          yellow 20px,
-          yellow 40px
-        );
+        background: var(--warning-gradient);
         display: flex;
         justify-content: center;
         align-items: center;
@@ -92,7 +86,7 @@ if (activeEntries.length > 0) {
         background: black;
         color: yellow;
         padding: 0.1em 1em;
-        font-family: "tiny5", monospace;
+        font-family: var(--font-tiny5);
         text-transform: uppercase;
       }
       ul li img {
@@ -101,25 +95,17 @@ if (activeEntries.length > 0) {
       ul li a {
         display: block;
       }
-      .title {
-        margin: 0;
-        color: white;
-        line-height: 1;
-      }
-      .date {
-        margin: 0;
-        color: rgb(var(--gray));
-      }
       .entry-number {
         color: rgb(var(--gray));
       }
       .entry-title {
         color: white;
-        font-family: "tiny5";
+        font-family: var(--font-tiny5);
         text-align: center;
+        margin: 0;
+        line-height: 1;
       }
       .placeholder-wrapper {
-        /* To make it look like other entries but not clickable */
         display: block;
       }
       .placeholder-image {
