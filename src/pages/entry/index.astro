@@ -11,6 +11,12 @@ const activeEntries = (await getCollection('entry', ({ data }) => {
   (a, b) => a.data.entryNumber - b.data.entryNumber,
 );
 
+// Also fetch draft entry numbers so they appear as placeholders
+const allEntries = await getCollection('entry');
+const draftNumbers = allEntries
+  .filter(e => e.data.status === 'draft')
+  .map(e => e.data.entryNumber);
+
 // Group entries by arc, sorted by arc order
 const entriesByArc = new Map<string, typeof activeEntries>();
 for (const entry of activeEntries) {
@@ -23,22 +29,46 @@ for (const entry of activeEntries) {
 const activeArcs = [...entriesByArc.keys()]
   .sort((a, b) => (ARCS[a]?.order ?? 99) - (ARCS[b]?.order ?? 99));
 
-// Fill placeholders: for each arc, fill gaps between min/max entry numbers
-function buildArcEntries(entries: typeof activeEntries) {
+// Fill entries for an arc: show published/in-progress entries,
+// plus placeholders for any draft entries that belong to this arc
+function buildArcEntries(entries: typeof activeEntries, arcName: string, isLastArc: boolean) {
   const result: Array<typeof activeEntries[number] | { isPlaceholder: true; data: { entryNumber: number; title: string } }> = [];
   if (entries.length === 0) return result;
-  const min = entries[0].data.entryNumber;
-  const max = entries[entries.length - 1].data.entryNumber;
-  const entryMap = new Map(entries.map(e => [e.data.entryNumber, e]));
-  for (let i = min; i <= max; i++) {
-    if (entryMap.has(i)) {
-      result.push(entryMap.get(i)!);
+
+  // Sort active entries by entryNumber
+  const sorted = [...entries].sort((a, b) => a.data.entryNumber - b.data.entryNumber);
+
+  // Find draft entry numbers that belong to this arc
+  const arcDrafts = allEntries
+    .filter(e => e.data.status === 'draft' && (e.data.arc === arcName || (!e.data.arc && arcName === 'uncategorized')))
+    .map(e => e.data.entryNumber)
+    .sort((a, b) => a - b);
+
+  // Merge active entries and draft placeholders in order
+  let activeIdx = 0;
+  let draftIdx = 0;
+  while (activeIdx < sorted.length || draftIdx < arcDrafts.length) {
+    const activeNum = activeIdx < sorted.length ? sorted[activeIdx].data.entryNumber : Infinity;
+    const draftNum = draftIdx < arcDrafts.length ? arcDrafts[draftIdx] : Infinity;
+
+    if (activeNum < draftNum) {
+      result.push(sorted[activeIdx++]);
     } else {
       result.push({
         isPlaceholder: true,
-        data: { entryNumber: i, title: 'in-progress' },
+        data: { entryNumber: draftNum, title: 'in-progress' },
       });
+      draftIdx++;
     }
+  }
+
+  // One trailing placeholder on the last arc only
+  if (isLastArc) {
+    const maxNum = result.length > 0 ? result[result.length - 1].data.entryNumber : 0;
+    result.push({
+      isPlaceholder: true,
+      data: { entryNumber: maxNum + 1, title: 'in-progress' },
+    });
   }
   return result;
 }
@@ -173,9 +203,10 @@ function buildArcEntries(entries: typeof activeEntries) {
     <Header />
 
     <main>
-      {activeArcs.map((arc) => {
+      {activeArcs.map((arc, idx) => {
         const arcInfo = ARCS[arc] ?? { name: arc, color: '#808080' };
-        const arcEntries = buildArcEntries(entriesByArc.get(arc)!);
+        const isLastArc = idx === activeArcs.length - 1;
+        const arcEntries = buildArcEntries(entriesByArc.get(arc)!, arc, isLastArc);
         return (
           <div class="arc-section" id={arc}>
             <div class="arc-header" style={`color: ${arcInfo.color};`}>
