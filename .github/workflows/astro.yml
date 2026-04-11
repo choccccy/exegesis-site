@@ -66,6 +66,9 @@ jobs:
       - name: Install dependencies
         run: ${{ steps.detect-package-manager.outputs.manager }} ${{ steps.detect-package-manager.outputs.command }}
         working-directory: ${{ env.BUILD_PATH }}
+      - name: Generate Astro types
+        run: ${{ steps.detect-package-manager.outputs.runner }} astro sync
+        working-directory: ${{ env.BUILD_PATH }}
       - name: Type check with TypeScript
         run: ${{ steps.detect-package-manager.outputs.runner }} tsc --noEmit
         working-directory: ${{ env.BUILD_PATH }}
