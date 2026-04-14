@@ -30,52 +30,73 @@ const { starCount = 800 } = Astro.props;
       this.y = Math.random() * this.height;
 
       // Spectral class determines both color and intrinsic brightness
-      // Real sky: hot stars are bright, cool dwarfs are very dim
+      // Naked-eye sky: most visible stars are distant white A/F types
+      // Warm colors are rare giants/supergiants among the brighter stars
       const spectralTypes = [
-        // O/B - blue-white, very bright, rare
-        { color: "#e0e8ff", brightness: 0.9 },
-        { color: "#d0d8ff", brightness: 0.85 },
-        { color: "#c8d0ff", brightness: 0.8 },
-        // A - white, bright
-        { color: "#ffffff", brightness: 1.0 },
-        { color: "#ffffff", brightness: 0.95 },
-        { color: "#ffffff", brightness: 0.9 },
-        { color: "#f8f8ff", brightness: 0.85 },
-        { color: "#ffffff", brightness: 0.9 },
-        // F - yellow-white, moderate
-        { color: "#fffff0", brightness: 0.75 },
-        { color: "#fff8e0", brightness: 0.7 },
-        { color: "#fff0d0", brightness: 0.65 },
-        { color: "#fffff0", brightness: 0.7 },
+        // O/B - blue-white, very bright, extremely rare
+        { color: "#d0d8ff", brightness: 0.95 },
+        { color: "#c8d0ff", brightness: 0.9 },
+        { color: "#e0e8ff", brightness: 0.85 },
+        // A - white, bright, rare
+        { color: "#ffffff", brightness: 0.8 },
+        { color: "#f0f0ff", brightness: 0.75 },
+        { color: "#e8e8ff", brightness: 0.7 },
+        // F - yellow-white, moderate-bright
+        { color: "#fff8f0", brightness: 0.65 },
+        { color: "#fff0e0", brightness: 0.6 },
+        { color: "#fffff0", brightness: 0.55 },
         // G - yellow, moderate
-        { color: "#ffe8b0", brightness: 0.6 },
-        { color: "#ffd880", brightness: 0.55 },
-        { color: "#ffe0a0", brightness: 0.5 },
-        // K - orange, dim
-        { color: "#ffb060", brightness: 0.3 },
-        { color: "#ffa040", brightness: 0.25 },
-        { color: "#ffc080", brightness: 0.35 },
-        // M - red, very dim
-        { color: "#ff6040", brightness: 0.15 },
-        { color: "#ff4020", brightness: 0.1 },
-        { color: "#ff8060", brightness: 0.2 },
+        { color: "#ffe8b0", brightness: 0.5 },
+        { color: "#ffe0a0", brightness: 0.45 },
+        // K giants - orange, dim-moderate (rare)
+        { color: "#ffb060", brightness: 0.35 },
+        { color: "#ffa040", brightness: 0.3 },
+        // M supergiants - red, dim (very rare)
+        { color: "#ff6040", brightness: 0.2 },
+        { color: "#ff4020", brightness: 0.15 },
+        // Dim background stars: grey-white (distant A/F/G types)
+        { color: "#ffffff", brightness: 0.25 },
+        { color: "#f8f8ff", brightness: 0.2 },
+        { color: "#f0f0f8", brightness: 0.15 },
+        { color: "#e8e8f0", brightness: 0.1 },
+        { color: "#e0e0e8", brightness: 0.08 },
+        { color: "#d8d8e0", brightness: 0.05 },
       ];
 
-      // Weighted random: heavily skewed toward dim cool stars (real sky distribution)
+      // Weighted: ~80% dim grey-white background, ~20% visible stars
+      // Dim white/grey: ~80%, visible O/B/A/F: ~10%, yellow G: ~4%, orange K: ~4%, red M: ~2%
       const weights = [
-        1, 1, 1,            // O/B: ~0.5% (extremely rare, very bright)
-        1, 1, 1, 1, 1,      // A:   ~2.5% (rare, bright)
-        2, 2, 2, 2,         // F:   ~4% (uncommon, moderate-bright)
-        5, 5, 5,            // G:   ~7.5% (moderate)
-        20, 20, 20,         // K:   ~30% (common, dim)
-        35, 35, 35,         // M:   ~52% (dominant, very dim)
+        1,
+        1,
+        1, // O/B: blue-white (bright)
+        3,
+        3,
+        3, // A: white (bright)
+        4,
+        4,
+        4, // F: yellow-white (moderate)
+        4,
+        4, // G: yellow (moderate)
+        3,
+        3, // K: orange (dim-moderate)
+        1,
+        1, // M: red (dim)
+        15,
+        15,
+        15,
+        15,
+        15,
+        15, // Dim white/grey background
       ];
       const totalWeight = weights.reduce((a, b) => a + b, 0);
       let rand = Math.random() * totalWeight;
       let typeIdx = 0;
       for (let i = 0; i < weights.length; i++) {
         rand -= weights[i];
-        if (rand <= 0) { typeIdx = i; break; }
+        if (rand <= 0) {
+          typeIdx = i;
+          break;
+        }
       }
 
       const spectralType = spectralTypes[typeIdx];
@@ -112,7 +133,7 @@ const { starCount = 800 } = Astro.props;
       ctx.fill();
 
       // Diffraction spikes on all stars (scaled by brightness, prominent)
-      const spikeAlpha = this.baseOpacity * 0.48;
+      const spikeAlpha = this.baseOpacity * 0.4;
       ctx.lineWidth = 1;
       const spikeLength = this.baseSize * 32;
 
