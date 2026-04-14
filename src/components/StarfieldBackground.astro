@@ -94,17 +94,16 @@ const { starCount = 800 } = Astro.props;
       this.baseSize = 1;
     }
 
-    update(mouseX, mouseY, canvasWidth, canvasHeight) {
-      // Parallax offset based on depth
-      const parallaxStrength = this.depth * 8;
-      const offsetX = (mouseX - 0.5) * parallaxStrength;
-      const offsetY = (mouseY - 0.5) * parallaxStrength;
-
+    update(canvasWidth, canvasHeight) {
       // Stars scroll with page content — move UP as you scroll DOWN
       const scrollOffset = window.scrollY;
 
-      this.drawX = this.x + offsetX;
-      this.drawY = this.y + offsetY - scrollOffset;
+      // Vertical parallax: deeper stars move slower than shallow ones
+      const parallaxStrength = this.depth * 3;
+      const parallaxY = scrollOffset * (1 - parallaxStrength / 20);
+
+      this.drawX = this.x;
+      this.drawY = this.y - parallaxY;
 
       // Seamless tiling via modulo — works at any scroll depth
       const margin = 10;
@@ -165,16 +164,11 @@ const { starCount = 800 } = Astro.props;
 
       this.ctx = this.canvas.getContext("2d");
       this.stars = [];
-      this.mouseX = 0.5;
-      this.mouseY = 0.5;
-      this.smoothMouseX = 0.5;
-      this.smoothMouseY = 0.5;
 
       this.resize();
       this.init();
 
       window.addEventListener("resize", () => this.resize());
-      window.addEventListener("mousemove", (e) => this.onMouseMove(e));
 
       this.animate();
     }
@@ -200,15 +194,7 @@ const { starCount = 800 } = Astro.props;
       }
     }
 
-    onMouseMove(e) {
-      this.mouseX = e.clientX / window.innerWidth;
-      this.mouseY = e.clientY / window.innerHeight;
-    }
-
     animate() {
-      this.smoothMouseX += (this.mouseX - this.smoothMouseX) * 0.03;
-      this.smoothMouseY += (this.mouseY - this.smoothMouseY) * 0.03;
-
       this.ctx.fillStyle = "#000000";
       this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
 
@@ -216,8 +202,6 @@ const { starCount = 800 } = Astro.props;
 
       this.stars.forEach((star) => {
         star.update(
-          this.smoothMouseX,
-          this.smoothMouseY,
           this.canvas.width,
           this.canvas.height,
         );
