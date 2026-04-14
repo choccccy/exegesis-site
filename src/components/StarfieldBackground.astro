@@ -89,16 +89,16 @@ const { starCount = 800 } = Astro.props;
       this.color = spectralType.color;
       this.baseOpacity = spectralType.brightness;
 
-      // Depth layer for parallax only (1-3, affects shift amount)
-      this.depth = Math.random() < 0.7 ? 1 : Math.random() < 0.85 ? 2 : 3;
+      // Depth: continuous 0-1 for unique parallax per star
+      this.depth = Math.random();
       this.baseSize = 1;
     }
 
     update(canvasWidth, canvasHeight) {
       const scrollOffset = window.scrollY;
 
-      // Vertical parallax: deeper stars move slower (depth 1: 0.95x, depth 2: 0.8x, depth 3: 0.6x)
-      const parallaxRatio = 1.1 - this.depth * 0.15;
+      // Vertical parallax: each star has its own speed (0.95x to 0.6x based on depth)
+      const parallaxRatio = 0.6 + this.depth * 0.35;
       const parallaxY = scrollOffset * parallaxRatio;
 
       this.drawX = this.x;
