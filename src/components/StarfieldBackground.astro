@@ -95,12 +95,11 @@ const { starCount = 800 } = Astro.props;
     }
 
     update(canvasWidth, canvasHeight) {
-      // Stars scroll with page content — move UP as you scroll DOWN
       const scrollOffset = window.scrollY;
 
-      // Vertical parallax: deeper stars move slower than shallow ones
-      const parallaxStrength = this.depth * 3;
-      const parallaxY = scrollOffset * (1 - parallaxStrength / 20);
+      // Vertical parallax: deeper stars move much slower (depth 1: 1x, depth 2: 0.6x, depth 3: 0.25x)
+      const parallaxRatio = 1 - this.depth * 0.35;
+      const parallaxY = scrollOffset * parallaxRatio;
 
       this.drawX = this.x;
       this.drawY = this.y - parallaxY;
@@ -114,11 +113,15 @@ const { starCount = 800 } = Astro.props;
     }
 
     draw(ctx) {
+      // Round to whole pixels to prevent anti-aliasing blur
+      const px = Math.round(this.drawX);
+      const py = Math.round(this.drawY);
+
       // All stars are single pixel, brightness varies
       ctx.globalAlpha = this.baseOpacity;
       ctx.fillStyle = this.color;
       ctx.beginPath();
-      ctx.arc(this.drawX, this.drawY, 1, 0, Math.PI * 2);
+      ctx.arc(px, py, 1, 0, Math.PI * 2);
       ctx.fill();
 
       // Diffraction spikes on all stars (scaled by brightness, prominent)
@@ -134,8 +137,8 @@ const { starCount = 800 } = Astro.props;
 
       // Draw 4 diagonal arms with wide, gradual tapering
       const arms = [
-        { x1: this.drawX - spikeLength, y1: this.drawY - spikeLength, x2: this.drawX + spikeLength, y2: this.drawY + spikeLength },
-        { x1: this.drawX + spikeLength, y1: this.drawY - spikeLength, x2: this.drawX - spikeLength, y2: this.drawY + spikeLength },
+        { x1: px - spikeLength, y1: py - spikeLength, x2: px + spikeLength, y2: py + spikeLength },
+        { x1: px + spikeLength, y1: py - spikeLength, x2: px - spikeLength, y2: py + spikeLength },
       ];
 
       arms.forEach((arm) => {
@@ -163,6 +166,7 @@ const { starCount = 800 } = Astro.props;
       if (!this.canvas) return;
 
       this.ctx = this.canvas.getContext("2d");
+      this.ctx.imageSmoothingEnabled = false;
       this.stars = [];
 
       this.resize();
@@ -224,6 +228,7 @@ const { starCount = 800 } = Astro.props;
     height: 0;
     z-index: -1;
     pointer-events: none;
+    isolation: isolate;
   }
 
   #starfield-canvas {
@@ -235,5 +240,7 @@ const { starCount = 800 } = Astro.props;
     display: block;
     margin: 0;
     padding: 0;
+    will-change: transform;
+    contain: strict;
   }
 </style>
