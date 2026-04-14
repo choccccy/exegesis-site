@@ -1,6 +1,7 @@
 ---
 import BaseHead from '../components/BaseHead.astro';
 import Header from '../components/Header.astro';
+import StarfieldBackground from '../components/StarfieldBackground.astro';
 
 type Props = {
     title: string;
@@ -38,7 +39,7 @@ const { title, description } = Astro.props;
   </head>
 
   <body>
-    <div class="bg-grid"></div>
+    <StarfieldBackground />
 
     <Header />
 

@@ -6,6 +6,7 @@ import EntryNavigation from '../components/EntryNavigation.astro';
 import Header from '../components/Header.astro';
 import WarningBanner from '../components/WarningBanner.astro';
 import NavButton from '../components/NavButton.astro';
+import StarfieldBackground from '../components/StarfieldBackground.astro';
 
 type Props = CollectionEntry<'entry'>['data'];
 
@@ -49,7 +50,7 @@ const { status, arc, title, showTitle, description, previousEntry, nextEntry, he
   </head>
 
   <body>
-    <div class="bg-grid"></div>
+    <StarfieldBackground />
 
     <Header />
     

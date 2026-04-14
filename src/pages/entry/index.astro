@@ -3,6 +3,7 @@ import { getCollection } from 'astro:content';
 import BaseHead from '../../components/BaseHead.astro';
 import Header from '../../components/Header.astro';
 import { SITE_DESCRIPTION, SITE_TITLE, ARCS } from '../../consts';
+import StarfieldBackground from '../../components/StarfieldBackground.astro';
 
 // Fetch entries that should be visible: published + in-progress
 const activeEntries = (await getCollection('entry', ({ data }) => {
@@ -198,7 +199,7 @@ function buildArcEntries(entries: typeof activeEntries, arcName: string, isLastA
     </style>
   </head>
   <body>
-    <div class="bg-grid"></div>
+    <StarfieldBackground />
 
     <Header />
 
