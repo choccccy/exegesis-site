@@ -97,8 +97,8 @@ const { starCount = 800 } = Astro.props;
     update(canvasWidth, canvasHeight) {
       const scrollOffset = window.scrollY;
 
-      // Vertical parallax: deeper stars move much slower (depth 1: 1x, depth 2: 0.6x, depth 3: 0.25x)
-      const parallaxRatio = 1 - this.depth * 0.35;
+      // Vertical parallax: deeper stars move slower (depth 1: 0.95x, depth 2: 0.8x, depth 3: 0.6x)
+      const parallaxRatio = 1.1 - this.depth * 0.15;
       const parallaxY = scrollOffset * parallaxRatio;
 
       this.drawX = this.x;
