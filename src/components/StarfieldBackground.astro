@@ -9,7 +9,7 @@ interface Props {
   starCount?: number;
 }
 
-const { starCount = 400 } = Astro.props;
+const { starCount = 800 } = Astro.props;
 ---
 
 <div class="starfield-wrapper">
@@ -29,29 +29,62 @@ const { starCount = 400 } = Astro.props;
       this.x = Math.random() * this.width;
       this.y = Math.random() * this.height;
 
-      // Depth layer (1-3, 1=far/dim, 3=near/bright)
-      this.depth = Math.random() < 0.7 ? 1 : Math.random() < 0.85 ? 2 : 3;
-
-      // Size based on depth
-      const sizes = [1, 1.5, 2];
-      this.baseSize = sizes[this.depth - 1] * (0.8 + Math.random() * 0.4);
-
-      // Opacity based on depth (bright stars = pure white, no dimming)
-      const opacities = [0.3, 0.6, 1.0];
-      this.baseOpacity = opacities[this.depth - 1];
-
-      // Star colors (mostly white, slight variations)
-      const colors = [
-        "#ffffff",
-        "#ffffff",
-        "#ffffff",
-        "#ffffff", // majority white
-        "#f0f0f0",
-        "#e8e8ff",
-        "#ffe8e0",
-        "#fffff0", // subtle tints
+      // Spectral class determines both color and intrinsic brightness
+      // Real sky: hot stars are bright, cool dwarfs are very dim
+      const spectralTypes = [
+        // O/B - blue-white, very bright, rare
+        { color: "#e0e8ff", brightness: 0.9 },
+        { color: "#d0d8ff", brightness: 0.85 },
+        { color: "#c8d0ff", brightness: 0.8 },
+        // A - white, bright
+        { color: "#ffffff", brightness: 1.0 },
+        { color: "#ffffff", brightness: 0.95 },
+        { color: "#ffffff", brightness: 0.9 },
+        { color: "#f8f8ff", brightness: 0.85 },
+        { color: "#ffffff", brightness: 0.9 },
+        // F - yellow-white, moderate
+        { color: "#fffff0", brightness: 0.75 },
+        { color: "#fff8e0", brightness: 0.7 },
+        { color: "#fff0d0", brightness: 0.65 },
+        { color: "#fffff0", brightness: 0.7 },
+        // G - yellow, moderate
+        { color: "#ffe8b0", brightness: 0.6 },
+        { color: "#ffd880", brightness: 0.55 },
+        { color: "#ffe0a0", brightness: 0.5 },
+        // K - orange, dim
+        { color: "#ffb060", brightness: 0.3 },
+        { color: "#ffa040", brightness: 0.25 },
+        { color: "#ffc080", brightness: 0.35 },
+        // M - red, very dim
+        { color: "#ff6040", brightness: 0.15 },
+        { color: "#ff4020", brightness: 0.1 },
+        { color: "#ff8060", brightness: 0.2 },
       ];
-      this.color = colors[Math.floor(Math.random() * colors.length)];
+
+      // Weighted random: heavily skewed toward dim cool stars (real sky distribution)
+      const weights = [
+        1, 1, 1,            // O/B: ~0.5% (extremely rare, very bright)
+        1, 1, 1, 1, 1,      // A:   ~2.5% (rare, bright)
+        2, 2, 2, 2,         // F:   ~4% (uncommon, moderate-bright)
+        5, 5, 5,            // G:   ~7.5% (moderate)
+        20, 20, 20,         // K:   ~30% (common, dim)
+        35, 35, 35,         // M:   ~52% (dominant, very dim)
+      ];
+      const totalWeight = weights.reduce((a, b) => a + b, 0);
+      let rand = Math.random() * totalWeight;
+      let typeIdx = 0;
+      for (let i = 0; i < weights.length; i++) {
+        rand -= weights[i];
+        if (rand <= 0) { typeIdx = i; break; }
+      }
+
+      const spectralType = spectralTypes[typeIdx];
+      this.color = spectralType.color;
+      this.baseOpacity = spectralType.brightness;
+
+      // Depth layer for parallax only (1-3, affects shift amount)
+      this.depth = Math.random() < 0.7 ? 1 : Math.random() < 0.85 ? 2 : 3;
+      this.baseSize = 1;
     }
 
     update(mouseX, mouseY, canvasWidth, canvasHeight) {
@@ -81,7 +114,7 @@ const { starCount = 400 } = Astro.props;
       // Diffraction spikes on all stars (scaled by brightness, prominent)
       const spikeAlpha = this.baseOpacity * 0.48;
       ctx.lineWidth = 1;
-      const spikeLength = this.baseSize * 16;
+      const spikeLength = this.baseSize * 32;
 
       // Parse color for gradient - handle hex colors
       const hex = this.color;
