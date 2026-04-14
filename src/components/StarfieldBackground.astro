@@ -66,27 +66,13 @@ const { starCount = 800 } = Astro.props;
       // Weighted: ~88% dim grey-white, ~12% visible stars
       // Bright stars (O/B, A @ 0.8+) reduced to ~10 per 800-star field
       const weights = [
-        1,
-        0,
-        0, // O/B: blue-white (only the brightest, very rare)
-        1,
-        0,
-        0, // A: white (only the 0.8 variant)
-        1,
-        1,
-        1, // F: yellow-white
-        2,
-        2, // G: yellow
-        3,
-        3, // K: orange
-        1,
-        1, // M: red
-        25,
-        25,
-        25,
-        25,
-        25,
-        25, // Dim white/grey background
+        1, 0, 0, // O/B: blue-white (only the brightest, very rare)
+        1, 0, 0, // A: white (only the 0.8 variant)
+        1, 1, 1, // F: yellow-white
+        2, 2,    // G: yellow
+        3, 3,    // K: orange
+        1, 1,    // M: red
+        25, 25, 25, 25, 25, 25, // Dim white/grey background
       ];
       const totalWeight = weights.reduce((a, b) => a + b, 0);
       let rand = Math.random() * totalWeight;
@@ -114,19 +100,18 @@ const { starCount = 800 } = Astro.props;
       const offsetX = (mouseX - 0.5) * parallaxStrength;
       const offsetY = (mouseY - 0.5) * parallaxStrength;
 
-      // Scroll offset — stars move with page content
+      // Stars scroll with page content — move UP as you scroll DOWN
       const scrollOffset = window.scrollY;
 
-      // drawY is in viewport coordinates
-      // this.y is a document-coordinate seed; subtract scrollOffset to get viewport position
-      let rawX = this.x + offsetX;
-      let rawY = this.y + offsetY - scrollOffset;
+      this.drawX = this.x + offsetX;
+      this.drawY = this.y + offsetY - scrollOffset;
 
-      // Seamless tiling with modulo — works at any scroll depth
-      const wrapW = canvasWidth + 20;
-      const wrapH = canvasHeight + 20;
-      this.drawX = ((rawX % wrapW) + wrapW) % wrapW - 10;
-      this.drawY = ((rawY % wrapH) + wrapH) % wrapH - 10;
+      // Seamless tiling via modulo — works at any scroll depth
+      const margin = 10;
+      const wrapW = canvasWidth + margin * 2;
+      const wrapH = canvasHeight + margin * 2;
+      this.drawX = ((this.drawX % wrapW) + wrapW) % wrapW - margin;
+      this.drawY = ((this.drawY % wrapH) + wrapH) % wrapH - margin;
     }
 
     draw(ctx) {
@@ -150,18 +135,8 @@ const { starCount = 800 } = Astro.props;
 
       // Draw 4 diagonal arms with wide, gradual tapering
       const arms = [
-        {
-          x1: this.drawX - spikeLength,
-          y1: this.drawY - spikeLength,
-          x2: this.drawX + spikeLength,
-          y2: this.drawY + spikeLength,
-        },
-        {
-          x1: this.drawX + spikeLength,
-          y1: this.drawY - spikeLength,
-          x2: this.drawX - spikeLength,
-          y2: this.drawY + spikeLength,
-        },
+        { x1: this.drawX - spikeLength, y1: this.drawY - spikeLength, x2: this.drawX + spikeLength, y2: this.drawY + spikeLength },
+        { x1: this.drawX + spikeLength, y1: this.drawY - spikeLength, x2: this.drawX - spikeLength, y2: this.drawY + spikeLength },
       ];
 
       arms.forEach((arm) => {
@@ -190,7 +165,7 @@ const { starCount = 800 } = Astro.props;
 
       this.ctx = this.canvas.getContext("2d");
       this.stars = [];
-      this.mouseX = 0.5; // normalized 0-1
+      this.mouseX = 0.5;
       this.mouseY = 0.5;
       this.smoothMouseX = 0.5;
       this.smoothMouseY = 0.5;
@@ -199,12 +174,7 @@ const { starCount = 800 } = Astro.props;
       this.init();
 
       window.addEventListener("resize", () => this.resize());
-      window.addEventListener("load", () => this.resize());
       window.addEventListener("mousemove", (e) => this.onMouseMove(e));
-
-      // Resize when content changes (page transitions, dynamic loads)
-      const observer = new MutationObserver(() => this.resize());
-      observer.observe(document.body, { childList: true, subtree: true });
 
       this.animate();
     }
@@ -213,11 +183,9 @@ const { starCount = 800 } = Astro.props;
       this.canvas.width = window.innerWidth;
       this.canvas.height = window.innerHeight;
 
-      // Reposition stars for new dimensions
       this.stars.forEach((star) => {
         star.width = this.canvas.width;
         star.height = this.canvas.height;
-        // Reposition if out of bounds
         if (star.x > this.canvas.width)
           star.x = Math.random() * this.canvas.width;
         if (star.y > this.canvas.height)
@@ -238,18 +206,14 @@ const { starCount = 800 } = Astro.props;
     }
 
     animate() {
-      // Smooth mouse movement (lerp)
       this.smoothMouseX += (this.mouseX - this.smoothMouseX) * 0.03;
       this.smoothMouseY += (this.mouseY - this.smoothMouseY) * 0.03;
 
-      // Clear canvas
       this.ctx.fillStyle = "#000000";
       this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
 
-      // Sort by depth (far first)
       this.stars.sort((a, b) => a.depth - b.depth);
 
-      // Update and draw
       this.stars.forEach((star) => {
         star.update(
           this.smoothMouseX,
