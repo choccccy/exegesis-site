@@ -114,14 +114,19 @@ const { starCount = 800 } = Astro.props;
       const offsetX = (mouseX - 0.5) * parallaxStrength;
       const offsetY = (mouseY - 0.5) * parallaxStrength;
 
-      this.drawX = this.x + offsetX;
-      this.drawY = this.y + offsetY;
+      // Scroll offset — stars move with page content
+      const scrollOffset = window.scrollY;
 
-      // Wrap around edges (seamless)
-      if (this.drawX < -10) this.drawX += canvasWidth + 20;
-      if (this.drawX > canvasWidth + 10) this.drawX -= canvasWidth + 20;
-      if (this.drawY < -10) this.drawY += canvasHeight + 20;
-      if (this.drawY > canvasHeight + 10) this.drawY -= canvasHeight + 20;
+      // drawY is in viewport coordinates
+      // this.y is a document-coordinate seed; subtract scrollOffset to get viewport position
+      let rawX = this.x + offsetX;
+      let rawY = this.y + offsetY - scrollOffset;
+
+      // Seamless tiling with modulo — works at any scroll depth
+      const wrapW = canvasWidth + 20;
+      const wrapH = canvasHeight + 20;
+      this.drawX = ((rawX % wrapW) + wrapW) % wrapW - 10;
+      this.drawY = ((rawY % wrapH) + wrapH) % wrapH - 10;
     }
 
     draw(ctx) {
@@ -194,7 +199,12 @@ const { starCount = 800 } = Astro.props;
       this.init();
 
       window.addEventListener("resize", () => this.resize());
+      window.addEventListener("load", () => this.resize());
       window.addEventListener("mousemove", (e) => this.onMouseMove(e));
+
+      // Resize when content changes (page transitions, dynamic loads)
+      const observer = new MutationObserver(() => this.resize());
+      observer.observe(document.body, { childList: true, subtree: true });
 
       this.animate();
     }
