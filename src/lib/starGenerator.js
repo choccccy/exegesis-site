@@ -37,13 +37,13 @@ const SPECTRAL_TYPES = [
 
 // Weight distribution
 const WEIGHTS = [
-  1, 1, 1,            // O/B: blue-white (bright)
-  3, 3, 3,            // A: white (bright)
-  4, 4, 4,            // F: yellow-white (moderate)
-  4, 4,               // G: yellow (moderate)
-  3, 3,               // K: orange (dim-moderate)
-  1, 1,               // M: red (dim)
-  15, 15, 15, 15, 15, 15,  // Dim white/grey background
+  1, 0, 0,            // O/B: blue-white (only the brightest)
+  1, 0, 0,            // A: white (only the 0.8 variant)
+  1, 1, 1,            // F: yellow-white
+  2, 2,               // G: yellow
+  3, 3,               // K: orange (rare giants)
+  1, 1,               // M: red (very rare supergiants)
+  25, 25, 25, 25, 25, 25, // Dim white/grey background
 ];
 
 const TOTAL_WEIGHT = WEIGHTS.reduce((a, b) => a + b, 0);
