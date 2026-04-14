@@ -229,8 +229,8 @@ const { starCount = 800 } = Astro.props;
 
     animate() {
       // Smooth mouse movement (lerp)
-      this.smoothMouseX += (this.mouseX - this.smoothMouseX) * 0.05;
-      this.smoothMouseY += (this.mouseY - this.smoothMouseY) * 0.05;
+      this.smoothMouseX += (this.mouseX - this.smoothMouseX) * 0.03;
+      this.smoothMouseY += (this.mouseY - this.smoothMouseY) * 0.03;
 
       // Clear canvas
       this.ctx.fillStyle = "#000000";
