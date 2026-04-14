@@ -1,12 +1,12 @@
 ---
-import BaseHead from '../components/BaseHead.astro';
-import Header from '../components/Header.astro';
-import StarfieldBackground from '../components/StarfieldBackground.astro';
+import BaseHead from "../components/BaseHead.astro";
+import Header from "../components/Header.astro";
+import StarfieldBackground from "../components/StarfieldBackground.astro";
 
 type Props = {
-    title: string;
-    description: string;
-}
+  title: string;
+  description: string;
+};
 
 const { title, description } = Astro.props;
 ---
@@ -17,6 +17,7 @@ const { title, description } = Astro.props;
     <style>
       main {
         max-width: 100%;
+        position: relative;
       }
       .prose p {
         margin-bottom: 1em;
@@ -44,10 +45,9 @@ const { title, description } = Astro.props;
     <Header />
 
     <main>
-        <div class="prose">
-          <slot />
-        </div>
+      <div class="prose">
+        <slot />
+      </div>
     </main>
-
   </body>
 </html>

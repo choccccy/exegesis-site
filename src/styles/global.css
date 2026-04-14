@@ -16,24 +16,19 @@
   --white: 255, 255, 255;
   --gray-gradient: rgba(var(--gray-light), 50%), #fff;
   --box-shadow:
-    0 2px 6px rgba(var(--gray), 25%), 0 8px 24px rgba(var(--gray), 33%), 0 16px 32px
-    rgba(var(--gray), 33%);
+    0 2px 6px rgba(var(--gray), 25%), 0 8px 24px rgba(var(--gray), 33%), 0 16px 32px rgba(var(--gray), 33%);
 
   /* Warning banners */
-  --warning-gradient: repeating-linear-gradient(
-    45deg,
-    black 0px,
-    black 20px,
-    yellow 20px,
-    yellow 40px
-  );
-  --nsfw-gradient: repeating-linear-gradient(
-    45deg,
-    black 0px,
-    black 20px,
-    #ff6600 20px,
-    #ff6600 40px
-  );
+  --warning-gradient: repeating-linear-gradient(45deg,
+      black 0px,
+      black 20px,
+      yellow 20px,
+      yellow 40px);
+  --nsfw-gradient: repeating-linear-gradient(45deg,
+      black 0px,
+      black 20px,
+      #ff6600 20px,
+      #ff6600 40px);
 
   /* Typography */
   --paragraph-margin: 1.25em;
@@ -43,7 +38,8 @@
 
   /* Layout */
   --prose-width: 92%;
-  --prose-indent: 4%; /* (100% - var(--prose-width)) / 2 */
+  --prose-indent: 4%;
+  /* (100% - var(--prose-width)) / 2 */
   --main-max-width: 70vw;
   --main-mobile-width: 90vw;
 
@@ -51,6 +47,7 @@
      so all @media queries must hardcode 840px. This variable is for reference only. */
   --breakpoint-mobile: 840px;
 }
+
 body {
   font-family: var(--font-body);
   margin: 0;
@@ -63,6 +60,7 @@ body {
   font-size: 20px;
   line-height: 1.7;
 }
+
 main {
   width: var(--main-max-width);
   max-width: calc(100% - 2em);
@@ -71,7 +69,50 @@ main {
   border: 1px solid white;
   box-sizing: border-box;
   background: black;
+  position: relative;
+  overflow: visible;
+  /* === Crosshair Parameters (adjust to taste) === */
+  --crosshair-size: 32px;
+  /* Length of each arm from corner */
+  --crosshair-thick: 4px;
+  /* Thickness of each arm */
+  --crosshair-half: calc(var(--crosshair-size) / 2);
+  --crosshair-half-thick: calc(var(--crosshair-thick) / 2);
 }
+
+main::before,
+main::after {
+  content: '';
+  position: absolute;
+  inset: calc(-1 * var(--crosshair-half));
+  pointer-events: none;
+  z-index: 1;
+}
+
+main::before {
+  background:
+    /* Top-left: horizontal arm */
+    linear-gradient(to right, white var(--crosshair-size), transparent var(--crosshair-size)) left 0 top calc(var(--crosshair-half) - var(--crosshair-half-thick)) / var(--crosshair-size) var(--crosshair-thick) no-repeat,
+    /* Top-left: vertical arm */
+    linear-gradient(to bottom, white var(--crosshair-size), transparent var(--crosshair-size)) left calc(var(--crosshair-half) - var(--crosshair-half-thick)) top 0 / var(--crosshair-thick) var(--crosshair-size) no-repeat,
+    /* Top-right: horizontal arm */
+    linear-gradient(to left, white var(--crosshair-size), transparent var(--crosshair-size)) right 0 top calc(var(--crosshair-half) - var(--crosshair-half-thick)) / var(--crosshair-size) var(--crosshair-thick) no-repeat,
+    /* Top-right: vertical arm */
+    linear-gradient(to bottom, white var(--crosshair-size), transparent var(--crosshair-size)) right calc(var(--crosshair-half) - var(--crosshair-half-thick)) top 0 / var(--crosshair-thick) var(--crosshair-size) no-repeat;
+}
+
+main::after {
+  background:
+    /* Bottom-left: horizontal arm */
+    linear-gradient(to right, white var(--crosshair-size), transparent var(--crosshair-size)) left 0 bottom calc(var(--crosshair-half) - var(--crosshair-half-thick)) / var(--crosshair-size) var(--crosshair-thick) no-repeat,
+    /* Bottom-left: vertical arm */
+    linear-gradient(to top, white var(--crosshair-size), transparent var(--crosshair-size)) left calc(var(--crosshair-half) - var(--crosshair-half-thick)) bottom 0 / var(--crosshair-thick) var(--crosshair-size) no-repeat,
+    /* Bottom-right: horizontal arm */
+    linear-gradient(to left, white var(--crosshair-size), transparent var(--crosshair-size)) right 0 bottom calc(var(--crosshair-half) - var(--crosshair-half-thick)) / var(--crosshair-size) var(--crosshair-thick) no-repeat,
+    /* Bottom-right: vertical arm */
+    linear-gradient(to top, white var(--crosshair-size), transparent var(--crosshair-size)) right calc(var(--crosshair-half) - var(--crosshair-half-thick)) bottom 0 / var(--crosshair-thick) var(--crosshair-size) no-repeat;
+}
+
 h1,
 h2,
 h3,
@@ -81,58 +122,76 @@ h6 {
   margin: 0 0 0.5rem 0;
   line-height: 1.2;
 }
+
 h1 {
   font-size: 3.052em;
 }
+
 h2 {
   font-size: 2.441em;
 }
+
 h3 {
   font-size: 1.953em;
 }
+
 h4 {
   font-size: 1.563em;
 }
+
 h5 {
   font-size: 1.25em;
 }
+
 strong,
 b {
   font-weight: 700;
 }
+
 a {
   color: var(--accent);
 }
+
 a:hover {
   color: var(--accent);
 }
+
 p {
   margin-top: var(--paragraph-margin);
   margin-bottom: var(--paragraph-margin);
 }
+
 textarea {
   width: 100%;
   font-size: 16px;
 }
+
 input {
   font-size: 16px;
 }
+
 table {
   width: 100%;
 }
+
 img {
   width: 100%;
   height: auto;
   outline: 1px solid white;
 
   /* Use both for browser compatibility */
-  image-rendering: -webkit-optimize-contrast; /* Chrome/Safari */
-  image-rendering: crisp-edges; /* Firefox */
-  image-rendering: pixelated; /* Chrome (preferred) */
+  image-rendering: -webkit-optimize-contrast;
+  /* Chrome/Safari */
+  image-rendering: crisp-edges;
+  /* Firefox */
+  image-rendering: pixelated;
+  /* Chrome (preferred) */
 
   /* Prevent smooth scaling */
-  image-rendering: -moz-crisp-edges; /* Firefox fallback */
+  image-rendering: -moz-crisp-edges;
+  /* Firefox fallback */
 }
+
 /* Apply width constraint to prose text elements */
 .prose p,
 .prose h1,
@@ -147,41 +206,49 @@ img {
   margin-left: auto;
   margin-right: auto;
 }
+
 /* Reset paragraph styles specifically for paragraphs containing only images */
 .prose p:has(> img:only-child) {
   width: 100%;
   margin-left: 0;
   margin-right: 0;
 }
+
 code {
   font-family: var(--font-mono);
   font-size: 18px;
   background-color: rgb(var(--gray-dark-dark));
   padding: 0.2em 0.4em;
 }
+
 pre {
   padding: 1.5em;
   border-radius: 8px;
 }
-pre > code {
+
+pre>code {
   all: unset;
 }
+
 blockquote {
   border-left: 4px solid var(--accent);
   padding: 0 0 0 20px;
   margin: 0px;
   font-size: 1.333em;
 }
+
 hr {
   width: 100%;
   border: none;
   border-top: 1px solid white;
 }
+
 @media (max-width: 840px) {
   main {
     width: var(--main-mobile-width);
   }
 }
+
 .sr-only {
   border: 0;
   padding: 0;
@@ -215,6 +282,7 @@ hr {
   font-style: normal;
   font-display: swap;
 }
+
 @font-face {
   font-family: "Atkinson";
   src: url("/fonts/Atkinson-Bold.woff") format("woff");
@@ -230,6 +298,7 @@ hr {
   font-style: normal;
   font-display: swap;
 }
+
 @font-face {
   font-family: "JetBrainsMono";
   src: url("/fonts/JetBrainsMono/JetBrainsMono-ThinItalic.woff2") format("woff2");
@@ -237,6 +306,7 @@ hr {
   font-style: italic;
   font-display: swap;
 }
+
 @font-face {
   font-family: "JetBrainsMono";
   src: url("/fonts/JetBrainsMono/JetBrainsMono-ExtraLight.woff2") format("woff2");
@@ -244,6 +314,7 @@ hr {
   font-style: normal;
   font-display: swap;
 }
+
 @font-face {
   font-family: "JetBrainsMono";
   src: url("/fonts/JetBrainsMono/JetBrainsMono-ExtraLightItalic.woff2") format("woff2");
@@ -251,6 +322,7 @@ hr {
   font-style: italic;
   font-display: swap;
 }
+
 @font-face {
   font-family: "JetBrainsMono";
   src: url("/fonts/JetBrainsMono/JetBrainsMono-Light.woff2") format("woff2");
@@ -258,6 +330,7 @@ hr {
   font-style: normal;
   font-display: swap;
 }
+
 @font-face {
   font-family: "JetBrainsMono";
   src: url("/fonts/JetBrainsMono/JetBrainsMono-LightItalic.woff2") format("woff2");
@@ -265,6 +338,7 @@ hr {
   font-style: italic;
   font-display: swap;
 }
+
 @font-face {
   font-family: "JetBrainsMono";
   src: url("/fonts/JetBrainsMono/JetBrainsMono-Regular.woff2") format("woff2");
@@ -272,6 +346,7 @@ hr {
   font-style: normal;
   font-display: swap;
 }
+
 @font-face {
   font-family: "JetBrainsMono";
   src: url("/fonts/JetBrainsMono/JetBrainsMono-RegularItalic.woff2") format("woff2");
@@ -279,6 +354,7 @@ hr {
   font-style: italic;
   font-display: swap;
 }
+
 @font-face {
   font-family: "JetBrainsMono";
   src: url("/fonts/JetBrainsMono/JetBrainsMono-Medium.woff2") format("woff2");
@@ -286,6 +362,7 @@ hr {
   font-style: normal;
   font-display: swap;
 }
+
 @font-face {
   font-family: "JetBrainsMono";
   src: url("/fonts/JetBrainsMono/JetBrainsMono-MediumItalic.woff2") format("woff2");
@@ -293,6 +370,7 @@ hr {
   font-style: italic;
   font-display: swap;
 }
+
 @font-face {
   font-family: "JetBrainsMono";
   src: url("/fonts/JetBrainsMono/JetBrainsMono-SemiBold.woff2") format("woff2");
@@ -300,6 +378,7 @@ hr {
   font-style: normal;
   font-display: swap;
 }
+
 @font-face {
   font-family: "JetBrainsMono";
   src: url("/fonts/JetBrainsMono/JetBrainsMono-SemiBoldItalic.woff2") format("woff2");
@@ -307,6 +386,7 @@ hr {
   font-style: italic;
   font-display: swap;
 }
+
 @font-face {
   font-family: "JetBrainsMono";
   src: url("/fonts/JetBrainsMono/JetBrainsMono-Bold.woff2") format("woff2");
@@ -314,6 +394,7 @@ hr {
   font-style: normal;
   font-display: swap;
 }
+
 @font-face {
   font-family: "JetBrainsMono";
   src: url("/fonts/JetBrainsMono/JetBrainsMono-BoldItalic.woff2") format("woff2");
@@ -321,6 +402,7 @@ hr {
   font-style: italic;
   font-display: swap;
 }
+
 @font-face {
   font-family: "JetBrainsMono";
   src: url("/fonts/JetBrainsMono/JetBrainsMono-ExtraBold.woff2") format("woff2");
@@ -328,6 +410,7 @@ hr {
   font-style: normal;
   font-display: swap;
 }
+
 @font-face {
   font-family: "JetBrainsMono";
   src: url("/fonts/JetBrainsMono/JetBrainsMono-ExtraBoldItalic.woff2") format("woff2");
