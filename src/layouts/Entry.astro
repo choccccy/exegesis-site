@@ -62,7 +62,7 @@ const { status, arc, title, showTitle, description, previousEntry, nextEntry, he
 
     {(status === 'in-progress' || status === 'draft') && (<WarningBanner lines={[ 'this entry is unfinished! content is subject to change.' ]} />)}
 
-    <main>
+    <main class="crosshair-corners">
       {!NSFW ? (
         <div class="prose">
           <slot />

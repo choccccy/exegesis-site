@@ -69,19 +69,29 @@ main {
   border: 1px solid white;
   box-sizing: border-box;
   background: black;
-  position: relative;
-  overflow: visible;
-  /* === Crosshair Parameters (adjust to taste) === */
-  --crosshair-size: 32px;
-  /* Length of each arm from corner */
-  --crosshair-thick: 4px;
-  /* Thickness of each arm */
-  --crosshair-half: calc(var(--crosshair-size) / 2);
-  --crosshair-half-thick: calc(var(--crosshair-thick) / 2);
 }
 
-main::before,
-main::after {
+/* === Crosshair Corner Decoration ===
+   Add class="crosshair-corners" to any element
+   to get L-shaped crosshairs at all four corners.
+
+   Customize by overriding these vars on the target element:
+     --crosshair-size: 32px;   // arm length
+     --crosshair-thick: 4px;   // arm thickness
+   e.g. <div class="crosshair-corners" style="--crosshair-size: 48px;">
+*/
+.crosshair-corners {
+  /* === Crosshair Parameters (adjust to taste) === */
+  --crosshair-size: 32px;      /* Length of each arm from corner */
+  --crosshair-thick: 4px;      /* Thickness of each arm */
+  --crosshair-half: calc(var(--crosshair-size) / 2);
+  --crosshair-half-thick: calc(var(--crosshair-thick) / 2);
+  position: relative;
+  overflow: visible;
+}
+
+.crosshair-corners::before,
+.crosshair-corners::after {
   content: '';
   position: absolute;
   inset: calc(-1 * var(--crosshair-half));
@@ -89,7 +99,7 @@ main::after {
   z-index: 1;
 }
 
-main::before {
+.crosshair-corners::before {
   background:
     /* Top-left: horizontal arm */
     linear-gradient(to right, white var(--crosshair-size), transparent var(--crosshair-size)) left 0 top calc(var(--crosshair-half) - var(--crosshair-half-thick)) / var(--crosshair-size) var(--crosshair-thick) no-repeat,
@@ -101,7 +111,7 @@ main::before {
     linear-gradient(to bottom, white var(--crosshair-size), transparent var(--crosshair-size)) right calc(var(--crosshair-half) - var(--crosshair-half-thick)) top 0 / var(--crosshair-thick) var(--crosshair-size) no-repeat;
 }
 
-main::after {
+.crosshair-corners::after {
   background:
     /* Bottom-left: horizontal arm */
     linear-gradient(to right, white var(--crosshair-size), transparent var(--crosshair-size)) left 0 bottom calc(var(--crosshair-half) - var(--crosshair-half-thick)) / var(--crosshair-size) var(--crosshair-thick) no-repeat,
