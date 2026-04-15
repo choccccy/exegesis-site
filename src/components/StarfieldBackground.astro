@@ -1,8 +1,8 @@
 ---
 /**
  * StarfieldBackground component
- * Renders a sparse, realistic starfield with subtle mouse parallax
- * Hard sci-fi aesthetic: static stars, minimal movement
+ * Renders a sparse, realistic starfield with vertical scroll parallax
+ * Zero JS scroll tracking — canvas is absolute at document height, scrolls naturally
  */
 
 interface Props {
@@ -25,36 +25,25 @@ const { starCount = 800 } = Astro.props;
     }
 
     init() {
-      // Position
       this.x = Math.random() * this.width;
       this.y = Math.random() * this.height;
 
-      // Spectral class determines both color and intrinsic brightness
-      // Naked-eye sky: most visible stars are distant white A/F types
-      // Warm colors are rare giants/supergiants among the brighter stars
       const spectralTypes = [
-        // O/B - blue-white, very bright, extremely rare
         { color: "#d0d8ff", brightness: 0.95 },
         { color: "#c8d0ff", brightness: 0.9 },
         { color: "#e0e8ff", brightness: 0.85 },
-        // A - white, bright, rare
         { color: "#ffffff", brightness: 0.8 },
         { color: "#f0f0ff", brightness: 0.75 },
         { color: "#e8e8ff", brightness: 0.7 },
-        // F - yellow-white, moderate-bright
         { color: "#fff8f0", brightness: 0.65 },
         { color: "#fff0e0", brightness: 0.6 },
         { color: "#fffff0", brightness: 0.55 },
-        // G - yellow, moderate
         { color: "#ffe8b0", brightness: 0.5 },
         { color: "#ffe0a0", brightness: 0.45 },
-        // K giants - orange, dim-moderate (rare)
         { color: "#ffb060", brightness: 0.35 },
         { color: "#ffa040", brightness: 0.3 },
-        // M supergiants - red, dim (very rare)
         { color: "#ff6040", brightness: 0.2 },
         { color: "#ff4020", brightness: 0.15 },
-        // Dim background stars: grey-white (distant A/F/G types)
         { color: "#ffffff", brightness: 0.25 },
         { color: "#f8f8ff", brightness: 0.2 },
         { color: "#f0f0f8", brightness: 0.15 },
@@ -63,75 +52,43 @@ const { starCount = 800 } = Astro.props;
         { color: "#d8d8e0", brightness: 0.05 },
       ];
 
-      // Weighted: ~88% dim grey-white, ~12% visible stars
-      // Bright stars (O/B, A @ 0.8+) reduced to ~10 per 800-star field
       const weights = [
-        1, 0, 0, // O/B: blue-white (only the brightest, very rare)
-        1, 0, 0, // A: white (only the 0.8 variant)
-        1, 1, 1, // F: yellow-white
-        2, 2,    // G: yellow
-        3, 3,    // K: orange
-        1, 1,    // M: red
-        25, 25, 25, 25, 25, 25, // Dim white/grey background
+        1, 0, 0, 1, 0, 0,
+        1, 1, 1, 2, 2,
+        3, 3, 1, 1,
+        25, 25, 25, 25, 25, 25,
       ];
       const totalWeight = weights.reduce((a, b) => a + b, 0);
       let rand = Math.random() * totalWeight;
       let typeIdx = 0;
       for (let i = 0; i < weights.length; i++) {
         rand -= weights[i];
-        if (rand <= 0) {
-          typeIdx = i;
-          break;
-        }
+        if (rand <= 0) { typeIdx = i; break; }
       }
 
       const spectralType = spectralTypes[typeIdx];
       this.color = spectralType.color;
       this.baseOpacity = spectralType.brightness;
-
-      // Depth: continuous 0-1 for unique parallax per star
       this.depth = Math.random();
       this.baseSize = 1;
     }
 
-    update(canvasWidth, canvasHeight) {
-      const scrollOffset = window.scrollY;
-
-      // Vertical parallax: each star has its own speed (0.95x to 0.6x based on depth)
-      const parallaxRatio = 0.6 + this.depth * 0.35;
-      const parallaxY = scrollOffset * parallaxRatio;
-
-      this.drawX = this.x;
-      this.drawY = this.y - parallaxY;
-
-      // Seamless tiling via modulo — works at any scroll depth
-      const margin = 10;
-      const wrapW = canvasWidth + margin * 2;
-      const wrapH = canvasHeight + margin * 2;
-      this.drawX = ((this.drawX % wrapW) + wrapW) % wrapW - margin;
-      this.drawY = ((this.drawY % wrapH) + wrapH) % wrapH - margin;
-    }
-
     draw(ctx) {
-      // Round to whole pixels to prevent anti-aliasing blur
-      const px = Math.round(this.drawX);
-      const py = Math.round(this.drawY);
+      const px = Math.round(this.x);
+      const py = Math.round(this.y);
 
-      // All stars are single pixel, brightness varies
       ctx.globalAlpha = this.baseOpacity;
       ctx.fillStyle = this.color;
       ctx.beginPath();
       ctx.arc(px, py, 1, 0, Math.PI * 2);
       ctx.fill();
 
-      // Only draw spikes for bright stars
       if (!this.drawSpikes) return;
 
-      const { r, g, b } = this.spikeColor;
-      const [stops, alphas] = this.spikeStops;
       const len = this.spikeLength;
-
-      // Two diagonal arms through the star
+      const base = this.spikeRGBA;
+      const alphas = this.spikeAlphas;
+      const stops = this.spikeStops;
       const arms = [
         { x1: px - len, y1: py - len, x2: px + len, y2: py + len },
         { x1: px + len, y1: py - len, x2: px - len, y2: py + len },
@@ -141,7 +98,7 @@ const { starCount = 800 } = Astro.props;
       arms.forEach((arm) => {
         const grad = ctx.createLinearGradient(arm.x1, arm.y1, arm.x2, arm.y2);
         stops.forEach((stop, i) => {
-          grad.addColorStop(stop, `rgba(${r},${g},${b},${alphas[i]})`);
+          grad.addColorStop(stop, `${base}${alphas[i]})`);
         });
         ctx.strokeStyle = grad;
         ctx.beginPath();
@@ -156,42 +113,68 @@ const { starCount = 800 } = Astro.props;
     constructor() {
       this.canvas = document.getElementById("starfield-canvas");
       if (!this.canvas) return;
-
       this.ctx = this.canvas.getContext("2d");
-      this.ctx.imageSmoothingEnabled = false;
       this.stars = [];
+      this.initialized = false;
 
-      this.resize();
-      this.init();
+      this.initWhenReady();
 
       window.addEventListener("resize", () => this.resize());
+      window.addEventListener("mousemove", (e) => this.onMouseMove(e));
+    }
 
+    async initWhenReady() {
+      // Wait for document to settle so we can read full height
+      await new Promise(r => {
+        if (document.readyState === "complete") r();
+        else window.addEventListener("load", r);
+      });
+      // Extra delay for astro islands / lazy content
+      await new Promise(r => setTimeout(r, 200));
+
+      this.resize();
+      this.initStars();
+      this.initialized = true;
       this.animate();
+
+      // Watch for layout changes
+      const observer = new ResizeObserver(() => this.resize());
+      observer.observe(document.body);
+      observer.observe(document.documentElement);
+    }
+
+    getDocSize() {
+      return {
+        w: Math.max(document.body.scrollWidth, document.documentElement.scrollWidth, window.innerWidth),
+        h: Math.max(document.body.scrollHeight, document.documentElement.scrollHeight, window.innerHeight),
+      };
     }
 
     resize() {
-      this.canvas.width = window.innerWidth;
-      this.canvas.height = window.innerHeight;
+      const { w, h } = this.getDocSize();
+      if (this.canvas.width === w && this.canvas.height === h && this.stars.length) return;
 
-      this.stars.forEach((star) => {
-        star.width = this.canvas.width;
-        star.height = this.canvas.height;
-        if (star.x > this.canvas.width)
-          star.x = Math.random() * this.canvas.width;
-        if (star.y > this.canvas.height)
-          star.y = Math.random() * this.canvas.height;
-      });
+      this.canvas.width = w;
+      this.canvas.height = h;
+
+      if (this.stars.length) {
+        // Just update star dimensions — don't reposition existing stars
+        this.stars.forEach((star) => {
+          star.width = w;
+          star.height = h;
+        });
+      }
     }
 
-    init() {
-      // Detect low-end device — reduce stars to keep 60fps
+    initStars() {
       const isLowEnd = navigator.hardwareConcurrency <= 4 || window.innerWidth < 768;
       const count = isLowEnd ? Math.floor(starCount * 0.5) : starCount;
 
       this.stars = [];
+      this.canvas._prevW = this.canvas.width;
+
       for (let i = 0; i < count; i++) {
         const star = new Star(this.canvas.width, this.canvas.height);
-        // Only bright stars get spikes (dim star spikes are barely visible)
         if (star.baseOpacity >= 0.4) {
           const hex = star.color;
           const r = parseInt(hex.slice(1, 3), 16);
@@ -199,14 +182,9 @@ const { starCount = 800 } = Astro.props;
           const b = parseInt(hex.slice(5, 7), 16);
           const spikeAlpha = star.baseOpacity * 0.4;
           const spikeLength = star.baseSize * 32;
-
-          // Pre-build two gradient templates (one for each diagonal direction)
-          // These are reused every frame with updated positions
-          star.spikeStops = [
-            [0, 0.35, 0.45, 0.5, 0.55, 0.65, 1],
-            [0, spikeAlpha * 0.2, spikeAlpha * 0.5, spikeAlpha, spikeAlpha * 0.5, spikeAlpha * 0.2, 0]
-          ];
-          star.spikeColor = { r, g, b };
+          star.spikeRGBA = `rgba(${r},${g},${b},`;
+          star.spikeAlphas = [0, spikeAlpha * 0.2, spikeAlpha * 0.5, spikeAlpha, spikeAlpha * 0.5, spikeAlpha * 0.2, 0];
+          star.spikeStops = [0, 0.35, 0.45, 0.5, 0.55, 0.65, 1];
           star.spikeLength = spikeLength;
           star.drawSpikes = true;
         } else {
@@ -216,19 +194,19 @@ const { starCount = 800 } = Astro.props;
       }
     }
 
+    onMouseMove(e) {
+      this.mouseX = e.clientX / window.innerWidth;
+      this.mouseY = e.clientY / window.innerHeight;
+    }
+
     animate() {
+      if (!this.initialized) return;
+
       this.ctx.fillStyle = "#000000";
       this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
 
       this.stars.sort((a, b) => a.depth - b.depth);
-
-      this.stars.forEach((star) => {
-        star.update(
-          this.canvas.width,
-          this.canvas.height,
-        );
-        star.draw(this.ctx);
-      });
+      this.stars.forEach((star) => star.draw(this.ctx));
 
       requestAnimationFrame(() => this.animate());
     }
@@ -239,26 +217,21 @@ const { starCount = 800 } = Astro.props;
 
 <style>
   .starfield-wrapper {
-    position: fixed;
+    position: absolute;
     top: 0;
     left: 0;
     width: 0;
     height: 0;
     z-index: -1;
     pointer-events: none;
-    isolation: isolate;
   }
 
   #starfield-canvas {
     position: absolute;
     top: 0;
     left: 0;
-    width: 100vw;
-    height: 100vh;
     display: block;
     margin: 0;
     padding: 0;
-    will-change: transform;
-    contain: strict;
   }
 </style>
