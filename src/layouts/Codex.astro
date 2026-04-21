@@ -1,23 +1,39 @@
 ---
-import { Image } from 'astro:assets';
-import type { CollectionEntry } from 'astro:content';
-import BaseHead from '../components/BaseHead.astro';
-import EntryNavigation from '../components/EntryNavigation.astro';
-import Header from '../components/Header.astro';
-import WarningBanner from '../components/WarningBanner.astro';
-import NavButton from '../components/NavButton.astro';
+import { Image } from "astro:assets";
+import type { CollectionEntry } from "astro:content";
+import BaseHead from "../components/BaseHead.astro";
+import EntryNavigation from "../components/EntryNavigation.astro";
+import Header from "../components/Header.astro";
+import WarningBanner from "../components/WarningBanner.astro";
+import NavButton from "../components/NavButton.astro";
+import StarfieldBackground from "../components/StarfieldBackground.astro";
 
-type Props = CollectionEntry<'codex'>['data'];
+type Props = CollectionEntry<"codex">["data"];
 
-const { published, title, showTitle, description, previousEntry, nextEntry, heroImage, NSFW } = Astro.props;
+const {
+  published,
+  title,
+  showTitle,
+  description,
+  previousEntry,
+  nextEntry,
+  heroImage,
+  NSFW,
+} = Astro.props;
 ---
 
 <html lang="en">
   <head>
-    <BaseHead title={title} description={description} image={heroImage} embedCard="summary_large_image"/>
+    <BaseHead
+      title={title}
+      description={description}
+      image={heroImage}
+      embedCard="summary_large_image"
+    />
     <style>
       main {
         max-width: 100%;
+        position: relative;
       }
       .prose {
         width: 100%;
@@ -49,63 +65,73 @@ const { published, title, showTitle, description, previousEntry, nextEntry, hero
   </head>
 
   <body>
-    <div class="bg-grid"></div>
+    <StarfieldBackground />
 
     <Header />
 
     <div class="title">
-      {showTitle !== false && (
-      <h1>{title}</h1>
-      )}
+      {showTitle !== false && <h1>{title}</h1>}
     </div>
 
-    {published == false && (<WarningBanner lines={[ 'this entry is unfinished! content is subject to change.' ]} />)}
+    {
+      published == false && (
+        <WarningBanner
+          lines={["this entry is unfinished! content is subject to change."]}
+        />
+      )
+    }
 
-    <main>
-      {!NSFW ? (
-        <div class="prose">
-          <slot />
-        </div>
-      ) : (
-        <>
-          <div id="nsfw-warning">
-            <WarningBanner
-              variant="nsfw"
-              lines={[
-                'This section contains mature, NSFW themes for adults.',
-                'Would you like to continue to read this entry, or skip this section?'
-              ]}
-            />
-            <div id="nsfw-actions">
-              <NavButton
-                id="nsfw-confirm-btn"
-                type="warning"
-                ariaLabel="Confirm viewing NSFW content"
-              >
-                Continue
-              </NavButton>
-              <NavButton
-                id="nsfw-skip-btn"
-                type="next"
-                ariaLabel="Skip NSFW content and return"
-              >
-                Skip
-              </NavButton>
-            </div>
-          </div>
-
-          <div id="entry-content" class="prose" style="display:none;">
+    <main class="crosshair-corners">
+      {
+        !NSFW ? (
+          <div class="prose">
             <slot />
           </div>
-        </>
-      )}
+        ) : (
+          <>
+            <div id="nsfw-warning">
+              <WarningBanner
+                variant="nsfw"
+                lines={[
+                  "This section contains mature, NSFW themes for adults.",
+                  "Would you like to continue to read this entry, or skip this section?",
+                ]}
+              />
+              <div id="nsfw-actions">
+                <NavButton
+                  id="nsfw-confirm-btn"
+                  type="warning"
+                  ariaLabel="Confirm viewing NSFW content"
+                >
+                  Continue
+                </NavButton>
+                <NavButton
+                  id="nsfw-skip-btn"
+                  type="next"
+                  ariaLabel="Skip NSFW content and return"
+                >
+                  Skip
+                </NavButton>
+              </div>
+            </div>
+
+            <div id="entry-content" class="prose" style="display:none;">
+              <slot />
+            </div>
+          </>
+        )
+      }
     </main>
 
-    {published == false && (
-      <WarningBanner lines={['this entry is unfinished! content is subject to change.']} />
-    )}
+    {
+      published == false && (
+        <WarningBanner
+          lines={["this entry is unfinished! content is subject to change."]}
+        />
+      )
+    }
 
-    <div id="entry-nav-wrapper" style={NSFW ? 'display:none;' : ''}>
+    <div id="entry-nav-wrapper" style={NSFW ? "display:none;" : ""}>
       <EntryNavigation
         currentEntry={title}
         previousEntry={previousEntry}
@@ -116,27 +142,27 @@ const { published, title, showTitle, description, previousEntry, nextEntry, hero
 </html>
 
 <script is:inline>
-  const warning = document.querySelector('#nsfw-warning')
-  const content = document.querySelector('#entry-content')
-  const navWrapper = document.querySelector('#entry-nav-wrapper')
-  const confirmed = localStorage.getItem('nsfwConfirmed')
+  const warning = document.querySelector("#nsfw-warning");
+  const content = document.querySelector("#entry-content");
+  const navWrapper = document.querySelector("#entry-nav-wrapper");
+  const confirmed = localStorage.getItem("nsfwConfirmed");
 
-  if (confirmed === 'true') {
-    content.style.display = ''
-    warning.style.display = 'none'
-    navWrapper.style.display = ''
+  if (confirmed === "true") {
+    content.style.display = "";
+    warning.style.display = "none";
+    navWrapper.style.display = "";
   }
 
-  document.querySelector('#nsfw-confirm-btn')?.addEventListener('click', () => {
-    localStorage.setItem('nsfwConfirmed', 'true')
-    content.style.display = ''
-    warning.style.display = 'none'
-    navWrapper.style.display = ''
-  })
+  document.querySelector("#nsfw-confirm-btn")?.addEventListener("click", () => {
+    localStorage.setItem("nsfwConfirmed", "true");
+    content.style.display = "";
+    warning.style.display = "none";
+    navWrapper.style.display = "";
+  });
 
-  document.querySelector('#nsfw-skip-btn')?.addEventListener('click', () => {
-    warning.style.display = 'none'
-    navWrapper.style.display = ''
-    window.scrollTo({ top: 0, behavior: 'smooth' })
-  })
+  document.querySelector("#nsfw-skip-btn")?.addEventListener("click", () => {
+    warning.style.display = "none";
+    navWrapper.style.display = "";
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  });
 </script>
