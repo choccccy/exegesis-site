@@ -3,6 +3,7 @@ import BaseHead from '../components/BaseHead.astro';
 import Header from '../components/Header.astro';
 import { SITE_DESCRIPTION, SITE_TITLE } from '../consts';
 import WarningBanner from '../components/WarningBanner.astro';
+import StarfieldBackground from '../components/StarfieldBackground.astro';
 ---
 
 <!doctype html>
@@ -11,7 +12,7 @@ import WarningBanner from '../components/WarningBanner.astro';
         <BaseHead title={`${SITE_TITLE} — 500`} description={SITE_DESCRIPTION} />
     </head>
     <body>
-        <div class="bg-grid"></div>
+        <StarfieldBackground />
         <Header />
         <WarningBanner lines={[ '500: Internal Server Error', 'something broke on our end. try again in a bit.' ]} />
     </body>
