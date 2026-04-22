@@ -84,17 +84,18 @@ import TextLogo from "../assets/exegesis_textlogo.svg";
     flex-direction: column;
     height: auto;
     gap: 1rem;
-    padding-bottom: 0;
+    padding-bottom: 2rem;
     align-items: center;
   }
 
   header.is-stacked .internal-links {
     position: static;
     transform: none;
-    flex-wrap: wrap;
+    display: grid;
+    grid-template-columns: repeat(var(--nav-cols, 2), auto);
     justify-content: center;
+    gap: 2em;
     width: 100%;
-    display: flex;
     height: auto;
   }
 
@@ -109,6 +110,7 @@ import TextLogo from "../assets/exegesis_textlogo.svg";
     height: 3.5em;
     padding: 0 1em;
     box-sizing: border-box;
+    justify-self: center;
   }
 
   @media (max-width: 840px) {
@@ -117,13 +119,15 @@ import TextLogo from "../assets/exegesis_textlogo.svg";
       height: auto;
       gap: 1rem;
       align-items: center;
-      padding-bottom: 0;
+      padding-bottom: 2rem;
     }
     .internal-links {
       position: static;
       transform: none;
-      flex-wrap: wrap;
+      display: grid;
+      grid-template-columns: repeat(var(--nav-cols, 2), auto);
       justify-content: center;
+      gap: 2em;
       height: auto;
       width: 100%;
     }
@@ -132,6 +136,9 @@ import TextLogo from "../assets/exegesis_textlogo.svg";
       max-width: 400px;
       height: auto;
       margin-bottom: 1rem;
+    }
+    nav a {
+      justify-self: center;
     }
   }
 </style>
@@ -147,6 +154,18 @@ import TextLogo from "../assets/exegesis_textlogo.svg";
   const links = nav?.querySelector(".internal-links");
 
   if (header && nav && logo && links) {
+    /**
+     * Compute optimal column count for stacked nav layout.
+     * Targets 2 rows max with balanced distribution:
+     *   4 → 2 cols (2+2), 5 → 3 cols (3+2), 6 → 3 cols (3+3), 7 → 4 cols (4+3)
+     */
+    const updateNavCols = () => {
+      const count = links.children.length;
+      const cols = Math.ceil(count / 2);
+      links.style.setProperty('--nav-cols', String(cols));
+    };
+    updateNavCols();
+
     const checkOverlap = () => {
       // Force non-stacked state temporarily to measure original dimensions
       const wasStacked = header.classList.contains("is-stacked");

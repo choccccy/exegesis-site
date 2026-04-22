@@ -120,7 +120,8 @@ function buildArcEntries(
         font-size: 1.25rem;
         text-transform: uppercase;
         letter-spacing: 0.05em;
-        white-space: nowrap;
+        text-align: center;
+        text-wrap: balance;
       }
       .arc-header h3 a {
         color: inherit;
@@ -128,6 +129,7 @@ function buildArcEntries(
       }
       .arc-header-line {
         flex: 1;
+        min-width: 2rem;
         height: 2px;
         background: currentColor;
         opacity: 0.5;
@@ -208,7 +210,7 @@ function buildArcEntries(
       }
       @media (max-width: 840px) {
         ul {
-          gap: 0.5em;
+          gap: 4rem;
         }
         ul li {
           width: 100%;
@@ -255,7 +257,10 @@ function buildArcEntries(
                         </h4>
                       </div>
                     ) : (
-                      <a class="entry-card crosshair-corners crosshair-blink crosshair-small" href={`/entry/${entry.id}/`}>
+                      <a
+                        class="entry-card crosshair-corners crosshair-blink crosshair-small"
+                        href={`/entry/${entry.id}/`}
+                      >
                         {entry.data.heroImage && (
                           <img src={entry.data.heroImage.src} alt="" />
                         )}

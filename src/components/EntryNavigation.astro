@@ -46,29 +46,31 @@ const isNextActive =
 
 <nav class="entry-navigation" role="navigation" aria-label="Entry navigation">
   <div class="nav-group">
-    {previousEntry ? (
-      isPreviousActive ? (
-        <CrosshairContainer blink small class="nav-button-wrapper prev">
+    <div class="nav-item-wrapper prev">
+      {previousEntry ? (
+        isPreviousActive ? (
+          <CrosshairContainer blink small class="nav-button-wrapper">
+            <NavButton
+              type="previous"
+              href={`/entry/${titleToSlug(previousEntry)}/`}
+              ariaLabel={`Previous entry: ${previousEntry}`}
+            >
+              {previousEntry}
+            </NavButton>
+          </CrosshairContainer>
+        ) : (
           <NavButton
-            type="previous"
-            href={`/entry/${titleToSlug(previousEntry)}/`}
-            ariaLabel={`Previous entry: ${previousEntry}`}
+            type={['previous', 'disabled']}
+            ariaLabel={`Previous entry not yet published: ${previousEntry}`}
+            title="This entry is not yet published"
           >
-            {previousEntry}
+            {'{...}'}
           </NavButton>
-        </CrosshairContainer>
+        )
       ) : (
-        <NavButton
-          type={['previous', 'disabled']}
-          ariaLabel={`Previous entry not yet published: ${previousEntry}`}
-          title="This entry is not yet published"
-        >
-          {'{...}'}
-        </NavButton>
-      )
-    ) : (
-      <NavButton type="placeholder" aria-hidden="true" />
-    )}
+        <NavButton type="placeholder" aria-hidden="true" />
+      )}
+    </div>
 
     <CrosshairContainer active small class="nav-button-wrapper current">
       <NavButton
@@ -80,17 +82,26 @@ const isNextActive =
       </NavButton>
     </CrosshairContainer>
 
-    {nextEntry ? (
-      isNextActive ? (
-        <CrosshairContainer blink small class="nav-button-wrapper next">
+    <div class="nav-item-wrapper next">
+      {nextEntry ? (
+        isNextActive ? (
+          <CrosshairContainer blink small class="nav-button-wrapper">
+            <NavButton
+              type="next"
+              href={`/entry/${titleToSlug(nextEntry)}/`}
+              ariaLabel={`Next entry: ${nextEntry}`}
+            >
+              {nextEntry}
+            </NavButton>
+          </CrosshairContainer>
+        ) : (
           <NavButton
-            type="next"
-            href={`/entry/${titleToSlug(nextEntry)}/`}
-            ariaLabel={`Next entry: ${nextEntry}`}
+            type={['next', 'disabled']}
+            ariaLabel="No next entry available"
           >
-            {nextEntry}
+            {'{...}'}
           </NavButton>
-        </CrosshairContainer>
+        )
       ) : (
         <NavButton
           type={['next', 'disabled']}
@@ -98,21 +109,14 @@ const isNextActive =
         >
           {'{...}'}
         </NavButton>
-      )
-    ) : (
-      <NavButton
-        type={['next', 'disabled']}
-        ariaLabel="No next entry available"
-      >
-        {'{...}'}
-      </NavButton>
-    )}
+      )}
+    </div>
+
+    <div class="arc-label-wrapper">
+      <a class="arc-label" href={`/entry/#${arcHash}`} style={`color: ${arcInfo.color};`}>{arcInfo.name}</a>
+    </div>
   </div>
 </nav>
-
-<div class="arc-label-wrapper">
-  <a class="arc-label" href={`/entry/#${arcHash}`} style={`color: ${arcInfo.color};`}>{arcInfo.name}</a>
-</div>
 
 <style>
   .entry-navigation {
@@ -121,7 +125,8 @@ const isNextActive =
 
   .arc-label-wrapper {
     text-align: center;
-    margin: 0 0 10vh 0;
+    grid-column: 2;
+    margin: 1rem 0 10vh 0;
   }
 
   .arc-label {
@@ -150,13 +155,13 @@ const isNextActive =
   }
 
   /* Ensure the wrappers respect the grid layout of the buttons they contain */
-  .nav-button-wrapper {
+  .nav-item-wrapper {
     display: flex;
     height: 100%;
   }
-  .nav-button-wrapper.prev { justify-self: end; }
-  .nav-button-wrapper.current { justify-self: center; }
-  .nav-button-wrapper.next { justify-self: start; }
+  .nav-item-wrapper.prev { grid-column: 1; justify-self: end; }
+  .nav-item-wrapper.next { grid-column: 3; justify-self: start; }
+  .nav-button-wrapper.current { grid-column: 2; justify-self: center; }
 
   /* Ensure buttons inside wrappers take up full space */
   .nav-button-wrapper :global(.nav-button) {
@@ -170,5 +175,12 @@ const isNextActive =
       gap: 2.5rem;
       margin: 1em;
     }
+    .nav-item-wrapper.prev { order: 1; }
+    .nav-button-wrapper.current { order: 2; }
+    .arc-label-wrapper { 
+      order: 3; 
+      margin: -1.25rem 0 -1.25rem 0; /* Pull closer to current button as in the screenshot request */
+    }
+    .nav-item-wrapper.next { order: 4; }
   }
 </style>
