@@ -77,7 +77,7 @@ main {
 
    Customize by overriding these vars on the target element:
      --crosshair-size: 32px;   // arm length
-     --crosshair-thick: 4px;   // arm thickness
+     --crosshair-thick: 2px;   // arm thickness
    e.g. <div class="crosshair-corners" style="--crosshair-size: 48px;">
 */
 .crosshair-corners {
@@ -178,10 +178,13 @@ main {
 }
 
 /* Small variation (tabs, card UI) */
-.crosshair-small {
-  --crosshair-size: 16px;
-  --crosshair-thick: 3px;
-  --crosshair-offset: 0.5px; /* Offset to align with 1px outlines */
+.crosshair-corners.crosshair-small {
+  --crosshair-size: 16px !important;
+  --crosshair-thick: 2px !important;
+  --crosshair-offset: 0.5px !important;
+  /* Re-declare calculations to ensure they re-evaluate correctly when size/thick are overridden */
+  --crosshair-half: calc(var(--crosshair-size) / 2) !important;
+  --crosshair-half-thick: calc(var(--crosshair-thick) / 2) !important;
 }
 
 h1,

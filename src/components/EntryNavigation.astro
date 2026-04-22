@@ -2,6 +2,7 @@
 import { getCollection } from 'astro:content'
 import { ARCS } from '../consts';
 import NavButton from '../components/NavButton.astro'
+import CrosshairContainer from '../components/CrosshairContainer.astro'
 
 interface Props {
   currentEntry: string
@@ -47,13 +48,15 @@ const isNextActive =
   <div class="nav-group">
     {previousEntry ? (
       isPreviousActive ? (
-        <NavButton
-          type="previous"
-          href={`/entry/${titleToSlug(previousEntry)}/`}
-          ariaLabel={`Previous entry: ${previousEntry}`}
-        >
-          {previousEntry}
-        </NavButton>
+        <CrosshairContainer blink small class="nav-button-wrapper prev">
+          <NavButton
+            type="previous"
+            href={`/entry/${titleToSlug(previousEntry)}/`}
+            ariaLabel={`Previous entry: ${previousEntry}`}
+          >
+            {previousEntry}
+          </NavButton>
+        </CrosshairContainer>
       ) : (
         <NavButton
           type={['previous', 'disabled']}
@@ -67,23 +70,27 @@ const isNextActive =
       <NavButton type="placeholder" aria-hidden="true" />
     )}
 
-    <NavButton
-      type="current"
-      onclick="window.scrollTo({ top: 0, behavior: 'smooth' })"
-      ariaLabel={`Back to top of ${currentEntry}`}
-    >
-      {currentEntry}
-    </NavButton>
+    <CrosshairContainer active small class="nav-button-wrapper current">
+      <NavButton
+        type="current"
+        onclick="window.scrollTo({ top: 0, behavior: 'smooth' })"
+        ariaLabel={`Back to top of ${currentEntry}`}
+      >
+        {currentEntry}
+      </NavButton>
+    </CrosshairContainer>
 
     {nextEntry ? (
       isNextActive ? (
-        <NavButton
-          type="next"
-          href={`/entry/${titleToSlug(nextEntry)}/`}
-          ariaLabel={`Next entry: ${nextEntry}`}
-        >
-          {nextEntry}
-        </NavButton>
+        <CrosshairContainer blink small class="nav-button-wrapper next">
+          <NavButton
+            type="next"
+            href={`/entry/${titleToSlug(nextEntry)}/`}
+            ariaLabel={`Next entry: ${nextEntry}`}
+          >
+            {nextEntry}
+          </NavButton>
+        </CrosshairContainer>
       ) : (
         <NavButton
           type={['next', 'disabled']}
@@ -139,14 +146,28 @@ const isNextActive =
     display: grid;
     grid-template-columns: 1fr auto 1fr;
     align-items: center;
-    column-gap: 1.25rem;
+    column-gap: 3rem;
+  }
+
+  /* Ensure the wrappers respect the grid layout of the buttons they contain */
+  .nav-button-wrapper {
+    display: flex;
+    height: 100%;
+  }
+  .nav-button-wrapper.prev { justify-self: end; }
+  .nav-button-wrapper.current { justify-self: center; }
+  .nav-button-wrapper.next { justify-self: start; }
+
+  /* Ensure buttons inside wrappers take up full space */
+  .nav-button-wrapper :global(.nav-button) {
+    width: 100%;
   }
 
   @media (max-width: 840px) {
     .nav-group {
       display: flex;
       flex-direction: column;
-      gap: 0.75rem;
+      gap: 2.5rem;
       margin: 1em;
     }
   }

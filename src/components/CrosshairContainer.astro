@@ -7,6 +7,7 @@ type Props<Tag extends HTMLTag> = Polymorphic<{
   active?: boolean;
   size?: string;
   thickness?: string;
+  small?: boolean;
 }>;
 
 const {
@@ -15,6 +16,7 @@ const {
   active = false,
   size,
   thickness,
+  small = false,
   class: className,
   style,
   ...props
@@ -22,23 +24,29 @@ const {
 
 // Prepare CSS variables for custom sizing
 const customVars = {
+  ...(small && { 
+    "--crosshair-size": "16px", 
+    "--crosshair-thick": "2px",
+    "--crosshair-offset": "0.5px"
+  }),
   ...(size && { "--crosshair-size": size }),
   ...(thickness && { "--crosshair-thick": thickness }),
 };
 
-// If size is provided, we should also update the half-calculation variables 
-// to ensure the pseudo-elements position themselves correctly if the 
-// browser doesn't automatically re-evaluate the global.css calcs.
-if (size) {
-    const sizeVal = size.replace(/[a-z%]/g, "");
-    const unit = size.replace(/[0-9.]/g, "");
+// Ensure half-calculations are provided if any size/thick are set
+const finalSize = size || (small ? "16px" : null);
+const finalThick = thickness || (small ? "2px" : null);
+
+if (finalSize) {
+    const sizeVal = finalSize.replace(/[a-z%]/g, "");
+    const unit = finalSize.replace(/[0-9.]/g, "");
     if (!isNaN(Number(sizeVal))) {
         customVars["--crosshair-half"] = `${Number(sizeVal) / 2}${unit}`;
     }
 }
-if (thickness) {
-    const thickVal = thickness.replace(/[a-z%]/g, "");
-    const unit = thickness.replace(/[0-9.]/g, "");
+if (finalThick) {
+    const thickVal = finalThick.replace(/[a-z%]/g, "");
+    const unit = finalThick.replace(/[0-9.]/g, "");
     if (!isNaN(Number(thickVal))) {
         customVars["--crosshair-half-thick"] = `${Number(thickVal) / 2}${unit}`;
     }
@@ -47,12 +55,11 @@ if (thickness) {
 
 <Tag
   class:list={[
-    className,
     "crosshair-corners",
     { "crosshair-blink": blink, "crosshair-on": active },
+    className
   ]}
-  style={{ ...customVars, ...(typeof style === "object" ? style : {}) }}
-  {...(typeof style === "string" ? { style: `${style}` } : {})}
+  style={{ ...customVars, ...style }}
   {...props}
 >
   <slot />
