@@ -84,7 +84,7 @@ main {
   /* Default parameters */
   --crosshair-size: 32px;
   --crosshair-thick: 4px;
-  --crosshair-offset: 0px;
+  --crosshair-offset: 0.5px; /* Centers crosshairs on 1px outlines */
   
   /* Derived calculations (automatically re-evaluate when size/thick change) */
   --crosshair-half: calc(var(--crosshair-size) / 2);
@@ -181,7 +181,6 @@ main {
 .crosshair-corners.crosshair-small {
   --crosshair-size: 16px;
   --crosshair-thick: 2px;
-  --crosshair-offset: 0.5px;
 }
 
 h1,
