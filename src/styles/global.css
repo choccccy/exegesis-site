@@ -81,12 +81,12 @@ main {
    e.g. <div class="crosshair-corners" style="--crosshair-size: 48px;">
 */
 .crosshair-corners {
-  /* === Crosshair Parameters (adjust to taste) === */
+  /* Default parameters */
   --crosshair-size: 32px;
   --crosshair-thick: 4px;
-  --crosshair-offset: 0px; /* Fine-tune alignment (e.g. 0.5px) */
+  --crosshair-offset: 0px;
   
-  /* Internal calculations - do not override these directly */
+  /* Derived calculations (automatically re-evaluate when size/thick change) */
   --crosshair-half: calc(var(--crosshair-size) / 2);
   --crosshair-half-thick: calc(var(--crosshair-thick) / 2);
   
@@ -158,20 +158,20 @@ main {
 }
 
 /* Portable utilities for crosshair interaction */
-.crosshair-blink::before,
-.crosshair-blink::after {
+.crosshair-corners.crosshair-blink::before,
+.crosshair-corners.crosshair-blink::after {
   opacity: 0;
 }
 
-.crosshair-blink:hover::before,
-.crosshair-blink:hover::after {
+.crosshair-corners.crosshair-blink:hover::before,
+.crosshair-corners.crosshair-blink:hover::after {
   animation: blink-binary 0.75s linear forwards;
   z-index: 100;
 }
 
 /* Forcing crosshairs to be visible (e.g., active state) */
-.crosshair-on::before,
-.crosshair-on::after {
+.crosshair-corners.crosshair-on::before,
+.crosshair-corners.crosshair-on::after {
   opacity: 1 !important;
   animation: none !important;
   z-index: 100;
@@ -179,12 +179,9 @@ main {
 
 /* Small variation (tabs, card UI) */
 .crosshair-corners.crosshair-small {
-  --crosshair-size: 16px !important;
-  --crosshair-thick: 2px !important;
-  --crosshair-offset: 0.5px !important;
-  /* Re-declare calculations to ensure they re-evaluate correctly when size/thick are overridden */
-  --crosshair-half: calc(var(--crosshair-size) / 2) !important;
-  --crosshair-half-thick: calc(var(--crosshair-thick) / 2) !important;
+  --crosshair-size: 16px;
+  --crosshair-thick: 2px;
+  --crosshair-offset: 0.5px;
 }
 
 h1,

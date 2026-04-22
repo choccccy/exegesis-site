@@ -24,39 +24,15 @@ const {
 
 // Prepare CSS variables for custom sizing
 const customVars = {
-  ...(small && { 
-    "--crosshair-size": "16px", 
-    "--crosshair-thick": "2px",
-    "--crosshair-offset": "0.5px"
-  }),
   ...(size && { "--crosshair-size": size }),
   ...(thickness && { "--crosshair-thick": thickness }),
 };
-
-// Ensure half-calculations are provided if any size/thick are set
-const finalSize = size || (small ? "16px" : null);
-const finalThick = thickness || (small ? "2px" : null);
-
-if (finalSize) {
-    const sizeVal = finalSize.replace(/[a-z%]/g, "");
-    const unit = finalSize.replace(/[0-9.]/g, "");
-    if (!isNaN(Number(sizeVal))) {
-        customVars["--crosshair-half"] = `${Number(sizeVal) / 2}${unit}`;
-    }
-}
-if (finalThick) {
-    const thickVal = finalThick.replace(/[a-z%]/g, "");
-    const unit = finalThick.replace(/[0-9.]/g, "");
-    if (!isNaN(Number(thickVal))) {
-        customVars["--crosshair-half-thick"] = `${Number(thickVal) / 2}${unit}`;
-    }
-}
 ---
 
 <Tag
   class:list={[
     "crosshair-corners",
-    { "crosshair-blink": blink, "crosshair-on": active },
+    { "crosshair-blink": blink, "crosshair-on": active, "crosshair-small": small },
     className
   ]}
   style={{ ...customVars, ...style }}
