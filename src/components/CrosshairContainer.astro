@@ -1,0 +1,59 @@
+---
+import type { HTMLTag, Polymorphic } from "astro/types";
+
+type Props<Tag extends HTMLTag> = Polymorphic<{
+  as: Tag;
+  blink?: boolean;
+  active?: boolean;
+  size?: string;
+  thickness?: string;
+}>;
+
+const {
+  as: Tag = "div",
+  blink = false,
+  active = false,
+  size,
+  thickness,
+  class: className,
+  style,
+  ...props
+} = Astro.props;
+
+// Prepare CSS variables for custom sizing
+const customVars = {
+  ...(size && { "--crosshair-size": size }),
+  ...(thickness && { "--crosshair-thick": thickness }),
+};
+
+// If size is provided, we should also update the half-calculation variables 
+// to ensure the pseudo-elements position themselves correctly if the 
+// browser doesn't automatically re-evaluate the global.css calcs.
+if (size) {
+    const sizeVal = size.replace(/[a-z%]/g, "");
+    const unit = size.replace(/[0-9.]/g, "");
+    if (!isNaN(Number(sizeVal))) {
+        customVars["--crosshair-half"] = `${Number(sizeVal) / 2}${unit}`;
+    }
+}
+if (thickness) {
+    const thickVal = thickness.replace(/[a-z%]/g, "");
+    const unit = thickness.replace(/[0-9.]/g, "");
+    if (!isNaN(Number(thickVal))) {
+        customVars["--crosshair-half-thick"] = `${Number(thickVal) / 2}${unit}`;
+    }
+}
+---
+
+<Tag
+  class:list={[
+    className,
+    "crosshair-corners",
+    { "crosshair-blink": blink, "crosshair-on": active },
+  ]}
+  style={{ ...customVars, ...(typeof style === "object" ? style : {}) }}
+  {...(typeof style === "string" ? { style: `${style}` } : {})}
+  {...props}
+>
+  <slot />
+</Tag>
