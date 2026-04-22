@@ -37,6 +37,8 @@ import TextLogo from "../assets/exegesis_textlogo.svg";
     color: white;
     background: transparent;
     box-shadow: 0 2px 8px rgba(var(--black), 5%);
+    position: relative;
+    z-index: 100;
   }
   .logo-img {
     outline: 0;
@@ -46,32 +48,28 @@ import TextLogo from "../assets/exegesis_textlogo.svg";
     object-fit: contain;
   }
   .internal-links {
-    height: 100%;
+    height: auto;
     position: absolute;
     left: 50%;
     top: 50%;
     transform: translate(-50%, -50%);
     display: flex;
-    gap: 1em;
+    gap: 2em;
     background-color: black;
+    align-items: center;
   }
   nav a {
-    padding: 1em 0.5em;
+    padding: 0.5em 1em;
     color: white;
-    border-bottom: 4px solid transparent;
     text-decoration: none;
-    height: 100%;
+    height: auto;
     display: flex;
     align-items: center;
     justify-content: center;
     text-align: center;
     font-family: var(--font-tiny5);
     line-height: 1.2;
-    transition: border-color 0.2s;
     box-sizing: border-box;
-  }
-  nav a.active {
-    border-bottom-color: white;
   }
   nav {
     height: 10vh;

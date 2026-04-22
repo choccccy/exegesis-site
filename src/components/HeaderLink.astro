@@ -9,15 +9,33 @@ const subpath = pathname.match(/[^\/]+/g);
 const isActive = href === pathname || href === '/' + (subpath?.[0] || '');
 ---
 
-<a href={href} class:list={[className, { active: isActive }]} {...props}>
+<a href={href} class:list={[className, "crosshair-corners", { active: isActive }]} {...props}>
     <slot />
 </a>
 <style>
-    a {
+    a.crosshair-corners {
         display: inline-block;
         text-decoration: none;
+        /* Force smaller size by re-declaring all related variables */
+        --crosshair-size: 16px;
+        --crosshair-thick: 2px;
+        --crosshair-half: 8px;
+        --crosshair-half-thick: 1px;
     }
-    a.active {
-        font-weight: bolder;
+
+    /* Hide crosshairs by default and ensure high z-index */
+    a.crosshair-corners::before,
+    a.crosshair-corners::after {
+        opacity: 0;
+        transition: opacity 0.2s;
+        z-index: 100;
+    }
+
+    /* Show crosshairs on hover or when active */
+    a.crosshair-corners:hover::before,
+    a.crosshair-corners:hover::after,
+    a.crosshair-corners.active::before,
+    a.crosshair-corners.active::after {
+        opacity: 1;
     }
 </style>
