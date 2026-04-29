@@ -251,6 +251,7 @@ table {
 img {
   width: 100%;
   height: auto;
+  display: block;
   outline: 1px solid white;
 
   /* Use both for browser compatibility */
@@ -284,8 +285,7 @@ img {
 /* Reset paragraph styles specifically for paragraphs containing only images */
 .prose p:has(> img:only-child) {
   width: 100%;
-  margin-left: 0;
-  margin-right: 0;
+  margin: 0;
 }
 
 code {
