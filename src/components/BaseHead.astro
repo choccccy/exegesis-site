@@ -84,3 +84,55 @@ const ogImage = resolveImageUrl(image);
 <meta property="twitter:title" content={title} />
 <meta property="twitter:description" content={description} />
 <meta property="twitter:image" content={ogImage} />
+
+<script is:inline>
+  /**
+   * Handle reactive crosshair blinks on touch/pointer devices.
+   * This is global to catch all .crosshair-blink elements across the site.
+   */
+  (function() {
+    const handlePointer = (e) => {
+      const target = e.target.closest('.crosshair-blink');
+      if (!target) return;
+      
+      // Instant visual feedback
+      target.classList.remove('is-touch-blinking');
+      void target.offsetWidth;
+      target.classList.add('is-touch-blinking');
+    };
+
+    const handleClick = (e) => {
+      const target = e.target.closest('.crosshair-blink');
+      if (!target) return;
+
+      const link = e.target.closest('a');
+      const isModified = e.metaKey || e.ctrlKey || e.shiftKey || e.altKey;
+
+      if (link && link.href && !isModified && !link.target) {
+        // We only delay if it's a standard internal/external link that would unload the page
+        // Ensure we haven't already intercepted this click
+        if (link.dataset.intercepted === 'true') return;
+        
+        e.preventDefault();
+        e.stopPropagation();
+        
+        link.dataset.intercepted = 'true';
+        
+        // Trigger the visual blink again just in case pointerdown was missed
+        target.classList.remove('is-touch-blinking');
+        void target.offsetWidth;
+        target.classList.add('is-touch-blinking');
+
+        setTimeout(() => {
+          link.dataset.intercepted = 'false';
+          window.location.assign(link.href);
+        }, 450);
+      }
+    };
+
+    // Use capture phase (true) for click to get ahead of other listeners
+    document.addEventListener('click', handleClick, true);
+    // pointerdown for instant response
+    document.addEventListener('pointerdown', handlePointer, { passive: true });
+  })();
+</script>

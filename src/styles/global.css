@@ -164,7 +164,11 @@ main {
 }
 
 .crosshair-corners.crosshair-blink:hover::before,
-.crosshair-corners.crosshair-blink:hover::after {
+.crosshair-corners.crosshair-blink:hover::after,
+.crosshair-corners.crosshair-blink:active::before,
+.crosshair-corners.crosshair-blink:active::after,
+.crosshair-corners.crosshair-blink.is-touch-blinking::before,
+.crosshair-corners.crosshair-blink.is-touch-blinking::after {
   animation: blink-binary 0.75s linear forwards;
   z-index: 100;
 }
