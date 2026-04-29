@@ -184,7 +184,7 @@ const { starCount = 800 } = Astro.props;
     }
   }
 
-  // Register Web Component to naturally handle Astro ViewTransitions lifecycle and avoid memory leaks
+  // Register Web Component to naturally handle Astro ClientRouter lifecycle and avoid memory leaks
   customElements.define('starfield-background', StarfieldBackground);
 </script>
 
