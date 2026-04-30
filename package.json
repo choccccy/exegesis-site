@@ -15,5 +15,9 @@
     "astro": "^6.1.10",
     "remark-unwrap-images": "^4.0.1",
     "sharp": "^0.34.3"
+  },
+  "devDependencies": {
+    "@astrojs/check": "^0.5.10",
+    "typescript": "^5.4.5"
   }
 }
