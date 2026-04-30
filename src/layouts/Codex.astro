@@ -1,5 +1,4 @@
 ---
-import type { CollectionEntry } from "astro:content";
 import BaseHead from "../components/BaseHead.astro";
 import EntryNavigation from "../components/EntryNavigation.astro";
 import Header from "../components/Header.astro";
@@ -135,6 +134,8 @@ const {
         currentEntry={title}
         previousEntry={previousEntry}
         nextEntry={nextEntry}
+        currentStatus={undefined as any}
+        arc={undefined as any}
       />
     </div>
   </body>
