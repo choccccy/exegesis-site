@@ -24,16 +24,18 @@ const borderDarken = 0.5;
 const { char: rawChar = 'default', bgOverride } = Astro.props;
 const char = rawChar.toLowerCase();
 
-function withAlpha(hex, alpha) {
-  const [, r, g, b] = hex.match(/^#(..)(..)(..)$/).map(x => parseInt(x, 16));
+function withAlpha(hex: string, alpha: number) {
+  const match = hex.match(/^#(..)(..)(..)$/);
+  const [, r, g, b] = match ? match.map((x: string) => parseInt(x, 16)) : [0, 0, 0, 0];
   return `rgba(${r}, ${g}, ${b}, ${alpha})`;
 }
-function darken(hex, factor = borderDarken) {
-  const [, r, g, b] = hex.match(/^#(..)(..)(..)$/).map(x => parseInt(x, 16));
+function darken(hex: string, factor = borderDarken) {
+  const match = hex.match(/^#(..)(..)(..)$/);
+  const [, r, g, b] = match ? match.map((x: string) => parseInt(x, 16)) : [0, 0, 0, 0];
   return `rgb(${Math.round(r*factor)}, ${Math.round(g*factor)}, ${Math.round(b*factor)})`;
 }
 
-const paletteKey = Object.keys(palette).find(k => k.toLowerCase() === char);
+const paletteKey = Object.keys(palette).find(k => k.toLowerCase() === char) as keyof typeof palette | undefined;
 const characterName = paletteKey || rawChar;
 
 const entry = (paletteKey ? palette[paletteKey] : undefined) ?? palette.fallback;

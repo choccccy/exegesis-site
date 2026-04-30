@@ -51,7 +51,7 @@ const errors = [];
 const warnings = [];
 
 for (const entry of entries) {
-  const { title, previousEntry, nextEntry, status } = entry;
+  const { title, previousEntry, nextEntry } = entry;
 
   if (previousEntry) {
     const prev = byTitle.get(previousEntry);

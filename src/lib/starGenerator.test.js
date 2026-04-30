@@ -7,7 +7,6 @@
 
 import assert from "assert";
 import {
-  generateStar,
   generateStarfield,
   analyzeStarfield,
   SPECTRAL_TYPES,

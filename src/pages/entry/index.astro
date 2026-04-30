@@ -14,9 +14,7 @@ const activeEntries = (
 
 // Also fetch draft entry numbers so they appear as placeholders
 const allEntries = await getCollection("entry");
-const draftNumbers = allEntries
-  .filter((e) => e.data.status === "draft")
-  .map((e) => e.data.entryNumber);
+
 
 // Group entries by arc, sorted by arc order
 const entriesByArc = new Map<string, typeof activeEntries>();

@@ -1,5 +1,4 @@
 ---
-import { Image } from "astro:assets";
 import type { CollectionEntry } from "astro:content";
 import BaseHead from "../components/BaseHead.astro";
 import EntryNavigation from "../components/EntryNavigation.astro";
@@ -8,7 +7,7 @@ import WarningBanner from "../components/WarningBanner.astro";
 import NavButton from "../components/NavButton.astro";
 import StarfieldBackground from "../components/StarfieldBackground.astro";
 
-type Props = CollectionEntry<"codex">["data"];
+type Props = any; // CollectionEntry<"codex">["data"];
 
 const {
   published,

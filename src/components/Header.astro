@@ -162,7 +162,9 @@ import TextLogo from "../assets/exegesis_textlogo.svg";
     const updateNavCols = () => {
       const count = links.children.length;
       const cols = Math.ceil(count / 2);
-      links.style.setProperty('--nav-cols', String(cols));
+      if (links instanceof HTMLElement) {
+        links.style.setProperty('--nav-cols', String(cols));
+      }
     };
     updateNavCols();
 
@@ -182,7 +184,6 @@ import TextLogo from "../assets/exegesis_textlogo.svg";
       // Calculate the distance between the right edge of the logo and the left edge of the links
       const logoRight = logoRect.right;
       const linksLeft = linksRect.left;
-      const gap = linksLeft - logoRight;
 
       // Also account for the links taking up space on the right side if they were centered
       // BUT since the links are absolute positioned at 50%, they overlap if
