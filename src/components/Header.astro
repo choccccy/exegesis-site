@@ -1,5 +1,5 @@
 ---
-import { SITE_TITLE, DISCORD_URL, VR_AVATARS_REPO } from "../consts";
+import { SITE_TITLE, DISCORD_URL, VR_AVATARS_REPO, SITE_SOURCE_REPO } from "../consts";
 import HeaderLink from "./HeaderLink.astro";
 
 import { Image } from "astro:assets";
@@ -25,6 +25,12 @@ import TextLogo from "../assets/exegesis_textlogo.svg";
         target="_blank"
       >
         VR<br />avatars
+      </HeaderLink>
+      <HeaderLink
+        href={SITE_SOURCE_REPO}
+        target="_blank"
+      >
+        website<br />source
       </HeaderLink>
     </div>
   </nav>
@@ -91,11 +97,13 @@ import TextLogo from "../assets/exegesis_textlogo.svg";
   header.is-stacked .internal-links {
     position: static;
     transform: none;
-    display: grid;
-    grid-template-columns: repeat(var(--nav-cols, 2), auto);
+    display: flex;
+    flex-wrap: wrap;
     justify-content: center;
-    gap: 2em;
-    width: 100%;
+    gap: 1.5rem;
+    width: var(--main-max-width);
+    max-width: calc(100% - 2em);
+    margin: 0 auto;
     height: auto;
   }
 
@@ -124,12 +132,14 @@ import TextLogo from "../assets/exegesis_textlogo.svg";
     .internal-links {
       position: static;
       transform: none;
-      display: grid;
-      grid-template-columns: repeat(var(--nav-cols, 2), auto);
+      display: flex;
+      flex-wrap: wrap;
       justify-content: center;
-      gap: 2em;
+      gap: 1rem;
+      width: var(--main-mobile-width);
+      max-width: calc(100% - 2em);
+      margin: 0 auto;
       height: auto;
-      width: 100%;
     }
     .logo-img {
       width: 65vw;
@@ -154,20 +164,6 @@ import TextLogo from "../assets/exegesis_textlogo.svg";
   const links = nav?.querySelector(".internal-links");
 
   if (header && nav && logo && links) {
-    /**
-     * Compute optimal column count for stacked nav layout.
-     * Targets 2 rows max with balanced distribution:
-     *   4 → 2 cols (2+2), 5 → 3 cols (3+2), 6 → 3 cols (3+3), 7 → 4 cols (4+3)
-     */
-    const updateNavCols = () => {
-      const count = links.children.length;
-      const cols = Math.ceil(count / 2);
-      if (links instanceof HTMLElement) {
-        links.style.setProperty('--nav-cols', String(cols));
-      }
-    };
-    updateNavCols();
-
     const checkOverlap = () => {
       // Force non-stacked state temporarily to measure original dimensions
       const wasStacked = header.classList.contains("is-stacked");
