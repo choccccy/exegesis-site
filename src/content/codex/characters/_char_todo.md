@@ -98,11 +98,11 @@
 ---
 
 ## Amur Team
-Lead: gruff no nonsense siberian wolf lady
-Assistant Lead: her quiet but competent american southern husband, just a big stocky 8ft tall dude
-Logistics/pilot: Nchọ & Obi
-SO: punkass spider they/them AI, mischeivous because spiders must be mischeivous them's the rulez
-CO: bookish swedish twink, really into music
+Lead: Valentina - gruff no nonsense siberian wolf lady
+Assistant Lead: Gerald - her quiet but competent american southern husband, just a big stocky 8ft tall dude
+Logistics/pilot: Nchọ & Obi-me
+SO: Kumo-17 - punkass spider they/them AI, mischeivous because spiders must be mischeivous, them's the rulez
+CO: Røyne - bookish swedish twink, really into music
 
 ## V3N's Team
 Lead: militaristic leader
