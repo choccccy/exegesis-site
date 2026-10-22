@@ -47,6 +47,24 @@ const { starCount = 800 } = Astro.props;
     /* Screen blend mode ensures the black background becomes transparent, 
        perfectly preserving the pre-blended RGB canvas colors */
     mix-blend-mode: screen;
+    /* Hidden until textures are generated, then faded in */
+    opacity: 0;
+    transition: opacity 150ms ease-out;
+  }
+
+  #starfield-wrapper.is-ready .starfield-layer {
+    opacity: 1;
+  }
+
+  /* Cached sky: show instantly */
+  #starfield-wrapper.no-fade .starfield-layer {
+    transition: none;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .starfield-layer {
+      transition: none;
+    }
   }
 
   /* Different speeds for parallax. 

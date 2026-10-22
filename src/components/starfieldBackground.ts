@@ -1,11 +1,17 @@
 import { generateStar } from '../lib/starGenerator.js';
 
+// Generated textures are cached per tab session so the sky stays consistent across pages.
+// Bump the version when the generator's look changes.
+const CACHE_KEY = 'starfield-layers-v1';
+const LAYER_IDS = ['starfield-bg', 'starfield-md', 'starfield-fg'];
+
 class StarfieldBackground extends HTMLElement {
   wrapper: HTMLElement | null = null;
   texSize: number = 1024;
   starCount: number = 800;
   ticking: boolean = false;
   scrollY: number = 0;
+  objectUrls: string[] = [];
 
   constructor() {
     super();
@@ -21,12 +27,57 @@ class StarfieldBackground extends HTMLElement {
     if (!this.wrapper) return;
     this.starCount = parseInt(this.dataset.starCount || "800", 10);
     
-    // Delay initialization slightly to ensure UI is interactive first
-    setTimeout(() => this.init(), 50);
+    this.setupListeners();
+
+    const cached = this.readCache();
+    if (cached) {
+      // Show the cached sky immediately, with no fade
+      cached.forEach((url, i) => this.setLayerImage(LAYER_IDS[i], url));
+      this.wrapper.classList.add('is-ready', 'no-fade');
+      return;
+    }
+
+    // Defer to the next frame so first paint isn't blocked by generation
+    requestAnimationFrame(() => this.init());
+  }
+
+  readCache(): string[] | null {
+    try {
+      const parsed = JSON.parse(sessionStorage.getItem(CACHE_KEY) || 'null');
+      if (Array.isArray(parsed) && parsed.length === LAYER_IDS.length && parsed.every(u => typeof u === 'string' && u.startsWith('data:image/png'))) {
+        return parsed;
+      }
+    } catch {
+      // Storage blocked or corrupt entry; fall through to generation
+    }
+    return null;
+  }
+
+  async writeCache(blobs: Blob[]) {
+    try {
+      const urls = await Promise.all(blobs.map(blob => new Promise<string>((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = () => resolve(reader.result as string);
+        reader.onerror = () => reject(reader.error);
+        reader.readAsDataURL(blob);
+      })));
+      sessionStorage.setItem(CACHE_KEY, JSON.stringify(urls));
+    } catch {
+      // Quota exceeded or storage blocked; caching is best-effort
+    }
+  }
+
+  setLayerImage(id: string, url: string) {
+    const el = this.querySelector(`#${id}`);
+    if (el instanceof HTMLElement) {
+      el.style.backgroundImage = `url(${url})`;
+    }
   }
 
   disconnectedCallback() {
     window.removeEventListener('scroll', this.handleScroll);
+    this.objectUrls.forEach(url => URL.revokeObjectURL(url));
+    this.objectUrls = [];
   }
 
   drawStar(ctx: CanvasRenderingContext2D, star: any, renderX: number, renderY: number) {
@@ -89,7 +140,7 @@ class StarfieldBackground extends HTMLElement {
     if (nearRight && nearBottom) this.drawStar(ctx, star, star.x - texSize, star.y - texSize);
   }
 
-  init() {
+  async init() {
     // Base density scaling for performance
     const isLowEnd = navigator.hardwareConcurrency <= 4 || window.innerWidth < 768;
     let count = isLowEnd ? Math.floor(this.starCount * 0.5) : this.starCount;
@@ -98,11 +149,7 @@ class StarfieldBackground extends HTMLElement {
     count = Math.floor(count * 1.5);
     
     // Partition stars into 3 depth layers for parallax
-    const layers: { id: string, stars: any[] }[] = [
-      { id: 'starfield-bg', stars: [] },
-      { id: 'starfield-md', stars: [] },
-      { id: 'starfield-fg', stars: [] }
-    ];
+    const layers: { id: string, stars: any[] }[] = LAYER_IDS.map(id => ({ id, stars: [] }));
 
     for (let i = 0; i < count; i++) {
       const star = generateStar(this.texSize, this.texSize);
@@ -113,35 +160,50 @@ class StarfieldBackground extends HTMLElement {
       else layers[2].stars.push(star);
     }
 
-    // Render each layer to a data URL
+    // Render each layer to its own canvas, then encode asynchronously to a blob URL
+    const blobs = await Promise.all(layers.map(layer => this.renderLayer(layer.id, layer.stars)));
+
+    // Fade all layers in together once every texture is decoded
+    requestAnimationFrame(() => this.wrapper?.classList.add('is-ready'));
+
+    if (blobs.every((b): b is Blob => b !== null)) {
+      this.writeCache(blobs);
+    }
+  }
+
+  async renderLayer(id: string, stars: any[]): Promise<Blob | null> {
     const canvas = document.createElement("canvas");
     canvas.width = this.texSize;
     canvas.height = this.texSize;
-    
-    const ctx = canvas.getContext("2d");
-    if (!ctx) return;
 
-    for (const layer of layers) {
-      // Reset globalAlpha to 1.0 to guarantee a completely opaque black fill, 
-      // preventing previous layer's stars from ghosting.
-      ctx.globalAlpha = 1.0;
-      ctx.fillStyle = "#000000";
-      ctx.fillRect(0, 0, this.texSize, this.texSize);
-      
-      layer.stars.forEach(star => this.drawSeamless(ctx, star));
-      
-      const dataUrl = canvas.toDataURL("image/png");
-      const el = this.querySelector(`#${layer.id}`);
-      if (el instanceof HTMLElement) {
-        el.style.backgroundImage = `url(${dataUrl})`;
-      }
-    }
+    const ctx = canvas.getContext("2d");
+    if (!ctx) return null;
+
+    ctx.fillStyle = "#000000";
+    ctx.fillRect(0, 0, this.texSize, this.texSize);
+    stars.forEach(star => this.drawSeamless(ctx, star));
+
+    const blob = await new Promise<Blob | null>(resolve => canvas.toBlob(resolve, "image/png"));
 
     // Cleanup large objects
     canvas.width = 0;
     canvas.height = 0;
+    if (!blob) return null;
 
-    this.setupListeners();
+    const url = URL.createObjectURL(blob);
+    this.objectUrls.push(url);
+
+    // Decode up front so the fade-in doesn't stutter on first paint
+    const img = new Image();
+    img.src = url;
+    try {
+      await img.decode();
+    } catch {
+      // Decode failure is non-fatal; the background will still load normally
+    }
+
+    this.setLayerImage(id, url);
+    return blob;
   }
 
   setupListeners() {
