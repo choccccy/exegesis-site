@@ -184,3 +184,41 @@ const isNextActive =
     .nav-item-wrapper.next { order: 4; }
   }
 </style>
+
+<script>
+  /**
+   * GoatCounter "read to end" event: fires once when the bottom nav has been
+   * on screen and the page has been open for at least MIN_SECONDS. The time
+   * floor keeps very short entries (nav visible on load) from counting every
+   * visitor as a finisher. On NSFW pages the nav stays display:none until the
+   * reader continues, so it can't fire before that.
+   */
+  const MIN_SECONDS = 10
+  const nav = document.querySelector('.entry-navigation')
+
+  if (nav && 'IntersectionObserver' in window) {
+    const openedAt = performance.now()
+    let visible = false
+    let timer: ReturnType<typeof setTimeout> | undefined
+
+    const fire = () => {
+      if (!visible) return
+      observer.disconnect()
+      ;(window as any).goatcounter?.count?.({
+        path: 'read-end' + location.pathname,
+        title: 'Read to end: ' + document.title,
+        event: true,
+      })
+    }
+
+    const observer = new IntersectionObserver(([entry]) => {
+      visible = entry.isIntersecting
+      clearTimeout(timer)
+      if (!visible) return
+      const remaining = MIN_SECONDS * 1000 - (performance.now() - openedAt)
+      if (remaining <= 0) fire()
+      else timer = setTimeout(fire, remaining)
+    })
+    observer.observe(nav)
+  }
+</script>

@@ -5,6 +5,7 @@ import sitemap from '@astrojs/sitemap';
 import { defineConfig } from 'astro/config';
 
 import remarkUnwrapImages from 'remark-unwrap-images';
+import rehypeGoatcounterLinks from './src/lib/rehypeGoatcounterLinks.js';
 
 // https://astro.build/config
 export default defineConfig({
@@ -12,6 +13,7 @@ export default defineConfig({
   integrations: [mdx(), sitemap()],
 
   markdown: {
-    remarkPlugins: [remarkUnwrapImages]
+    remarkPlugins: [remarkUnwrapImages],
+    rehypePlugins: [rehypeGoatcounterLinks]
   },
 });

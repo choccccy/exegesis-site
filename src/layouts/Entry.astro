@@ -79,6 +79,8 @@ const { status, arc, title, showTitle, description, previousEntry, nextEntry, he
             <div id="nsfw-actions">
               <NavButton
                 id="nsfw-confirm-btn"
+                data-goatcounter-click={`nsfw-continue${Astro.url.pathname}`}
+                data-goatcounter-title={`NSFW continue: ${title}`}
                 type="warning"
                 ariaLabel="Confirm viewing NSFW content"
               >
@@ -86,6 +88,8 @@ const { status, arc, title, showTitle, description, previousEntry, nextEntry, he
               </NavButton>
               <NavButton
                 id="nsfw-skip-btn"
+                data-goatcounter-click={`nsfw-skip${Astro.url.pathname}`}
+                data-goatcounter-title={`NSFW skip: ${title}`}
                 type="next"
                 ariaLabel="Skip NSFW content and return"
               >
